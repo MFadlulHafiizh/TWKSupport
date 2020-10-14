@@ -1,4 +1,4 @@
-package com.application.twksupport;
+package com.application.twksupport.auth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,11 +8,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.application.twksupport.RestApi.APIService;
+import com.application.twksupport.R;
+import com.application.twksupport.RestApi.LoginService;
 import com.application.twksupport.RestApi.ApiClient;
-import com.application.twksupport.RestApi.TokenResponse;
+import com.application.twksupport.model.TokenResponse;
+import com.application.twksupport.UserActivity;
 import com.google.gson.Gson;
 
 import okhttp3.ResponseBody;
@@ -29,7 +32,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         etEmail = findViewById(R.id.edtEmail);
         etPassword = findViewById(R.id.edtPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
@@ -47,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             final String email = etEmail.getText().toString();
             final String password = etPassword.getText().toString();
 
-            APIService service = ApiClient.getClient().create(APIService.class);
+            LoginService service = ApiClient.getClient().create(LoginService.class);
             Call<ResponseBody> srvLogin = service.getToken(email, password);
             srvLogin.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -57,11 +59,11 @@ public class MainActivity extends AppCompatActivity {
                             String ResponseJson = response.body().string();
                             Gson objGson = new Gson();
                             TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
-                            Log.d(TAG, ResponseJson);
                             if (objResp.getToken() != null){
-                                Toast.makeText(MainActivity.this, objResp.getToken(), Toast.LENGTH_SHORT).show();
+                                getSharedPreferences("valid", MODE_PRIVATE).edit().putString("token", objResp.getToken()).commit();
+                                Log.d(TAG, ResponseJson);
                                 Toast.makeText(MainActivity.this, "Password got successful", Toast.LENGTH_SHORT).show();
-                                Intent toUser = new Intent(MainActivity.this, UserActivity.class);
+                                Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
                                 startActivity(toUser);
                             }else{
                                 Toast.makeText(MainActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();

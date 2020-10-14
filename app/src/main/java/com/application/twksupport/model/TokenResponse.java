@@ -1,4 +1,4 @@
-package com.application.twksupport.RestApi;
+package com.application.twksupport.model;
 
 import com.google.gson.annotations.SerializedName;
 
