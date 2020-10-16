@@ -44,9 +44,9 @@ public class SplashActivity extends AppCompatActivity {
                         @Override
                         public void run() {
                             actUserLogin();
+                            finish();
                         }
                     });
-                    finish();
                 }
                 catch (Exception e){
                     e.printStackTrace();

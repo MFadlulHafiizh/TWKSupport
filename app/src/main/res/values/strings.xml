@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">TWKSupport</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="tab_title1">Bugs</string>
+    <string name="tab_title2">Feature</string>
+    <string name="tab_title3">Done</string>
 </resources>

@@ -2,12 +2,17 @@ package com.application.twksupport.auth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,16 +30,20 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
+    private ImageView twkLogo;
     private Button btnSignIn;
     private static final String TAG = MainActivity.class.getSimpleName();
+    private boolean exit = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         etEmail = findViewById(R.id.edtEmail);
         etPassword = findViewById(R.id.edtPassword);
         btnSignIn = findViewById(R.id.btnSignIn);
+        twkLogo = findViewById(R.id.twklogo);
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -42,6 +51,22 @@ public class MainActivity extends AppCompatActivity {
                 callLoginService();
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (exit){
+            super.onBackPressed();
+            return;
+        }
+        exit = true;
+        Toast.makeText(this, "Tap back again to exit", Toast.LENGTH_SHORT).show();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                exit = false;
+            }
+        }, 2000);
     }
 
     private void callLoginService() {
@@ -65,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "Password got successful", Toast.LENGTH_SHORT).show();
                                 Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
                                 startActivity(toUser);
+                                finish();
                             }else{
                                 Toast.makeText(MainActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
                             }
