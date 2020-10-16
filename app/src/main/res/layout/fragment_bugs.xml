@@ -1,14 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:paddingTop="16dp"
+    android:paddingLeft="24dp"
+    android:paddingRight="24dp"
+    android:orientation="vertical"
+    android:background="@color/blackCharcoal"
     tools:context=".BugsFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa_regular"
+        android:text="@string/bugs_reported"
+        android:textColor="@android:color/white"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_bugs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        tools:listitem="@layout/cardview_item_layout"/>
 
-</FrameLayout>
+
+</LinearLayout>
