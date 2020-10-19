@@ -5,6 +5,8 @@
     style="@style/Theme.AppCompat.Light.NoActionBar"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:transitionName="layout"
     android:background="@color/blackCharcoal">
 
     <FrameLayout
@@ -47,6 +49,7 @@
             app:layout_constraintRight_toRightOf="@id/framesplash"
             app:layout_constraintTop_toBottomOf="@+id/guideline3" />
     </FrameLayout>
+
 
     <ImageView
         android:layout_width="wrap_content"

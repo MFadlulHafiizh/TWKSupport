@@ -67,11 +67,13 @@ public class SplashActivity extends AppCompatActivity {
         }
         else {
             Intent login = new Intent(SplashActivity.this, MainActivity.class);
-            Pair[] pairs = new Pair[2];
+            Pair[] pairs = new Pair[3];
             pairs[0] = new Pair<View, String>(twkLogo, "sendLogo");
             pairs[1] = new Pair<View, String>(txtSupport, "sendTitle");
+            pairs[2] = new Pair<View, String>(parentLayout, "layout");
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SplashActivity.this, pairs);
             startActivity(login, options.toBundle());
+            overridePendingTransition(R.anim.fade_in, R.anim.fade_out);
         }
     }
 }

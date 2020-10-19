@@ -46,7 +46,7 @@
             android:fontFamily="@font/comfortaa_regular"
             android:text="Subject"
             android:textColor="@color/blackCharcoal"
-            android:textSize="14dp"
+            android:textSize="12dp"
             app:layout_constraintLeft_toRightOf="@+id/priority"
             app:layout_constraintTop_toTopOf="parent" />
 

@@ -8,6 +8,7 @@
     <color name="blackShadow">#59070707</color>
     <color name="defaultWhite">#FCFCFC</color>
     <color name="DofWhite">#F8F8F8</color>
-    <color name="success">#77DD00</color>
     <color name="defaultGrey">#E0E0E0</color>
+    <color name="greenFigma">#A1C349</color>
+    <color name="blueFigma">#809CFF</color>
 </resources>

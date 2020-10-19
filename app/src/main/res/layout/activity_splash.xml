@@ -5,7 +5,8 @@
     android:id="@+id/splash_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/white"
+    android:background="@color/defaultWhite"
+    android:transitionName="layout"
     tools:context=".auth.SplashActivity">
 
     <FrameLayout

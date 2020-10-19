@@ -20,15 +20,14 @@ public class UserActivity extends AppCompatActivity {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SectionsPagerAdapter adapter;
-
-
     private Button btnLogout;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
 
-        btnLogout = findViewById(R.id.btnlogout);
+        //btnLogout = findViewById(R.id.btnlogout);
         tabLayout = findViewById(R.id.tabs);
         viewPager = findViewById(R.id.viewpager);
         adapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -40,12 +39,12 @@ public class UserActivity extends AppCompatActivity {
         viewPager.setAdapter(adapter);
         tabLayout.setupWithViewPager(viewPager);
 
-        btnLogout.setOnClickListener(new View.OnClickListener() {
+        /*btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 logout();
             }
-        });
+        });*/
     }
 
     private void logout(){
