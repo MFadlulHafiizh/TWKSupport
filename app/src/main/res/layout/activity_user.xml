@@ -2,6 +2,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/userActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/blackCharcoal"
@@ -11,11 +12,8 @@
         android:id="@+id/tabs"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@android:id/navigationBarBackground"
-        app:tabGravity="center"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
         app:tabIndicator="@drawable/custom_tablayout"
         app:tabIndicatorAnimationDuration="500"
         app:tabIndicatorColor="@color/RedDefault"
@@ -24,7 +22,10 @@
         app:tabRippleColor="@color/RedDefault"
         app:tabTextAppearance="@style/tab_text"
         app:tabTextColor="@android:color/white"
-        app:tabUnboundedRipple="true">
+        app:tabUnboundedRipple="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.tabs.TabItem
             android:layout_width="wrap_content"
@@ -43,11 +44,44 @@
     </com.google.android.material.tabs.TabLayout>
 
     <androidx.viewpager.widget.ViewPager
-        android:id="@+id/viewpager"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/tabs" />
+        app:layout_constraintTop_toBottomOf="@+id/tabs"
+        android:id="@+id/viewpager"/>
 
+    <eightbitlab.com.blurview.BlurView
+        android:id="@+id/blur_bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
+    <com.getbase.floatingactionbutton.FloatingActionsMenu
+        android:id="@+id/fab_menu"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:fab_addButtonColorNormal="@color/RedDefault"
+        app:fab_addButtonColorPressed="@android:color/holo_red_light"
+        app:fab_labelStyle="@style/customFab">
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_requestFeature"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/defaultWhite"
+            app:fab_icon="@drawable/featureicon"
+            app:fab_size="mini"
+            app:fab_title="Request Feature"/>
+
+        <com.getbase.floatingactionbutton.FloatingActionButton
+            android:id="@+id/fab_bugReport"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:fab_colorNormal="@color/defaultWhite"
+            app:fab_icon="@drawable/ic_bug"
+            app:fab_size="mini"
+            app:fab_title="Report Bugs"/>
+
+    </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

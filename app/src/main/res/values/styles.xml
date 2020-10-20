@@ -19,5 +19,10 @@
     <style name="tab_text" parent="@android:style/TextAppearance.Widget.TabWidget">
         <item name="android:fontFamily">@font/comfortaa_bold</item>
     </style>
+    
+    <style name="customFab">
+        <item name="android:background">@drawable/fab_lable</item>
+        <item name="android:textColor">@color/blackCharcoal</item>
+    </style>
 
 </resources>
