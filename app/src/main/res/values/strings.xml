@@ -7,4 +7,12 @@
     <string name="tab_title3">Done</string>
     <string name="bugs_reported">Bugs Reported</string>
     <string name="priority">priority</string>
+    <string name="report">Report</string>
+    <string name="titleBugRequest">Bug Report</string>
+
+    <string-array name="priority">
+        <item>Low</item>
+        <item>Middle</item>
+        <item>High</item>
+    </string-array>
 </resources>

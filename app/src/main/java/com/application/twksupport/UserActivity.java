@@ -1,9 +1,13 @@
 package com.application.twksupport;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
@@ -11,11 +15,16 @@ import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.Toast;
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
 
 import eightbitlab.com.blurview.BlurView;
@@ -37,7 +46,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         setContentView(R.layout.activity_user);
         getSupportActionBar().setElevation(0);
 
-        inisialitation();
+        initialize();
 
         fab_bugs.setOnClickListener(this);
         fab_reqFeature.setOnClickListener(this);
@@ -79,7 +88,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void inisialitation(){
+    private void initialize(){
         //btnLogout = findViewById(R.id.btnlogout);
         tabLayout = findViewById(R.id.tabs);
         viewPager = findViewById(R.id.viewpager);
@@ -116,7 +125,52 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.fab_bugReport:
-                Toast.makeText(this, "Untuk report bug, tpi nanti yaa", Toast.LENGTH_SHORT).show();
+                BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UserActivity.this, R.style.AppBottomSheetDialogTheme);
+                bottomSheetDialog.setContentView(R.layout.bottom_sheet);
+                bottomSheetDialog.setCanceledOnTouchOutside(false);
+                bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
+                    @Override
+                    public void onShow(DialogInterface dialogInterface) {
+                        floatMenu.collapse();
+                        blurView.setAlpha(1);
+                    }
+                });
+                bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialogInterface) {
+                        blurView.setAlpha(0);
+                    }
+                });
+                Spinner prioritySpin = bottomSheetDialog.findViewById(R.id.prioritySpinner);
+                Spinner appnameSpin = bottomSheetDialog.findViewById(R.id.appnameSpinner);
+                final EditText etSubject = bottomSheetDialog.findViewById(R.id.edtSubject);
+                final EditText etDetails = bottomSheetDialog.findViewById(R.id.edtDetails);
+                Button btnReport = bottomSheetDialog.findViewById(R.id.btn_report);
+
+                btnReport.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (!etSubject.getText().toString().equals("") && !etDetails.getText().toString().equals("")){
+
+                            AlertDialog.Builder alertBuild = new AlertDialog.Builder(view.getContext());
+                            alertBuild.setTitle("Request Sended");
+                            alertBuild.setMessage("Wait for next response");
+                            alertBuild.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.dismiss();
+                                }
+                            });
+                            AlertDialog alertDialog = alertBuild.create();
+                            alertDialog.show();
+                        }
+                        else {
+                            Toast.makeText(UserActivity.this, "Please input data correctly", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                bottomSheetDialog.show();
                 break;
 
             case R.id.fab_requestFeature:

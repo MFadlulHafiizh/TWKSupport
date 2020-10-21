@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/bottom_sheet"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:background="@drawable/bottom_sheet_bg"
+    android:gravity="center"
+    android:padding="30dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa_regular"
+        android:textSize="16sp"
+        android:textAlignment="center"
+        android:textColor="@color/defaultWhite"
+        android:text="@string/titleBugRequest"/>
+
+    <Spinner
+        android:id="@+id/prioritySpinner"
+        android:layout_width="150dp"
+        android:layout_gravity="left"
+        android:layout_height="40dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/dashinput"
+        android:entries="@string/priority"/>
+
+    <Spinner
+        android:id="@+id/appnameSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/dashinput"
+        android:entries="@string/priority" />
+
+    <EditText
+        android:id="@+id/edtSubject"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:hint="Subject"
+        android:background="@drawable/dashinput"
+        android:paddingLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:textSize="12sp"/>
+
+    <EditText
+        android:id="@+id/edtDetails"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:background="@drawable/dashinput"
+        android:layout_marginTop="16dp"
+        android:hint="Details"
+        android:padding="16dp"
+        android:textSize="12sp"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:overScrollMode="always"
+        android:scrollbarStyle="insideInset"
+        android:scrollbars="vertical"
+        android:scrollHorizontally="false"/>
+
+    <Button
+        android:id="@+id/btn_report"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:background="@drawable/buttoneffect"
+        android:fontFamily="@font/comfortaa_bold"
+        android:text="@string/report"
+        android:textAllCaps="false"
+        android:layout_marginTop="15dp"
+        android:layout_gravity="right"
+        android:textColor="@android:color/white"/>
+
+
+</LinearLayout>
