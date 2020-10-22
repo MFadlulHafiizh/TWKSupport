@@ -64,6 +64,7 @@ public class SplashActivity extends AppCompatActivity {
         if (_objpref.getString("token", "") != ""){
             Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
             startActivity(toUser);
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
         }
         else {
             Intent login = new Intent(SplashActivity.this, MainActivity.class);

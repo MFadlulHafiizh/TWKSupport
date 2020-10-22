@@ -9,6 +9,8 @@
     <string name="priority">priority</string>
     <string name="report">Report</string>
     <string name="titleBugRequest">Bug Report</string>
+    <string name="loading">Please wait...</string>
+    <string name="success">Successfully</string>
 
     <string-array name="priority">
         <item>Low</item>

@@ -96,20 +96,15 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/edtEmail" />
 
-    <Button
-        android:id="@+id/btnSignIn"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginLeft="32dp"
-        android:layout_marginRight="32dp"
-        android:background="@drawable/buttoneffect"
-        android:fontFamily="@font/comfortaa_bold"
-        android:text="Sign In"
-        android:textAllCaps="false"
+    <include
+        android:id="@+id/btn_progress"
+        layout="@layout/progress_btn_layout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
         android:textColor="@android:color/white"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/guidelineButtonSignin" />
+        app:layout_constraintLeft_toLeftOf="@id/edtPassword"
+        app:layout_constraintRight_toRightOf="@id/edtPassword"
+        app:layout_constraintTop_toBottomOf="@+id/guidelineButtonSignin"/>
 
     <ImageView
         android:layout_width="match_parent"

@@ -2,23 +2,19 @@ package com.application.twksupport.auth;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ActivityOptions;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.twksupport.R;
 import com.application.twksupport.RestApi.LoginService;
 import com.application.twksupport.RestApi.ApiClient;
+import com.application.twksupport.UIUX.BtnProgress;
 import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
 import com.google.gson.Gson;
@@ -31,7 +27,7 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
     private EditText etEmail, etPassword;
     private ImageView twkLogo;
-    private Button btnSignIn;
+    private View btnSignIn;
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean exit = false;
 
@@ -42,13 +38,15 @@ public class MainActivity extends AppCompatActivity {
 
         etEmail = findViewById(R.id.edtEmail);
         etPassword = findViewById(R.id.edtPassword);
-        btnSignIn = findViewById(R.id.btnSignIn);
+        btnSignIn = findViewById(R.id.btn_progress);
         twkLogo = findViewById(R.id.twklogo);
 
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                callLoginService();
+                BtnProgress btnProgress = new BtnProgress(MainActivity.this, view);
+                btnProgress.buttonActivated();
+                callLoginService(view);
             }
         });
     }
@@ -69,11 +67,12 @@ public class MainActivity extends AppCompatActivity {
         }, 2000);
     }
 
-    private void callLoginService() {
+    private void callLoginService(final View view) {
         try {
             final String email = etEmail.getText().toString();
             final String password = etPassword.getText().toString();
-
+            final BtnProgress btnProgress = new BtnProgress(MainActivity.this, view);
+            final Handler handler = new Handler();
             LoginService service = ApiClient.getClient().create(LoginService.class);
             Call<ResponseBody> srvLogin = service.getToken(email, password);
             srvLogin.enqueue(new Callback<ResponseBody>() {
@@ -87,23 +86,37 @@ public class MainActivity extends AppCompatActivity {
                             if (objResp.getToken() != null){
                                 getSharedPreferences("valid", MODE_PRIVATE).edit().putString("token", objResp.getToken()).commit();
                                 Log.d(TAG, ResponseJson);
-                                Toast.makeText(MainActivity.this, "Password got successful", Toast.LENGTH_SHORT).show();
-                                Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
-                                startActivity(toUser);
-                                finish();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btnProgress.buttonFinished();
+                                        Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
+                                        startActivity(toUser);
+                                        finish();
+                                    }
+                                },2000);
                             }else{
                                 Toast.makeText(MainActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btnProgress.buttonError();
+                                    }
+                                },1000);
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            btnProgress.buttonError();
                         }
                     }
                 }
 
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    btnProgress.buttonError();
                     Toast.makeText(MainActivity.this, "System error occured", Toast.LENGTH_SHORT).show();
+
                 }
             });
         } catch (Exception e) {
