@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -17,6 +18,7 @@ import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.UIUX.BtnProgress;
 import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
 import okhttp3.ResponseBody;
@@ -25,7 +27,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
-    private EditText etEmail, etPassword;
+    private EditText etEmail;
+    private TextInputEditText etPassword;
     private ImageView twkLogo;
     private View btnSignIn;
     private static final String TAG = MainActivity.class.getSimpleName();

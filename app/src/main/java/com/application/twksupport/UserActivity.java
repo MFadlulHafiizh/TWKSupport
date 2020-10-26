@@ -9,15 +9,18 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
@@ -29,7 +32,7 @@ import com.google.android.material.tabs.TabLayout;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
-public class UserActivity extends AppCompatActivity implements View.OnClickListener {
+public class UserActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SectionsPagerAdapter adapter;
@@ -38,18 +41,20 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionsMenu floatMenu;
     private FloatingActionButton fab_bugs;
     private FloatingActionButton fab_reqFeature;
+    private Toolbar tool;
     TextView btmSheetTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_user);
-        getSupportActionBar().setElevation(0);
-
         initialize();
 
         fab_bugs.setOnClickListener(this);
         fab_reqFeature.setOnClickListener(this);
+
+        tool = findViewById(R.id.toolbar);
+        setSupportActionBar(tool);
 
         adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         //Add fragment
@@ -95,7 +100,12 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         fab_reqFeature = findViewById(R.id.fab_requestFeature);
         floatMenu = findViewById(R.id.fab_menu);
         blurView = findViewById(R.id.blur_bg);
+    }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
     }
 
     private void blurBackground(boolean state) {
@@ -136,7 +146,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public void showBottomSheet(String title, final String type) {
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this, R.style.AppBottomSheetDialogTheme);
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UserActivity.this, R.style.AppBottomSheetDialogTheme);
         bottomSheetDialog.setContentView(R.layout.bottom_sheet);
         btmSheetTitle = bottomSheetDialog.findViewById(R.id.reqeust_type);
         btmSheetTitle.setText(title);
@@ -183,5 +193,15 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
         bottomSheetDialog.show();
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
+
     }
 }

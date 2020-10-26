@@ -1,11 +1,10 @@
 <resources>
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-
         <!--enable content transition-->
         <item name="android:windowActivityTransitions">true</item>
     </style>
@@ -32,6 +31,18 @@
     <style name="customFab">
         <item name="android:background">@drawable/fab_lable</item>
         <item name="android:textColor">@color/blackCharcoal</item>
+    </style>
+    
+    <style name="expandedBarTextStyle" parent="AppTheme">
+        <item name="android:textSize">14sp</item>
+        <item name="android:fontFamily">@font/comfortaa_bold</item>
+        <item name="android:textColor">@color/textGrey</item>
+    </style>
+
+    <style name="collapsedBarTextStyle" parent="AppTheme">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/defaultWhite</item>
+        <item name="android:fontFamily">@font/comfortaa_bold</item>
     </style>
 
 </resources>

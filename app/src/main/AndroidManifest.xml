@@ -14,15 +14,18 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".auth.MainActivity"
-            android:theme="@style/Theme.Design.Light.NoActionBar"
-            android:screenOrientation="portrait"/>
+        <activity android:name=".NotificationActivity"></activity>
+        <activity
+            android:name=".auth.MainActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar" />
         <activity android:name=".ProgrammerActivity" />
         <activity android:name=".AdminActivity" />
         <activity android:name=".UserActivity" />
-        <activity android:name=".auth.SplashActivity"
-            android:theme="@style/Theme.Design.Light.NoActionBar"
-            android:screenOrientation="portrait">
+        <activity
+            android:name=".auth.SplashActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.Design.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

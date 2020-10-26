@@ -2,7 +2,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/bottom_sheet"
+    android:id="@+id/bottom_sheet_container"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bottom_sheet_bg"
@@ -29,7 +29,8 @@
         android:layout_gravity="left"
         android:layout_marginTop="32dp"
         android:background="@drawable/dashinput"
-        android:entries="@string/priority" />
+        android:entries="@array/priority"
+        android:paddingStart="16dp" />
 
     <Spinner
         android:id="@+id/appnameSpinner"

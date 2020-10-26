@@ -11,4 +11,6 @@
     <color name="defaultGrey">#E0E0E0</color>
     <color name="greenFigma">#A1C349</color>
     <color name="blueFigma">#809CFF</color>
+    <color name="redTransparent">#54D91E36</color>
+    <color name="textGrey">#777777</color>
 </resources>

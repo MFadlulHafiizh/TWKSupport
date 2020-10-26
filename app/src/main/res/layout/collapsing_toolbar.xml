@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/blackCharcoal"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:contentScrim="@color/blackCharcoal"
+        app:expandedTitleTextAppearance="@style/expandedBarTextStyle"
+        app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
+        app:expandedTitleGravity="center_horizontal"
+        app:expandedTitleMarginTop="99dp"
+        app:collapsedTitleTextAppearance="@style/collapsedBarTextStyle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:background="@drawable/toolbar_expand_bg"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_collapseMode="pin">
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/userImage"
+                android:layout_width="75dp"
+                android:layout_height="75dp"
+                android:layout_gravity="center_horizontal"
+                android:fitsSystemWindows="true"
+                android:layout_marginTop="16dp"
+                android:src="@drawable/ic_account_picture" />
+
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="20dp"
+                android:text="reza.example@mail.id"
+                android:textAlignment="center"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <include
+            layout="@layout/toolbar"/>
+
+    </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+</com.google.android.material.appbar.AppBarLayout>
