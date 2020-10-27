@@ -30,7 +30,7 @@
         android:layout_gravity="left"
         android:layout_marginTop="32dp"
         android:spinnerMode="dropdown"
-        android:background="@drawable/dashinput"
+        android:background="@drawable/dash_spinner"
         android:paddingStart="16dp"
         android:entries="@array/priority"/>
 
@@ -41,7 +41,7 @@
         android:spinnerMode="dropdown"
         android:minHeight="40dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/dashinput" />
+        android:background="@drawable/dash_spinner" />
 
     <EditText
         android:id="@+id/edtSubject"
@@ -75,7 +75,7 @@
         android:layout_height="40dp"
         android:layout_gravity="right"
         android:layout_marginTop="15dp"
-        android:background="@drawable/buttoneffect"
+        android:background="@drawable/button_red"
         android:fontFamily="@font/comfortaa_bold"
         android:text="@string/report"
         android:textAllCaps="false"

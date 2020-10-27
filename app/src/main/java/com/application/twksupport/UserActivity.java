@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ActivityOptions;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +22,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -39,7 +41,7 @@ import com.google.android.material.tabs.TabLayout;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 
-public class UserActivity extends AppCompatActivity implements View.OnClickListener, AdapterView.OnItemSelectedListener {
+public class UserActivity extends AppCompatActivity implements View.OnClickListener{
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private SectionsPagerAdapter adapter;
@@ -50,6 +52,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fab_reqFeature;
     private Toolbar tool;
     private AppBarLayout appbar;
+    Dialog popUpFilter;
     ImageView userImage;
     TextView userName;
     TextView userEmail;
@@ -143,7 +146,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.filter_menu:
-                Toast.makeText(this, "Belum beresss", Toast.LENGTH_SHORT).show();
+                showPopupFilter();
                 break;
         }
         return true;
@@ -249,13 +252,25 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         bottomSheetDialog.show();
     }
 
-    @Override
-    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+    public void showPopupFilter(){
+        Spinner spinPriorityFiler, spinAppnameFilter;
+        Button reset, apply;
+        ImageButton close;
+        popUpFilter = new Dialog(UserActivity.this, R.style.AppBottomSheetDialogTheme);
+        popUpFilter.setContentView(R.layout.filter_popup);
+        popUpFilter.setCanceledOnTouchOutside(false);
+        spinPriorityFiler = popUpFilter.findViewById(R.id.priorityFilter);
+        spinAppnameFilter = popUpFilter.findViewById(R.id.appNameFilter);
+        reset = popUpFilter.findViewById(R.id.btnResetFilter);
+        apply = popUpFilter.findViewById(R.id.btnApplyFilter);
+        close = popUpFilter.findViewById(R.id.btnCloseFilter);
 
-    }
-
-    @Override
-    public void onNothingSelected(AdapterView<?> adapterView) {
-
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                popUpFilter.dismiss();
+            }
+        });
+        popUpFilter.show();
     }
 }

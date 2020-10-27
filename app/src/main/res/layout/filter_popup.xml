@@ -1,20 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="300dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="center">
+    android:layout_gravity="center"
+    android:orientation="vertical"
+    app:cardCornerRadius="15dp">
 
-    <com.google.android.material.textfield.TextInputLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputEditText
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="45dp"
-            android:fontFamily="@font/comfortaa_regular"
-            android:hint="App Name"/>
-    </com.google.android.material.textfield.TextInputLayout>
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal">
 
-</LinearLayout>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/comfortaa_bold"
+                android:layout_marginTop="5dp"
+                android:text="Filter"
+                android:textColor="@color/blackCharcoal"
+                android:textSize="18sp" />
+
+            <ImageButton
+                android:id="@+id/btnCloseFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentRight="true"
+                android:background="@android:color/transparent"
+                android:src="@drawable/ic_close" />
+        </RelativeLayout>
+
+        <Spinner
+            android:id="@+id/priorityFilter"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:autofillHints="Priority"
+            android:background="@drawable/dash_spinner"
+            android:entries="@array/priority"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+        <Spinner
+            android:id="@+id/appNameFilter"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/dash_spinner"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|end"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnResetFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/button_red"
+                android:fontFamily="@font/comfortaa_regular"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:text="Reset"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="@color/defaultWhite" />
+
+            <Button
+                android:id="@+id/btnApplyFilter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/button_green"
+                android:fontFamily="@font/comfortaa_regular"
+                android:padding="10dp"
+                android:textSize="12sp"
+                android:text="Apply Filter"
+                android:gravity="center"
+                android:textAllCaps="false"
+                android:textColor="@color/defaultWhite" />
+        </LinearLayout>
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>
