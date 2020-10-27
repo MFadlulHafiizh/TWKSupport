@@ -25,20 +25,23 @@
     <Spinner
         android:id="@+id/prioritySpinner"
         android:layout_width="150dp"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:minHeight="40dp"
         android:layout_gravity="left"
         android:layout_marginTop="32dp"
+        android:spinnerMode="dropdown"
         android:background="@drawable/dashinput"
-        android:entries="@array/priority"
-        android:paddingStart="16dp" />
+        android:paddingStart="16dp"
+        android:entries="@array/priority"/>
 
     <Spinner
-        android:id="@+id/appnameSpinner"
+        android:id="@+id/appnameSpin"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+        android:minHeight="40dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/dashinput"
-        android:entries="@string/priority" />
+        android:background="@drawable/dashinput" />
 
     <EditText
         android:id="@+id/edtSubject"

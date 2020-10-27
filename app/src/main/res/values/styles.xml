@@ -45,4 +45,12 @@
         <item name="android:fontFamily">@font/comfortaa_bold</item>
     </style>
 
+    <style name="toolbar" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="elevation">0dp</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="homeAsUpIndicator">@drawable/ic_arrow_back</item>
+    </style>
+
 </resources>

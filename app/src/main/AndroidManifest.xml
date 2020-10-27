@@ -14,13 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".NotificationActivity"></activity>
+        <activity
+            android:name=".NotificationActivity"/>
         <activity
             android:name=".auth.MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.Design.Light.NoActionBar" />
-        <activity android:name=".ProgrammerActivity" />
-        <activity android:name=".AdminActivity" />
         <activity android:name=".UserActivity" />
         <activity
             android:name=".auth.SplashActivity"

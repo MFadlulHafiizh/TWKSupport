@@ -1,11 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/toolbar"
+<com.google.android.material.appbar.AppBarLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appbarContainer"
     android:layout_width="match_parent"
-    android:layout_height="?attr/actionBarSize"
-    android:background="@color/defaultWhite"
-    app:title="Reza Example"
-    app:subtitle="Reza.example@mail.id">
+    android:layout_height="wrap_content"
+    android:fitsSystemWindows="true">
 
-</androidx.appcompat.widget.Toolbar>
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarnotification"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/blackCharcoal"
+        android:transitionName="toolbar"
+        android:theme="@style/toolbar">
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/account_pict"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginRight="16dp"
+            android:transitionName="account_pict"
+            android:src="@drawable/ic_account_circle_white"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/userName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Reza Example"
+                android:textColor="@color/defaultWhite"
+                android:textSize="13sp"
+                android:transitionName="username"
+                android:fontFamily="@font/comfortaa_bold"
+                android:maxLines="1"/>
+
+            <TextView
+                android:id="@+id/userEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="reza.example@mail.id"
+                android:textColor="@color/defaultWhite"
+                android:textSize="12sp"
+                android:transitionName="email"
+                android:fontFamily="@font/comfortaa_regular"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+</com.google.android.material.appbar.AppBarLayout>

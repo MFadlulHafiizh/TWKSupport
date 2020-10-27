@@ -8,7 +8,7 @@
     android:layout_width="match_parent">
 
     <include
-        layout="@layout/collapsing_toolbar"/>
+        layout="@layout/toolbar" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/userActivity"
@@ -22,6 +22,7 @@
             android:id="@+id/tabs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:transitionName="tabContent"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -66,7 +67,7 @@
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/fab_menu"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:fab_addButtonColorNormal="@color/RedDefault"
             app:fab_addButtonColorPressed="@android:color/holo_red_light"

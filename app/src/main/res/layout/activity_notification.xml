@@ -1,48 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context=".NotificationActivity">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="0.6"
-        android:background="@drawable/notiftop"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        tools:context=".NotificationActivity">
 
-        <TextView
+        <include
+            layout="@layout/toolbar"/>
+
+        <LinearLayout
+            android:transitionName="tabContent"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginStart="16dp"
-            android:fontFamily="@font/comfortaa_bold"
-            android:text="Notification"
-            android:textColor="@color/defaultWhite"
-            android:textSize="24sp" />
+            android:layout_height="0dp"
+            android:layout_weight="0.6"
+            android:background="@drawable/notiftop"
+            android:orientation="horizontal">
 
-        <TextView
-            android:id="@+id/notif_count"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="16dp"
-            android:background="@drawable/notif_count_bg"
-            android:fontFamily="@font/comfortaa_bold"
-            android:gravity="center"
-            android:textColor="#FF0000"
-            tools:text="14" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="16dp"
+                android:fontFamily="@font/comfortaa_bold"
+                android:text="Notification"
+                android:textColor="@color/defaultWhite"
+                android:textSize="24sp" />
+
+            <TextView
+                android:id="@+id/notif_count"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:background="@drawable/notif_count_bg"
+                android:fontFamily="@font/comfortaa_bold"
+                android:gravity="center"
+                android:textColor="#FF0000"
+                tools:text="14" />
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_notif"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginTop="5dp"
+            android:layout_weight="5"
+            tools:listitem="@layout/card_notif_item"/>
+
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_notif"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="5dp"
-        android:layout_weight="5"
-        tools:listitem="@layout/card_notif_item"/>
-
-</LinearLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

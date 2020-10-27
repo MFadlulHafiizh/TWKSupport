@@ -95,6 +95,7 @@ public class MainActivity extends AppCompatActivity {
                                         btnProgress.buttonFinished();
                                         Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
                                         startActivity(toUser);
+                                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                         finish();
                                     }
                                 },2000);
