@@ -29,6 +29,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
 
+import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -52,11 +53,11 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionButton fab_reqFeature;
     private Toolbar tool;
     private AppBarLayout appbar;
-    Dialog popUpFilter;
+    private View decorView;
+    UserInteraction userInteraction = new UserInteraction();
     ImageView userImage;
     TextView userName;
     TextView userEmail;
-    TextView btmSheetTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,23 +72,15 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setTitle(null);
         appbar.setStateListAnimator(null);
 
-        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        //Add fragment
-        adapter.addFragment(new BugsFragment(), "Bugs");
-        adapter.addFragment(new FeatureFragment(), "Feature");
-        adapter.addFragment(new DoneFragment(), "Done");
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
-
         floatMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
-                blurBackground(true);
+                userInteraction.setBlurBackground(true, blurView, decorView, UserActivity.this);
             }
 
             @Override
             public void onMenuCollapsed() {
-                blurBackground(false);
+                userInteraction.setBlurBackground(false, blurView, decorView, UserActivity.this);
             }
         });
 
@@ -120,7 +113,14 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         userImage = appbar.findViewById(R.id.account_pict);
         userName = appbar.findViewById(R.id.userName);
         userEmail = appbar.findViewById(R.id.userEmail);
-
+        decorView = getWindow().getDecorView();
+        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //Add fragment
+        adapter.addFragment(new BugsFragment(), "Bugs");
+        adapter.addFragment(new FeatureFragment(), "Feature");
+        adapter.addFragment(new DoneFragment(), "Done");
+        viewPager.setAdapter(adapter);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -146,131 +146,24 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.filter_menu:
-                showPopupFilter();
+                userInteraction.showPopupFilter(this);
                 break;
         }
         return true;
-    }
-
-    private void blurBackground(boolean state) {
-        float radius = 2;
-
-        View decorView = getWindow().getDecorView();
-        ViewGroup rootView = (ViewGroup) decorView.findViewById(android.R.id.content);
-
-        Drawable windowBackground = decorView.getBackground();
-
-        if (state == true) {
-            blurView.setupWith(rootView)
-                    .setFrameClearDrawable(windowBackground)
-                    .setBlurAlgorithm(new RenderScriptBlur(this))
-                    .setBlurRadius(radius)
-                    .setHasFixedTransformationMatrix(false);
-            Animation fadeInAnimation = AnimationUtils.loadAnimation(getApplicationContext(), R.anim.fade_in);
-            blurView.setAnimation(fadeInAnimation);
-            blurView.setAlpha(1);
-        } else {
-            blurView.setAlpha(0);
-
-        }
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.fab_bugReport:
-                showBottomSheet("Report Your Bug", "report");
+                userInteraction.showBottomSheet(UserActivity.this, floatMenu, blurView, getLayoutInflater(),"Report Your Bug", "report");
                 break;
 
             case R.id.fab_requestFeature:
-                showBottomSheet("Request Some Feature", "request");
+                userInteraction.showBottomSheet(UserActivity.this, floatMenu, blurView, getLayoutInflater(), "Request Some Feature", "request");
                 break;
         }
 
     }
 
-    public void showBottomSheet(String title, final String type) {
-        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(UserActivity.this, R.style.AppBottomSheetDialogTheme);
-        View content = getLayoutInflater().inflate(R.layout.bottom_sheet, null);
-        final Spinner spinPriority = (Spinner) content.findViewById(R.id.prioritySpinner);
-        final Spinner spinAppName = (Spinner) content.findViewById(R.id.appnameSpin);
-        bottomSheetDialog.setContentView(content);
-        final EditText etSubject = bottomSheetDialog.findViewById(R.id.edtSubject);
-        final EditText etDetails = bottomSheetDialog.findViewById(R.id.edtDetails);
-        btmSheetTitle = bottomSheetDialog.findViewById(R.id.reqeust_type);
-        btmSheetTitle.setText(title);
-        bottomSheetDialog.setCanceledOnTouchOutside(false);
-
-        bottomSheetDialog.setOnShowListener(new DialogInterface.OnShowListener() {
-            @Override
-            public void onShow(DialogInterface dialogInterface) {
-                floatMenu.collapse();
-                blurView.setAlpha(1);
-            }
-        });
-        bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                blurView.setAlpha(0);
-            }
-        });
-        Button btnReport = bottomSheetDialog.findViewById(R.id.btn_report);
-
-        spinPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
-
-        btnReport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (!etSubject.getText().toString().equals("") && !etDetails.getText().toString().equals("")) {
-                    AlertDialog.Builder alertBuild = new AlertDialog.Builder(view.getContext());
-                    alertBuild.setTitle("Your "+ type + " has sended");
-                    alertBuild.setMessage("Wait for next response");
-                    alertBuild.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            dialogInterface.dismiss();
-                            bottomSheetDialog.dismiss();
-                        }
-                    });
-                    AlertDialog alertDialog = alertBuild.create();
-                    alertDialog.show();
-                } else {
-                    Toast.makeText(UserActivity.this, "Please input data correctly", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-        bottomSheetDialog.show();
-    }
-
-    public void showPopupFilter(){
-        Spinner spinPriorityFiler, spinAppnameFilter;
-        Button reset, apply;
-        ImageButton close;
-        popUpFilter = new Dialog(UserActivity.this, R.style.AppBottomSheetDialogTheme);
-        popUpFilter.setContentView(R.layout.filter_popup);
-        popUpFilter.setCanceledOnTouchOutside(false);
-        spinPriorityFiler = popUpFilter.findViewById(R.id.priorityFilter);
-        spinAppnameFilter = popUpFilter.findViewById(R.id.appNameFilter);
-        reset = popUpFilter.findViewById(R.id.btnResetFilter);
-        apply = popUpFilter.findViewById(R.id.btnApplyFilter);
-        close = popUpFilter.findViewById(R.id.btnCloseFilter);
-
-        close.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                popUpFilter.dismiss();
-            }
-        });
-        popUpFilter.show();
-    }
 }
