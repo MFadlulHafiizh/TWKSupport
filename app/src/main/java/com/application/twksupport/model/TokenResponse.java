@@ -10,6 +10,9 @@ public class TokenResponse {
     @SerializedName("token")
     private String token;
 
+    @SerializedName("role")
+    private String role;
+
     public TokenResponse(){
 
     }
@@ -28,5 +31,9 @@ public class TokenResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

@@ -3,6 +3,7 @@ package com.application.twksupport;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ActivityOptions;
@@ -32,6 +33,7 @@ import androidx.appcompat.widget.Toolbar;
 import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
+import com.application.twksupport.databinding.ActivityUserBinding;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.appbar.AppBarLayout;
@@ -44,8 +46,6 @@ import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class UserActivity extends AppCompatActivity implements View.OnClickListener{
     private TabLayout tabLayout;
-    private ViewPager viewPager;
-    private SectionsPagerAdapter adapter;
     private Button btnLogout;
     private BlurView blurView;
     private FloatingActionsMenu floatMenu;
@@ -54,6 +54,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar tool;
     private AppBarLayout appbar;
     private View decorView;
+    private ActivityUserBinding binding;
     UserInteraction userInteraction = new UserInteraction();
     ImageView userImage;
     TextView userName;
@@ -62,9 +63,11 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_user);
-        initialize();
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_user);
 
+        initialize();
+        setUpWithViewPager(binding.viewpager);
+        tabLayout.setupWithViewPager(binding.viewpager);
         fab_bugs.setOnClickListener(this);
         fab_reqFeature.setOnClickListener(this);
 
@@ -100,10 +103,18 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void setUpWithViewPager(ViewPager myViewPager){
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        //Add fragment
+        adapter.addFragment(new BugsFragment(), "Bugs");
+        adapter.addFragment(new FeatureFragment(), "Feature");
+        adapter.addFragment(new DoneFragment(), "Done");
+        myViewPager.setAdapter(adapter);
+    }
+
     private void initialize() {
         //btnLogout = findViewById(R.id.btnlogout);
         tabLayout = findViewById(R.id.tabs);
-        viewPager = findViewById(R.id.viewpager);
         fab_bugs = findViewById(R.id.fab_bugReport);
         fab_reqFeature = findViewById(R.id.fab_requestFeature);
         floatMenu = findViewById(R.id.fab_menu);
@@ -114,13 +125,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         userName = appbar.findViewById(R.id.userName);
         userEmail = appbar.findViewById(R.id.userEmail);
         decorView = getWindow().getDecorView();
-        adapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        //Add fragment
-        adapter.addFragment(new BugsFragment(), "Bugs");
-        adapter.addFragment(new FeatureFragment(), "Feature");
-        adapter.addFragment(new DoneFragment(), "Done");
-        viewPager.setAdapter(adapter);
-        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override

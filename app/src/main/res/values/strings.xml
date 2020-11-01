@@ -11,6 +11,8 @@
     <string name="titleBugRequest">Bug Report</string>
     <string name="loading">Please wait...</string>
     <string name="success">Successfully</string>
+    <string name="feature_requested">Feature Requested</string>
+    <string name="has_done">Has Done</string>
 
     <string-array name="priority">
         <item>Low</item>

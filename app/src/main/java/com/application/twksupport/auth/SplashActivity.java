@@ -2,8 +2,6 @@ package com.application.twksupport.auth;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
-
-import android.app.Activity;
 import android.app.ActivityOptions;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -11,14 +9,9 @@ import android.os.Bundle;
 import android.util.Log;
 import android.util.Pair;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationSet;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.application.twksupport.R;
-import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
 
 public class SplashActivity extends AppCompatActivity {
@@ -60,7 +53,6 @@ public class SplashActivity extends AppCompatActivity {
 
     private void actUserLogin(){
         SharedPreferences _objpref=getSharedPreferences("valid", MODE_PRIVATE);
-        TokenResponse tokenResponse = new TokenResponse();
         if (_objpref.getString("token", "") != ""){
             Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
             startActivity(toUser);

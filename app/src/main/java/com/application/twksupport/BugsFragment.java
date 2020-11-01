@@ -1,5 +1,9 @@
 package com.application.twksupport;
 
+import android.app.AlertDialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -8,9 +12,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.application.twksupport.adapter.RecycleViewAdapter;
 import com.application.twksupport.model.BugsData;
@@ -30,7 +36,21 @@ public class BugsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        addListDataBugs();
+    }
 
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.fragment_bugs, container, false);
+        rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
+        RecycleViewAdapter rvAdapter = new RecycleViewAdapter(getContext(), listBugs);
+        rvBugs.setLayoutManager(new LinearLayoutManager(getActivity()));
+        rvBugs.setAdapter(rvAdapter);
+        return view;
+    }
+
+    protected void addListDataBugs(){
         listBugs = new ArrayList<>();
         listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
         listBugs.add(new BugsData("low", "Error 500", "Reported"));
@@ -46,17 +66,6 @@ public class BugsFragment extends Fragment {
         listBugs.add(new BugsData("low", "Cant update item", "on proccess"));
         listBugs.add(new BugsData("low", "Error 404 Not Found", "on proccess"));
         listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
-        listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_bugs, container, false);
-        rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
-        RecycleViewAdapter rvAdapter = new RecycleViewAdapter(getContext(), listBugs);
-        rvBugs.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvBugs.setAdapter(rvAdapter);
-        return view;
+        listBugs.add(new BugsData("middle", "Cant update item", "on proccess"));
     }
 }

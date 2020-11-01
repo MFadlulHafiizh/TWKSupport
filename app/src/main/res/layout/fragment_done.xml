@@ -1,16 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:paddingTop="16dp"
+    android:paddingLeft="32dp"
+    android:paddingRight="32dp"
     android:background="@color/blackCharcoal"
     tools:context=".DoneFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textColor="@color/defaultWhite"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/txt_bug"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/comfortaa_regular"
+        android:text="@string/has_done"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:paddingBottom="6dp"/>
 
-</FrameLayout>
+</LinearLayout>

@@ -88,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                             TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
                             if (objResp.getToken() != null){
                                 getSharedPreferences("valid", MODE_PRIVATE).edit().putString("token", objResp.getToken()).commit();
+                                getSharedPreferences("role", MODE_PRIVATE).edit().putString("role", objResp.getRole()).commit();
                                 Log.d(TAG, ResponseJson);
                                 handler.postDelayed(new Runnable() {
                                     @Override

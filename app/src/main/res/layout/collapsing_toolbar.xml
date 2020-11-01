@@ -9,9 +9,9 @@
     android:orientation="vertical">
 
     <com.google.android.material.appbar.CollapsingToolbarLayout
+        android:id="@+id/collapsedToolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:contentScrim="@color/blackCharcoal"
         app:expandedTitleTextAppearance="@style/expandedBarTextStyle"
         app:layout_scrollFlags="scroll|snap|exitUntilCollapsed"
         app:expandedTitleGravity="center_horizontal"
