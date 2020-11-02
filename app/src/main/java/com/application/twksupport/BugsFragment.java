@@ -25,33 +25,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BugsFragment extends Fragment {
-    View view;
     private RecyclerView rvBugs;
-    private List<BugsData> listBugs;
+    private List<BugsData> listBugs = new ArrayList<>();
 
     public BugsFragment(){
 
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        addListDataBugs();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        view = inflater.inflate(R.layout.fragment_bugs, container, false);
+        View view = inflater.inflate(R.layout.fragment_bugs, container, false);
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
-        RecycleViewAdapter rvAdapter = new RecycleViewAdapter(getContext(), listBugs);
         rvBugs.setLayoutManager(new LinearLayoutManager(getActivity()));
-        rvBugs.setAdapter(rvAdapter);
+
+        addListDataBugs();
         return view;
     }
 
     protected void addListDataBugs(){
-        listBugs = new ArrayList<>();
         listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
         listBugs.add(new BugsData("low", "Error 500", "Reported"));
         listBugs.add(new BugsData("middle", "CRUD Error", "on proccess"));
@@ -67,5 +59,7 @@ public class BugsFragment extends Fragment {
         listBugs.add(new BugsData("low", "Error 404 Not Found", "on proccess"));
         listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
         listBugs.add(new BugsData("middle", "Cant update item", "on proccess"));
+
+        rvBugs.setAdapter(new RecycleViewAdapter(listBugs, getContext()));
     }
 }

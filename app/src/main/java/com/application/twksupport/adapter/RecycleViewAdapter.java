@@ -21,7 +21,7 @@ public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.
     Context mContext;
     List<BugsData> mBugs;
 
-    public RecycleViewAdapter(Context mContext, List<BugsData> mBugs) {
+    public RecycleViewAdapter(List<BugsData> mBugs, Context mContext) {
         this.mContext = mContext;
         this.mBugs = mBugs;
     }
