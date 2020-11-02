@@ -70,10 +70,9 @@ public class UserInteraction extends AppCompatActivity {
                     .setHasFixedTransformationMatrix(false);
             Animation fadeInAnimation = AnimationUtils.loadAnimation(appContext, R.anim.fade_in);
             blurView.setAnimation(fadeInAnimation);
-            blurView.setAlpha(1);
+            blurView.setBlurEnabled(true);
         } else {
-            blurView.setAlpha(0);
-
+            blurView.setBlurEnabled(false);
         }
     }
 

@@ -78,12 +78,12 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         floatMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
             @Override
             public void onMenuExpanded() {
-                userInteraction.setBlurBackground(true, blurView, decorView, UserActivity.this);
+                userInteraction.setBlurBackground(true, blurView, decorView, getApplicationContext());
             }
 
             @Override
             public void onMenuCollapsed() {
-                userInteraction.setBlurBackground(false, blurView, decorView, UserActivity.this);
+                userInteraction.setBlurBackground(false, blurView, decorView, getApplicationContext());
             }
         });
 
