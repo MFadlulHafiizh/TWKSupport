@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BugsFragment extends Fragment {
+    View view;
     private RecyclerView rvBugs;
     private List<BugsData> listBugs = new ArrayList<>();
 
@@ -33,13 +34,18 @@ public class BugsFragment extends Fragment {
     }
 
     @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        addListDataBugs();
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_bugs, container, false);
+        view = inflater.inflate(R.layout.fragment_bugs, container, false);
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
-        rvBugs.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        addListDataBugs();
+        rvBugs.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvBugs.setAdapter(new RecycleViewAdapter(listBugs, getContext()));
         return view;
     }
 
@@ -59,7 +65,5 @@ public class BugsFragment extends Fragment {
         listBugs.add(new BugsData("low", "Error 404 Not Found", "on proccess"));
         listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
         listBugs.add(new BugsData("middle", "Cant update item", "on proccess"));
-
-        rvBugs.setAdapter(new RecycleViewAdapter(listBugs, getContext()));
     }
 }

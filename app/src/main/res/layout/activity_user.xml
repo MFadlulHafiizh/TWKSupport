@@ -18,6 +18,15 @@
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:context=".UserActivity">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/tabss"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:gravity="center">
+
         <com.google.android.material.tabs.TabLayout
             android:id="@+id/tabs"
             android:layout_width="wrap_content"
@@ -25,9 +34,6 @@
             android:transitionName="tabContent"
             android:paddingTop="15dp"
             android:paddingBottom="15dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
             app:tabIndicator="@drawable/custom_tablayout"
             app:tabIndicatorAnimationDuration="500"
             app:tabIndicatorColor="@color/RedDefault"
@@ -53,12 +59,14 @@
                 android:layout_height="wrap_content"
                 android:text="Done" />
         </com.google.android.material.tabs.TabLayout>
+    </com.google.android.material.appbar.AppBarLayout>
 
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@+id/tabs" />
+            android:layout_height="0dp"
+            app:layout_constraintTop_toBottomOf="@+id/tabss"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <eightbitlab.com.blurview.BlurView
             android:id="@+id/blur_bg"
