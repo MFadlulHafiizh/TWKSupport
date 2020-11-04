@@ -1,6 +1,5 @@
 package com.application.twksupport.adapter;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -16,12 +15,12 @@ import com.application.twksupport.model.BugsData;
 
 import java.util.List;
 
-public class RecycleViewAdapter extends RecyclerView.Adapter<RecycleViewAdapter.MyViewHolder> {
+public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHolder> {
 
     private Context mContext;
     private List<BugsData> mBugs;
 
-    public RecycleViewAdapter(List<BugsData> mBugs, Context mContext) {
+    public RvBugsAdapter(List<BugsData> mBugs, Context mContext) {
         this.mContext = mContext;
         this.mBugs = mBugs;
     }

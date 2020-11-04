@@ -23,7 +23,10 @@ public interface ApiService {
                                 @Field("password") String password);
 
     @GET("user/data-bug")
-    Call<ResponseData> getUserBugData(@Query("email") String set_idUser);
+    Call<ResponseData> getUserBugData(@Query("email") String set_emailUser);
+
+    @GET("user/data-feature")
+    Call<ResponseData> getUserFeatureData(@Query("email") String set_emailUser);
 
     @GET("user")
     Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);

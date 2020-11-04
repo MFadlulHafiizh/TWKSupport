@@ -1,16 +1,12 @@
 package com.application.twksupport;
 
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Handler;
@@ -22,10 +18,9 @@ import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
-import com.application.twksupport.adapter.RecycleViewAdapter;
+import com.application.twksupport.adapter.RvBugsAdapter;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.ResponseData;
-import com.application.twksupport.model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +33,6 @@ public class BugsFragment extends Fragment {
     View view;
     private RecyclerView rvBugs;
     private RecyclerView.Adapter mAdapter;
-    private RecyclerView.LayoutManager mManager;
     private List<BugsData> listBugs = new ArrayList<>();
     ProgressDialog pd;
 
@@ -84,7 +78,7 @@ public class BugsFragment extends Fragment {
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 Log.d("RETRO", "RESPONSE : " + response.body().getBugData());
                 listBugs = response.body().getBugData();
-                mAdapter = new RecycleViewAdapter(listBugs, getContext());
+                mAdapter = new RvBugsAdapter(listBugs, getContext());
                 rvBugs.setAdapter(mAdapter);
                 mAdapter.notifyDataSetChanged();
                 pd.hide();
