@@ -14,8 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".NotificationActivity"/>
+        <activity android:name=".ProfileActivity"></activity>
+        <activity android:name=".NotificationActivity" />
         <activity
             android:name=".auth.MainActivity"
             android:screenOrientation="portrait"

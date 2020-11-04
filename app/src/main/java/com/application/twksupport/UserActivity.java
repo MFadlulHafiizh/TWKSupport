@@ -45,7 +45,6 @@ import retrofit2.Response;
 
 public class UserActivity extends AppCompatActivity implements View.OnClickListener{
     private TabLayout tabLayout;
-    private Button btnLogout;
     private BlurView blurView;
     private FloatingActionsMenu floatMenu;
     private FloatingActionButton fab_bugs;
@@ -72,8 +71,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         setUpWithViewPager(binding.viewpager);
         binding.viewpager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(binding.viewpager);
+
         fab_bugs.setOnClickListener(this);
         fab_reqFeature.setOnClickListener(this);
+        userImage.setOnClickListener(this);
 
         setSupportActionBar(tool);
         getSupportActionBar().setTitle(null);
@@ -139,14 +140,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    private void logout() {
-        SharedPreferences logoutPreferences = getSharedPreferences("valid", MODE_PRIVATE);
-        logoutPreferences.edit().remove("token").commit();
-        Intent login = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(login);
-
-    }
-
     private void setUpWithViewPager(ViewPager myViewPager){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         //Add fragment
@@ -157,7 +150,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void initialize() {
-        //btnLogout = findViewById(R.id.btnlogout);
         tabLayout = findViewById(R.id.tabs);
         fab_bugs = findViewById(R.id.fab_bugReport);
         fab_reqFeature = findViewById(R.id.fab_requestFeature);
@@ -210,6 +202,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.fab_requestFeature:
                 userInteraction.showBottomSheet(UserActivity.this, floatMenu, blurView, getLayoutInflater(), "Request Some Feature", "request");
                 break;
+
+            case R.id.account_pict :
+                Intent toProfile = new Intent(UserActivity.this, ProfileActivity.class);
+                startActivity(toProfile);
         }
 
     }

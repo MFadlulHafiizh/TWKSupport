@@ -28,4 +28,7 @@ public interface ApiService {
     @GET("user")
     Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);
 
+    @GET("logout")
+    Call<ResponseBody> logoutUser(@Query("token") String logoutToken);
+
 }
