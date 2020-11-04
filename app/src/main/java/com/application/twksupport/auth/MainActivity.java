@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
@@ -13,11 +12,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.application.twksupport.R;
-import com.application.twksupport.RestApi.LoginService;
+import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.UIUX.BtnProgress;
 import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
+import com.application.twksupport.model.UserData;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private TextInputEditText etPassword;
     private ImageView twkLogo;
     private View btnSignIn;
+    private SessionManager sessionManager;
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean exit = false;
 
@@ -44,6 +45,7 @@ public class MainActivity extends AppCompatActivity {
         btnSignIn = findViewById(R.id.btn_progress);
         twkLogo = findViewById(R.id.twklogo);
 
+        sessionManager = new SessionManager(getApplicationContext());
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -76,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
             final String password = etPassword.getText().toString();
             final BtnProgress btnProgress = new BtnProgress(MainActivity.this, view);
             final Handler handler = new Handler();
-            LoginService service = ApiClient.getClient().create(LoginService.class);
+            ApiService service = ApiClient.getClient().create(ApiService.class);
             Call<ResponseBody> srvLogin = service.getToken(email, password);
             srvLogin.enqueue(new Callback<ResponseBody>() {
                 @Override
@@ -87,8 +89,7 @@ public class MainActivity extends AppCompatActivity {
                             Gson objGson = new Gson();
                             TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
                             if (objResp.getToken() != null){
-                                getSharedPreferences("valid", MODE_PRIVATE).edit().putString("token", objResp.getToken()).commit();
-                                getSharedPreferences("role", MODE_PRIVATE).edit().putString("role", objResp.getRole()).commit();
+                                sessionManager.createSession(email, objResp.getToken());
                                 Log.d(TAG, ResponseJson);
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -99,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                                         overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                                         finish();
                                     }
-                                },2000);
+                                },1000);
                             }else{
                                 Toast.makeText(MainActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
                                 handler.postDelayed(new Runnable() {
@@ -120,13 +121,13 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(Call<ResponseBody> call, Throwable t) {
                     btnProgress.buttonError();
-                    Toast.makeText(MainActivity.this, "System error occured", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "System error occured, please check our internet connection", Toast.LENGTH_SHORT).show();
 
                 }
             });
         } catch (Exception e) {
             e.printStackTrace();
-            Toast.makeText(this, "System error occured, please check our internet connection", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "System error occured", Toast.LENGTH_SHORT).show();
         }
     }
 }

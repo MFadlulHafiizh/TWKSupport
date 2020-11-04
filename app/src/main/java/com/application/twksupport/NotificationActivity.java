@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.ActivityOptions;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Pair;
 import android.view.Menu;
@@ -14,11 +15,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 
+import com.application.twksupport.model.UserData;
 import com.google.android.material.appbar.AppBarLayout;
 
 public class NotificationActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private AppBarLayout appBarLayout;
+    UserData userInformation = new UserData();
     ImageView accountImage;
     TextView userName;
     TextView userEmail;
@@ -34,6 +37,11 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         appBarLayout.setStateListAnimator(null);
+        SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
+        String email = getUserInformation.getString("email", "Not Authorized");
+        String name = getUserInformation.getString("name", "Not Authorized");
+        userEmail.setText(email);
+        userName.setText(name);
     }
 
     protected void initialize(){

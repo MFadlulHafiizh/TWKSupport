@@ -16,7 +16,7 @@
         android:layout_marginBottom="9dp">
 
         <TextView
-            android:id="@+id/priority"
+            android:id="@+id/priorityHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/comfortaa_bold"
@@ -30,41 +30,40 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/priority"
             android:layout_marginTop="5dp"
             android:text="@string/priority"
             android:textSize="12sp"
-            app:layout_constraintLeft_toLeftOf="@id/priority"
-            app:layout_constraintRight_toRightOf="@id/priority"
-            app:layout_constraintTop_toBottomOf="@id/priority" />
+            app:layout_constraintLeft_toLeftOf="@id/priorityHome"
+            app:layout_constraintRight_toRightOf="@id/priorityHome"
+            app:layout_constraintTop_toBottomOf="@id/priorityHome" />
 
         <TextView
-            android:id="@+id/subject_item"
+            android:id="@+id/subject_itemHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="24dp"
-            android:layout_toRightOf="@id/priority"
+            android:layout_toRightOf="@id/priorityHome"
             android:fontFamily="@font/comfortaa_regular"
             android:text="Subject"
             android:textColor="@color/blackCharcoal"
             android:textSize="12dp"
-            app:layout_constraintLeft_toRightOf="@+id/priority"
+            app:layout_constraintLeft_toRightOf="@+id/priorityHome"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/appname"
+            android:id="@+id/appnameHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/priority"
-            android:layout_below="@id/subject_item"
+            android:layout_toRightOf="@id/priorityHome"
+            android:layout_below="@id/subject_itemHome"
             android:text="App Name"
             android:layout_marginTop="14dp"
             android:textSize="12sp"
-            app:layout_constraintTop_toBottomOf="@id/subject_item"
-            app:layout_constraintLeft_toLeftOf="@id/subject_item" />
+            app:layout_constraintTop_toBottomOf="@id/subject_itemHome"
+            app:layout_constraintLeft_toLeftOf="@id/subject_itemHome" />
 
         <TextView
-            android:id="@+id/status"
+            android:id="@+id/statusHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
@@ -73,7 +72,7 @@
             app:layout_constraintTop_toTopOf="parent"/>
 
         <TextView
-            android:id="@+id/date"
+            android:id="@+id/dateHome"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="dd-mm-yyyy"
@@ -81,7 +80,7 @@
             android:layout_marginTop="14dp"
             android:layout_alignParentRight="true"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintRight_toRightOf="@id/status"/>
+            app:layout_constraintRight_toRightOf="@id/statusHome"/>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

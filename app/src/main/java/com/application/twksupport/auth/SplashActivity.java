@@ -52,8 +52,8 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void actUserLogin(){
-        SharedPreferences _objpref=getSharedPreferences("valid", MODE_PRIVATE);
-        if (_objpref.getString("token", "") != ""){
+        SharedPreferences _objpref=getSharedPreferences("JWTTOKEN", 0);
+        if (_objpref.getString("jwttoken", "") != ""){
             Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
             startActivity(toUser);
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);

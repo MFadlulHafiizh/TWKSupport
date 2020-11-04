@@ -1,6 +1,7 @@
 package com.application.twksupport;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
@@ -12,22 +13,34 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.LinearSmoothScroller;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.application.twksupport.RestApi.ApiClient;
+import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.adapter.RecycleViewAdapter;
 import com.application.twksupport.model.BugsData;
+import com.application.twksupport.model.ResponseData;
+import com.application.twksupport.model.UserData;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 public class BugsFragment extends Fragment {
     View view;
     private RecyclerView rvBugs;
+    private RecyclerView.Adapter mAdapter;
+    private RecyclerView.LayoutManager mManager;
     private List<BugsData> listBugs = new ArrayList<>();
+    ProgressDialog pd;
 
     public BugsFragment(){
 
@@ -36,7 +49,10 @@ public class BugsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        addListDataBugs();
+        pd = new ProgressDialog(getActivity());
+        pd.setMessage("Loading...");
+        pd.setCancelable(false);
+
     }
 
     @Override
@@ -45,25 +61,41 @@ public class BugsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_bugs, container, false);
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
         rvBugs.setLayoutManager(new LinearLayoutManager(getContext()));
-        rvBugs.setAdapter(new RecycleViewAdapter(listBugs, getContext()));
+        pd.show();
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addListDataBugs();
+            }
+        },50);
+
+
         return view;
     }
 
     protected void addListDataBugs(){
-        listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
-        listBugs.add(new BugsData("low", "Error 500", "Reported"));
-        listBugs.add(new BugsData("middle", "CRUD Error", "on proccess"));
-        listBugs.add(new BugsData("low", "Cant add new item", "Reported"));
-        listBugs.add(new BugsData("high", "Cant update item", "Reported"));
-        listBugs.add(new BugsData("middle", "Error 404 Not Found", "on proccess"));
-        listBugs.add(new BugsData("middle", "Cant update item", "on proccess"));
-        listBugs.add(new BugsData("high", "Cant upload photo", "on proccess"));
-        listBugs.add(new BugsData("low", "Cant update item", "Reported"));
-        listBugs.add(new BugsData("middle", "Cant update item", "on proccess"));
-        listBugs.add(new BugsData("high", "Error 500", "Reported"));
-        listBugs.add(new BugsData("low", "Cant update item", "on proccess"));
-        listBugs.add(new BugsData("low", "Error 404 Not Found", "on proccess"));
-        listBugs.add(new BugsData("high", "Cant update item", "on proccess"));
-        listBugs.add(new BugsData("middle", "Cant update item", "on proccess"));
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        SharedPreferences getEmailUser = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        String email = getEmailUser.getString("email", "not Authenticated");
+        Call<ResponseData> getData = api.getUserBugData(email);
+        getData.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                Log.d("RETRO", "RESPONSE : " + response.body().getBugData());
+                listBugs = response.body().getBugData();
+                mAdapter = new RecycleViewAdapter(listBugs, getContext());
+                rvBugs.setAdapter(mAdapter);
+                mAdapter.notifyDataSetChanged();
+                pd.hide();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                pd.hide();
+                Log.d("RETRO", "FAILED : respon gagal");
+                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

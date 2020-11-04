@@ -92,13 +92,13 @@ public class UserInteraction extends AppCompatActivity {
             @Override
             public void onShow(DialogInterface dialogInterface) {
                 fabMenu.collapse();
-                blurView.setAlpha(1);
+                blurView.setBlurEnabled(true);
             }
         });
         bottomSheetDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialogInterface) {
-                blurView.setAlpha(0);
+                blurView.setBlurEnabled(false);
             }
         });
         Button btnReport = bottomSheetDialog.findViewById(R.id.btn_report);

@@ -1,48 +1,47 @@
 package com.application.twksupport;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ActivityOptions;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.widget.Toolbar;
 
+import com.application.twksupport.RestApi.ApiClient;
+import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
 import com.application.twksupport.databinding.ActivityUserBinding;
+import com.application.twksupport.model.UserData;
+import com.application.twksupport.model.UserManager;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.appbar.AppBarLayout;
-import com.google.android.material.bottomsheet.BottomSheetBehavior;
-import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.tabs.TabLayout;
+import com.google.gson.Gson;
+
+import java.io.IOException;
 
 import eightbitlab.com.blurview.BlurView;
-import eightbitlab.com.blurview.RenderScriptBlur;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserActivity extends AppCompatActivity implements View.OnClickListener{
     private TabLayout tabLayout;
@@ -55,6 +54,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private AppBarLayout appbar;
     private View decorView;
     private ActivityUserBinding binding;
+    private String getToken;
+    private String getUserEmail;
+    private UserManager userInformation;
     UserInteraction userInteraction = new UserInteraction();
     ImageView userImage;
     TextView userName;
@@ -64,9 +66,11 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user);
-
+        userInformation = new UserManager(getApplicationContext());
+        callUserInformation();
         initialize();
         setUpWithViewPager(binding.viewpager);
+        binding.viewpager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(binding.viewpager);
         fab_bugs.setOnClickListener(this);
         fab_reqFeature.setOnClickListener(this);
@@ -93,6 +97,46 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 logout();
             }
         });*/
+    }
+
+    private void callUserInformation(){
+        SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
+        getToken = _objpref.getString("jwttoken", "missing");
+        getUserEmail = _objpref.getString("email", "not Authenticated");
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Log.d("token", getToken);
+        Call<ResponseBody> getUserData = api.getUserInformation("Bearer "+getToken);
+        getUserData.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                if (response.isSuccessful()){
+                    try {
+                        String responseJSON = response.body().string();
+                        Gson objGson = new Gson();
+                        UserData objResp =  objGson.fromJson(responseJSON, UserData.class);
+                        userInformation.addUserInformation(objResp.getId(), objResp.getPhoto(), objResp.getName(), objResp.getEmail(), objResp.getRole(), objResp.getNo_hp());
+                        SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
+                        String email = getUserInformation.getString("email", "Not Authorized");
+                        String name = getUserInformation.getString("name", "Not Authorized");
+                        userEmail.setText(email);
+                        userName.setText(name);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+                else {
+                    Toast.makeText(UserActivity.this, "Unknown Error", Toast.LENGTH_SHORT).show();
+                    Log.d("hasil", ""+response.body());
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                Log.d("hasil", "Failed to load data, check your internet connection"+t.getMessage());
+            }
+        });
     }
 
     private void logout() {
