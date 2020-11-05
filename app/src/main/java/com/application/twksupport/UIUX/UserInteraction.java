@@ -3,13 +3,16 @@ package com.application.twksupport.UIUX;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -21,16 +24,28 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.application.twksupport.R;
+import com.application.twksupport.RestApi.ApiClient;
+import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.UserActivity;
+import com.application.twksupport.model.AppsUserData;
+import com.application.twksupport.model.ResponseData;
+import com.application.twksupport.model.UserManager;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class UserInteraction extends AppCompatActivity {
     Dialog popUpFilter;
     TextView btmSheetTitle;
+    private List<AppsUserData> listAppData = new ArrayList<>();
 
     public void showPopupFilter(Context appContext){
         Spinner spinPriorityFiler, spinAppnameFilter;
@@ -136,6 +151,33 @@ public class UserInteraction extends AppCompatActivity {
                 }
             }
         });
-        bottomSheetDialog.show();
+
+        SharedPreferences getEmailUser = appContext.getSharedPreferences("userInformation", 0);
+        String email = getEmailUser.getString("email", "not Authenticated");
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseData> getApps = api.getUserApps(email);
+        getApps.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()){
+                    Log.d("BottomSheet", ""+response.body().getUserApp());
+                    listAppData = response.body().getUserApp();
+                    ArrayAdapter<AppsUserData> spinnerAdapter = new ArrayAdapter<AppsUserData>(appContext, android.R.layout.simple_spinner_item, listAppData);
+                    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinAppName.setAdapter(spinnerAdapter);
+                    Log.d("BottomSheet", ""+listAppData);
+                    bottomSheetDialog.show();
+
+                }
+                else {
+                    Log.d("BottomSheet", ""+response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("BottomSheet", ""+t.getMessage());
+            }
+        });
     }
 }

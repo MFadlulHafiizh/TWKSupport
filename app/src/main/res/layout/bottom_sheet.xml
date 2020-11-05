@@ -40,6 +40,7 @@
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
         android:minHeight="40dp"
+        android:paddingStart="16dp"
         android:layout_marginTop="16dp"
         android:background="@drawable/dash_spinner" />
 

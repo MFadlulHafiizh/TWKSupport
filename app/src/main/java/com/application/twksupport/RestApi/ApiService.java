@@ -31,6 +31,9 @@ public interface ApiService {
     @GET("user/data-done")
     Call<ResponseData> getUserDoneData(@Query("email") String set_emailUser);
 
+    @GET("user/getapp")
+    Call<ResponseData> getUserApps(@Query("email") String set_emailUser);
+
     @GET("user")
     Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);
 

@@ -27,6 +27,9 @@ import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
 import com.application.twksupport.databinding.ActivityUserBinding;
+import com.application.twksupport.model.AppsUserData;
+import com.application.twksupport.model.BugsData;
+import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.UserData;
 import com.application.twksupport.model.UserManager;
 import com.getbase.floatingactionbutton.FloatingActionButton;
@@ -36,6 +39,8 @@ import com.google.android.material.tabs.TabLayout;
 import com.google.gson.Gson;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import eightbitlab.com.blurview.BlurView;
 import okhttp3.ResponseBody;
@@ -56,6 +61,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private String getToken;
     private String getUserEmail;
     private UserManager userInformation;
+    private List<AppsUserData> listAppData = new ArrayList<>();
     UserInteraction userInteraction = new UserInteraction();
     ImageView userImage;
     TextView userName;
@@ -139,6 +145,32 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 Log.d("hasil", "Failed to load data, check your internet connection"+t.getMessage());
+            }
+        });
+    }
+
+    public void reportBug(){
+        SharedPreferences getEmailUser = getSharedPreferences("userInformation", 0);
+        String email = getEmailUser.getString("email", "not Authenticated");
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseData> getApps = api.getUserApps(email);
+        getApps.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()){
+                    Log.d("BottomSheet", ""+response.body().getUserApp());
+                    listAppData = response.body().getUserApp();
+                    Log.d("BottomSheet", ""+listAppData);
+
+                }
+                else {
+                    Log.d("BottomSheet", ""+response.body());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("UserActivity", ""+t.getMessage());
             }
         });
     }

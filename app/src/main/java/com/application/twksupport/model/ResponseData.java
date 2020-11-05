@@ -7,6 +7,7 @@ public class ResponseData {
     private List<BugsData> bugData;
     private List<FeatureData> featureData;
     private List<DoneData> doneData;
+    private List<AppsUserData> userApp;
 
     public String getMessage() {
         return message;
@@ -38,5 +39,13 @@ public class ResponseData {
 
     public void setDoneData(List<DoneData> doneData) {
         this.doneData = doneData;
+    }
+
+    public List<AppsUserData> getUserApp() {
+        return userApp;
+    }
+
+    public void setUserApp(List<AppsUserData> userApp) {
+        this.userApp = userApp;
     }
 }
