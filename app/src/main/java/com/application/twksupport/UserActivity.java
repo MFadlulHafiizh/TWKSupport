@@ -66,8 +66,15 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         binding = DataBindingUtil.setContentView(this, R.layout.activity_user);
         userInformation = new UserManager(getApplicationContext());
-        callUserInformation();
+
         initialize();
+
+        SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
+        String email = getUserInformation.getString("email", "Not Authorized");
+        String name = getUserInformation.getString("name", "Not Authorized");
+        userEmail.setText(email);
+        userName.setText(name);
+
         setUpWithViewPager(binding.viewpager);
         binding.viewpager.setOffscreenPageLimit(3);
         tabLayout.setupWithViewPager(binding.viewpager);
@@ -103,7 +110,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private void callUserInformation(){
         SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
         getToken = _objpref.getString("jwttoken", "missing");
-        getUserEmail = _objpref.getString("email", "not Authenticated");
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Log.d("token", getToken);
         Call<ResponseBody> getUserData = api.getUserInformation("Bearer "+getToken);
@@ -113,9 +119,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 if (response.isSuccessful()){
                     try {
                         String responseJSON = response.body().string();
-                        Gson objGson = new Gson();
-                        UserData objResp =  objGson.fromJson(responseJSON, UserData.class);
-                        userInformation.addUserInformation(objResp.getId(), objResp.getPhoto(), objResp.getName(), objResp.getEmail(), objResp.getRole(), objResp.getNo_hp());
                         SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
                         String email = getUserInformation.getString("email", "Not Authorized");
                         String name = getUserInformation.getString("name", "Not Authorized");

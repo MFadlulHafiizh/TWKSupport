@@ -64,14 +64,14 @@ public class BugsFragment extends Fragment {
             }
         },50);
 
-
         return view;
     }
 
     protected void addListDataBugs(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         String email = getEmailUser.getString("email", "not Authenticated");
+        Log.d("BugsFragment", email);
         Call<ResponseData> getData = api.getUserBugData(email);
         getData.enqueue(new Callback<ResponseData>() {
             @Override

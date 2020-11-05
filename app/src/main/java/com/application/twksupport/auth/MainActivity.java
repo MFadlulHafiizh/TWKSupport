@@ -18,6 +18,7 @@ import com.application.twksupport.UIUX.BtnProgress;
 import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
 import com.application.twksupport.model.UserData;
+import com.application.twksupport.model.UserManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
@@ -32,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private ImageView twkLogo;
     private View btnSignIn;
     private SessionManager sessionManager;
+    private UserManager userInformation;
+    private UserData userData;
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean exit = false;
 
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity {
         twkLogo = findViewById(R.id.twklogo);
 
         sessionManager = new SessionManager(getApplicationContext());
+        userInformation = new UserManager(getApplicationContext());
         btnSignIn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -89,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                             Gson objGson = new Gson();
                             TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
                             if (objResp.getToken() != null){
-                                sessionManager.createSession(email, objResp.getToken());
+                                userInformation.addUserInformation(objResp.getUser().getId(), objResp.getUser().getPhoto(), objResp.getUser().getName(), objResp.getUser().getEmail(), objResp.getUser().getRole(), objResp.getUser().getNo_hp());
+                                sessionManager.createSession(objResp.getToken());
                                 Log.d(TAG, ResponseJson);
                                 handler.postDelayed(new Runnable() {
                                     @Override
@@ -113,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.d("MainActivity", ""+e.getMessage());
                             btnProgress.buttonError();
                         }
                     }

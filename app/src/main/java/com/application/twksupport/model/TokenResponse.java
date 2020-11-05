@@ -10,8 +10,8 @@ public class TokenResponse {
     @SerializedName("token")
     private String token;
 
-    @SerializedName("role")
-    private String role;
+    @SerializedName("user")
+    private UserData user;
 
     public TokenResponse(){
 
@@ -33,7 +33,11 @@ public class TokenResponse {
         this.token = token;
     }
 
-    public String getRole() {
-        return role;
+    public UserData getUser() {
+        return user;
+    }
+
+    public void setUser(UserData user) {
+        this.user = user;
     }
 }

@@ -68,9 +68,9 @@ public class FeatureFragment extends Fragment {
     }
 
 
-    public void addListDataFeature(){
+    protected void addListDataFeature(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         String email = getEmailUser.getString("email", "not Authenticated");
         Call<ResponseData> getData = api.getUserFeatureData(email);
         getData.enqueue(new Callback<ResponseData>() {
