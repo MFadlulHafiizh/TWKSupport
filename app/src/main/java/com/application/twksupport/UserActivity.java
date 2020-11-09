@@ -2,7 +2,6 @@ package com.application.twksupport;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.databinding.DataBindingUtil;
 import androidx.viewpager.widget.ViewPager;
 
 import android.app.ActivityOptions;
@@ -26,7 +25,6 @@ import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.application.twksupport.auth.MainActivity;
-import com.application.twksupport.databinding.ActivityUserBinding;
 import com.application.twksupport.model.AppsUserData;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.ResponseData;
@@ -57,8 +55,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar tool;
     private AppBarLayout appbar;
     private View decorView;
-    private ActivityUserBinding binding;
     private String getToken;
+    private ViewPager viewPager;
     private String getUserEmail;
     private UserManager userInformation;
     private List<AppsUserData> listAppData = new ArrayList<>();
@@ -70,47 +68,52 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_user);
+        setContentView(R.layout.activity_user);
         userInformation = new UserManager(getApplicationContext());
 
         initialize();
-
-        SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
-        String email = getUserInformation.getString("email", "Not Authorized");
-        String name = getUserInformation.getString("name", "Not Authorized");
-        userEmail.setText(email);
-        userName.setText(name);
-
-        setUpWithViewPager(binding.viewpager);
-        binding.viewpager.setOffscreenPageLimit(3);
-        tabLayout.setupWithViewPager(binding.viewpager);
-
-        fab_bugs.setOnClickListener(this);
-        fab_reqFeature.setOnClickListener(this);
-        userImage.setOnClickListener(this);
 
         setSupportActionBar(tool);
         getSupportActionBar().setTitle(null);
         appbar.setStateListAnimator(null);
 
-        floatMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
-            @Override
-            public void onMenuExpanded() {
-                userInteraction.setBlurBackground(true, blurView, decorView, getApplicationContext());
-            }
+        SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
+        String email = getUserInformation.getString("email", "Not Authorized");
+        String name = getUserInformation.getString("name", "Not Authorized");
+        String role = getUserInformation.getString("role", "Not Authorized");
+        userEmail.setText(email);
+        userName.setText(name);
 
-            @Override
-            public void onMenuCollapsed() {
-                userInteraction.setBlurBackground(false, blurView, decorView, getApplicationContext());
-            }
-        });
+        setUpWithViewPager(viewPager);
+        viewPager.setOffscreenPageLimit(3);
+        tabLayout.setupWithViewPager(viewPager);
 
-        /*btnLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                logout();
-            }
-        });*/
+        fab_bugs.setOnClickListener(this);
+        fab_reqFeature.setOnClickListener(this);
+        userImage.setOnClickListener(this);
+
+        switch (role){
+            case "client":
+                floatMenu.setVisibility(View.VISIBLE);
+                floatMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+                    @Override
+                    public void onMenuExpanded() {
+                        userInteraction.setBlurBackground(true, blurView, decorView, getApplicationContext());
+                    }
+
+                    @Override
+                    public void onMenuCollapsed() {
+                        userInteraction.setBlurBackground(false, blurView, decorView, getApplicationContext());
+                    }
+                });
+                break;
+
+            case "admin":
+                floatMenu.setVisibility(View.INVISIBLE);
+                break;
+        }
+
+
     }
 
     private void callUserInformation(){
@@ -149,32 +152,6 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-    public void reportBug(){
-        SharedPreferences getEmailUser = getSharedPreferences("userInformation", 0);
-        String email = getEmailUser.getString("email", "not Authenticated");
-        ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getApps = api.getUserApps(email);
-        getApps.enqueue(new Callback<ResponseData>() {
-            @Override
-            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
-                    Log.d("BottomSheet", ""+response.body().getUserApp());
-                    listAppData = response.body().getUserApp();
-                    Log.d("BottomSheet", ""+listAppData);
-
-                }
-                else {
-                    Log.d("BottomSheet", ""+response.body());
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseData> call, Throwable t) {
-                Log.d("UserActivity", ""+t.getMessage());
-            }
-        });
-    }
-
     private void setUpWithViewPager(ViewPager myViewPager){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
         //Add fragment
@@ -188,6 +165,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         tabLayout = findViewById(R.id.tabs);
         fab_bugs = findViewById(R.id.fab_bugReport);
         fab_reqFeature = findViewById(R.id.fab_requestFeature);
+        viewPager = findViewById(R.id.viewpager);
         floatMenu = findViewById(R.id.fab_menu);
         blurView = findViewById(R.id.blur_bg);
         tool = findViewById(R.id.toolbarnotification);

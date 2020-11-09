@@ -6,24 +6,27 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.application.twksupport.R;
-import com.application.twksupport.model.BugsData;
+import com.application.twksupport.model.DoneData;
 import com.application.twksupport.model.FeatureData;
-
 import java.util.List;
 
 public class RvFeatureAdapter extends RecyclerView.Adapter<RvFeatureAdapter.MyViewHolder> {
     private Context context;
     private List<FeatureData> mFeature;
+    private ItemClick click;
 
     public RvFeatureAdapter(List<FeatureData> mFeature, Context context) {
         this.context = context;
         this.mFeature = mFeature;
     }
+
+    public void setClick(ItemClick click) {
+        this.click = click;
+    }
+
 
     @NonNull
     @Override
@@ -34,7 +37,7 @@ public class RvFeatureAdapter extends RecyclerView.Adapter<RvFeatureAdapter.MyVi
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         FeatureData fd = mFeature.get(position);
         if (fd.getPriority().equals("High")){
             holder.tv_priority.setTextColor(Color.parseColor("#D13C4F"));
@@ -50,11 +53,22 @@ public class RvFeatureAdapter extends RecyclerView.Adapter<RvFeatureAdapter.MyVi
         holder.tv_status.setText(fd.getStatus());
         holder.app_name.setText(fd.getApps_name());
         holder.date.setText(fd.getCreated_at());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click.onItemClicked(mFeature.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mFeature.size();
+    }
+
+    public interface ItemClick{
+        void onItemClicked(FeatureData datafeature);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

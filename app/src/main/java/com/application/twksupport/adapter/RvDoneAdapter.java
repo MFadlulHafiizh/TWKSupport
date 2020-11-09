@@ -6,12 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.application.twksupport.R;
-import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.DoneData;
 
 import java.util.List;
@@ -20,10 +17,15 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
 
     private Context mContext;
     private List<DoneData> mDone;
+    private ItemClick click;
 
     public RvDoneAdapter(List<DoneData> mDone, Context mContext) {
         this.mContext = mContext;
         this.mDone = mDone;
+    }
+
+    public void setClick(ItemClick click) {
+        this.click = click;
     }
 
     @NonNull
@@ -36,7 +38,7 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
         DoneData dt = mDone.get(position);
         if (dt.getPriority().equals("High")){
             holder.tv_priority.setTextColor(Color.parseColor("#D13C4F"));
@@ -52,11 +54,22 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
         holder.tv_status.setText(dt.getStatus());
         holder.app_name.setText(dt.getApps_name());
         holder.date.setText(dt.getCreated_at());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click.onItemClicked(mDone.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mDone.size();
+    }
+
+    public interface ItemClick{
+        void onItemClicked(DoneData datadone);
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {

@@ -21,13 +21,20 @@
         android:textSize="16sp"
         android:paddingBottom="6dp"/>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_feature"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_feature"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/cardview_item_layout"
-        app:layout_constraintTop_toBottomOf="@+id/txt_feature"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rv_feature"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:listitem="@layout/cardview_item_layout"
+            app:layout_constraintTop_toBottomOf="@+id/txt_feature"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

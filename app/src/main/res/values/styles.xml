@@ -53,4 +53,10 @@
         <item name="homeAsUpIndicator">@drawable/ic_arrow_back</item>
     </style>
 
+    <style name="spinnerItemStyle" parent="@android:style/Widget.Holo.DropDownItem.Spinner">
+        <item name="android:textSize">13sp</item>
+        <item name="fontFamily">@font/comfortaa_regular</item>
+        <item name="android:textColor">@color/blackCharcoal</item>
+    </style>
+
 </resources>

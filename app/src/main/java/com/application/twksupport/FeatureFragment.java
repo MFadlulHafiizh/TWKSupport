@@ -8,6 +8,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.os.Handler;
 import android.util.Log;
@@ -20,6 +21,7 @@ import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.adapter.RvBugsAdapter;
 import com.application.twksupport.adapter.RvFeatureAdapter;
+import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.FeatureData;
 import com.application.twksupport.model.ResponseData;
 
@@ -33,9 +35,8 @@ import retrofit2.Response;
 public class FeatureFragment extends Fragment {
     View view;
     private RecyclerView rvFeature;
-    private RecyclerView.Adapter mAdapter;
     private List<FeatureData> listFeature = new ArrayList<>();
-    ProgressDialog pd;
+    SwipeRefreshLayout swipeRefreshLayout;
 
     public FeatureFragment() {
 
@@ -44,23 +45,51 @@ public class FeatureFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        pd = new ProgressDialog(getActivity());
-        pd.setMessage("Loading...");
-        pd.setCancelable(false);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_feature, container, false);
+        swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
+        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
+        final String role = getEmailUser.getString("role", "not Authenticated");
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (role){
+                    case "client":
+                        addListDataFeatureUser();
+                        break;
+
+                    case "admin" :
+                        addListAdminFeature();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
         rvFeature = (RecyclerView) view.findViewById(R.id.rv_feature);
         rvFeature.setLayoutManager(new LinearLayoutManager(getContext()));
-        pd.show();
+        swipeRefreshLayout.setRefreshing(true);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                addListDataFeature();
+                switch (role){
+                    case "client":
+                        addListDataFeatureUser();
+                        break;
+
+                    case "admin" :
+                        addListAdminFeature();
+                        break;
+
+                    default:
+                        break;
+                }
             }
         },50);
 
@@ -68,25 +97,77 @@ public class FeatureFragment extends Fragment {
     }
 
 
-    protected void addListDataFeature(){
+    protected void addListDataFeatureUser(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
+        SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        String getToken = _objpref.getString("jwttoken", "missing");
         String email = getEmailUser.getString("email", "not Authenticated");
-        Call<ResponseData> getData = api.getUserFeatureData(email);
+        Call<ResponseData> getData = api.getUserFeatureData(email, "Bearer "+getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                Log.d("RETRO", "RESPONSE : " + response.body().getFeatureData());
-                listFeature = response.body().getFeatureData();
-                mAdapter = new RvFeatureAdapter(listFeature, getContext());
-                rvFeature.setAdapter(mAdapter);
-                mAdapter.notifyDataSetChanged();
-                pd.hide();
+                if (response.isSuccessful()){
+                    listFeature = response.body().getFeatureData();
+                    RvFeatureAdapter mAdapter = new RvFeatureAdapter(listFeature, getContext());
+                    rvFeature.setAdapter(mAdapter);
+                    mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
+                        @Override
+                        public void onItemClicked(FeatureData datafeature) {
+                            Toast.makeText(getActivity(), ""+datafeature.getPriority(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-                pd.hide();
+                swipeRefreshLayout.setRefreshing(false);
+                Log.d("RETRO", "FAILED : respon gagal");
+                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    protected void addListAdminFeature(){
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        String getToken = _objpref.getString("jwttoken", "");
+        Call<ResponseData> getData = api.getAdminFeatureData("Bearer "+getToken);
+        getData.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()){
+                    listFeature = response.body().getFeatureData();
+                    Log.d("feature", ""+listFeature);
+                    RvFeatureAdapter mAdapter = new RvFeatureAdapter(listFeature, getContext());
+                    rvFeature.setAdapter(mAdapter);
+                    mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
+                        @Override
+                        public void onItemClicked(FeatureData datafeature) {
+                            Toast.makeText(getActivity(), ""+datafeature.getPriority(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                else {
+                    Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                swipeRefreshLayout.setRefreshing(false);
                 Log.d("RETRO", "FAILED : respon gagal");
                 Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
             }

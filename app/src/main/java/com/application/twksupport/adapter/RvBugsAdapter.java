@@ -19,10 +19,15 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
 
     private Context mContext;
     private List<BugsData> mBugs;
+    private ItemClick click;
 
     public RvBugsAdapter(List<BugsData> mBugs, Context mContext) {
         this.mContext = mContext;
         this.mBugs = mBugs;
+    }
+
+    public void setClick(ItemClick click) {
+        this.click = click;
     }
 
     @NonNull
@@ -35,7 +40,7 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
     }
 
     @Override
-    public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         BugsData bd = mBugs.get(position);
         if (bd.getPriority().equals("High")){
             holder.tv_priority.setTextColor(Color.parseColor("#D13C4F"));
@@ -51,11 +56,23 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
         holder.tv_status.setText(mBugs.get(position).getStatus());
         holder.app_name.setText(bd.getApps_name());
         holder.date.setText(bd.getCreated_at());
+
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click.onItemClicked(mBugs.get(holder.getAdapterPosition()));
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
         return mBugs.size();
+    }
+
+    public interface ItemClick{
+        void onItemClicked(BugsData databug);
     }
 
     public static class MyViewHolder extends RecyclerView.ViewHolder{

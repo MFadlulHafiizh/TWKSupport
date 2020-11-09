@@ -21,6 +21,11 @@
         android:textSize="16sp"
         android:paddingBottom="6dp"/>
 
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/refresh_hasDone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_done"
         android:layout_width="match_parent"
@@ -29,5 +34,7 @@
         app:layout_constraintTop_toBottomOf="@+id/txt_done"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>
