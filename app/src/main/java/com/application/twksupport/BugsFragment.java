@@ -33,11 +33,16 @@ public class BugsFragment extends Fragment {
     View view;
     private RecyclerView rvBugs;
     private List<BugsData> listBugs = new ArrayList<>();
+    private static BugsFragment instance;
     SwipeRefreshLayout swipeRefreshLayout;
 
 
     public BugsFragment(){
 
+    }
+
+    public static BugsFragment getInstance(){
+        return instance;
     }
 
     @Override
@@ -51,6 +56,7 @@ public class BugsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_bugs, container, false);
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
         swipeRefreshLayout = view.findViewById(R.id.refresh_bug);
+        instance = this;
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getEmailUser.getString("role", "not Authenticated");
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -94,7 +100,7 @@ public class BugsFragment extends Fragment {
         return view;
     }
 
-    protected void addListDataBugsUser(){
+    public void addListDataBugsUser(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
@@ -110,14 +116,14 @@ public class BugsFragment extends Fragment {
                     listBugs = response.body().getBugData();
                     RvBugsAdapter mAdapter = new RvBugsAdapter(listBugs, getContext());
                     rvBugs.setAdapter(mAdapter);
+                    rvBugs.smoothScrollToPosition(0);
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(BugsData databug) {
                             Toast.makeText(getActivity(), ""+databug.getPriority(), Toast.LENGTH_SHORT).show();
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     swipeRefreshLayout.setRefreshing(false);

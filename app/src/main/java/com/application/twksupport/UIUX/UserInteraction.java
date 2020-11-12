@@ -1,5 +1,6 @@
 package com.application.twksupport.UIUX;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +24,8 @@ import android.widget.Toast;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.application.twksupport.BugsFragment;
+import com.application.twksupport.FeatureFragment;
 import com.application.twksupport.R;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
@@ -227,6 +230,7 @@ public class UserInteraction extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
                                                     dialogInterface.dismiss();
+                                                    BugsFragment.getInstance().addListDataBugsUser();
                                                     bottomSheetDialog.dismiss();
                                                 }
                                             });
@@ -266,6 +270,7 @@ public class UserInteraction extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
                                                     dialogInterface.dismiss();
+                                                    FeatureFragment.getInstance().addListDataFeatureUser();
                                                     bottomSheetDialog.dismiss();
                                                 }
                                             });

@@ -37,11 +37,15 @@ public class FeatureFragment extends Fragment {
     private RecyclerView rvFeature;
     private List<FeatureData> listFeature = new ArrayList<>();
     SwipeRefreshLayout swipeRefreshLayout;
+    private static FeatureFragment instance;
 
     public FeatureFragment() {
 
     }
 
+    public static FeatureFragment getInstance(){
+        return instance;
+    }
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,6 +56,7 @@ public class FeatureFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_feature, container, false);
         swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
+        instance = this;
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getEmailUser.getString("role", "not Authenticated");
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -97,7 +102,7 @@ public class FeatureFragment extends Fragment {
     }
 
 
-    protected void addListDataFeatureUser(){
+    public void addListDataFeatureUser(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
