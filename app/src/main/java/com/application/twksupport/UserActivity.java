@@ -93,7 +93,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         userImage.setOnClickListener(this);
 
         switch (role){
-            case "client":
+            case "client-head":
                 floatMenu.setVisibility(View.VISIBLE);
                 floatMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
                     @Override
@@ -108,7 +108,23 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 });
                 break;
 
-            case "admin":
+            case "client-staff":
+                floatMenu.setVisibility(View.VISIBLE);
+                floatMenu.setOnFloatingActionsMenuUpdateListener(new FloatingActionsMenu.OnFloatingActionsMenuUpdateListener() {
+                    @Override
+                    public void onMenuExpanded() {
+                        userInteraction.setBlurBackground(true, blurView, decorView, getApplicationContext());
+                    }
+
+                    @Override
+                    public void onMenuCollapsed() {
+                        userInteraction.setBlurBackground(false, blurView, decorView, getApplicationContext());
+                    }
+                });
+                break;
+
+
+            case "twk-head":
                 floatMenu.setVisibility(View.INVISIBLE);
                 break;
         }

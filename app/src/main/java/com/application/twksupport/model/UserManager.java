@@ -11,11 +11,13 @@ public class UserManager {
     private Context context;
     private static final String REFNAME = "userInformation";
     private static final String KEY_ID = "id";
+    private static final String KEY_ID_PERUSAHAAN = "id_perushaan";
     private static final String KEY_PHOTO = "photo";
     private static final String KEY_NAME = "name";
     private static final String KEY_EMAIL = "email";
     private static final String KEY_ROLE = "role";
-    private static final String KEY_NOHP = "no_hp";
+    private static final String KEY_FCM_TOKEN = "fcm_token";
+    private static final String KEY_NAMA_PERUSAHAAN = "company_name";
 
     public UserManager(Context context){
         this.context = context;
@@ -23,13 +25,15 @@ public class UserManager {
         editor = sharedPreferences.edit();
     }
 
-    public void addUserInformation(String id, int photo, String name, String email, String role, String no_hp){
+    public void addUserInformation(String id, int id_perusahaan,int photo, String name, String email, String role, String fcm_token, String companyName){
         editor.putString(KEY_ID, id);
+        editor.putInt(KEY_ID_PERUSAHAAN, id_perusahaan);
         editor.putInt(KEY_PHOTO, photo);
         editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
         editor.putString(KEY_ROLE, role);
-        editor.putString(KEY_NOHP, no_hp);
+        editor.putString(KEY_FCM_TOKEN, fcm_token);
+        editor.putString(KEY_NAMA_PERUSAHAAN, companyName);
         editor.apply();
     }
 }

@@ -3,6 +3,7 @@ package com.application.twksupport;
 import android.app.ProgressDialog;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -37,7 +38,7 @@ public class DoneFragment extends Fragment {
     private List<DoneData> listDone = new ArrayList<>();
     SwipeRefreshLayout swipeRefreshLayout;
 
-    public DoneFragment(){
+    public DoneFragment() {
 
     }
 
@@ -53,17 +54,21 @@ public class DoneFragment extends Fragment {
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getEmailUser.getString("role", "not Authenticated");
         rvDone = (RecyclerView) view.findViewById(R.id.rv_done);
-        rvDone.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout = view.findViewById(R.id.refresh_hasDone);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                switch (role){
-                    case "client":
+                switch (role) {
+                    case "client-head":
                         addListDataDone();
                         break;
 
-                    case "admin" :
+                    case "client-staff":
+                        addListDataDone();
+                        break;
+
+
+                    case "twk-head":
                         addListDoneAdmin();
                         break;
 
@@ -72,17 +77,23 @@ public class DoneFragment extends Fragment {
                 }
             }
         });
+        rvDone.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout.setRefreshing(true);
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                switch (role){
-                    case "client":
+                switch (role) {
+                    case "client-head":
                         addListDataDone();
                         break;
 
-                    case "admin" :
+                    case "client-staff":
+                        addListDataDone();
+                        break;
+
+
+                    case "twk-head":
                         addListDoneAdmin();
                         break;
 
@@ -96,30 +107,32 @@ public class DoneFragment extends Fragment {
         return view;
     }
 
-    protected void addListDataDone(){
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
-        SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
-        String getToken = _objpref.getString("jwttoken", "missing");
-        String email = getEmailUser.getString("email", "not Authenticated");
+    protected void addListDataDone() {
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getData = api.getUserDoneData(email, "Bearer "+getToken);
+        final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
+        String getToken = _objpref.getString("jwttoken", "");
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
+        Log.d("donefragment", ""+idCompany);
+        Call<ResponseData> getData = api.getUserDoneData(idCompany, "Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
+                    Log.d("RETRO", "RESPONSE : " + response.body().getDoneData());
                     listDone = response.body().getDoneData();
+                    Log.d("datauser", "" + listDone);
                     RvDoneAdapter mAdapter = new RvDoneAdapter(listDone, getContext());
                     rvDone.setAdapter(mAdapter);
                     mAdapter.setClick(new RvDoneAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(DoneData datadone) {
-                            Toast.makeText(getActivity(), ""+datadone.getPriority(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "" + datadone.getPriority(), Toast.LENGTH_SHORT).show();
                         }
                     });
                     mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
-                }
-                else{
+                } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
 
@@ -133,28 +146,27 @@ public class DoneFragment extends Fragment {
         });
     }
 
-    protected void addListDoneAdmin(){
+    protected void addListDoneAdmin() {
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getData = api.getAdminDoneData("Bearer "+getToken);
+        Call<ResponseData> getData = api.getAdminDoneData("Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     listDone = response.body().getDoneData();
                     RvDoneAdapter mAdapter = new RvDoneAdapter(listDone, getContext());
                     rvDone.setAdapter(mAdapter);
                     mAdapter.setClick(new RvDoneAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(DoneData datadone) {
-                            Toast.makeText(getActivity(), ""+datadone.getPriority(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(), "" + datadone.getPriority(), Toast.LENGTH_SHORT).show();
                         }
                     });
                     mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
-                }
-                else{
+                } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
 

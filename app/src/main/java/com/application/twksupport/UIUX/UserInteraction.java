@@ -140,12 +140,12 @@ public class UserInteraction extends AppCompatActivity {
             }
         });
 
-        SharedPreferences getEmailUser = appContext.getSharedPreferences("userInformation", 0);
+        SharedPreferences getCompanyUser = appContext.getSharedPreferences("userInformation", 0);
         SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
         final String getToken = _objpref.getString("jwttoken", "missing");
-        final String email = getEmailUser.getString("email", "not Authenticated");
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getApps = api.getUserApps(email, "Bearer "+getToken);
+        Call<ResponseData> getApps = api.getUserApps(idCompany, "Bearer "+getToken);
         final String[] priority = new String[1];
         bottomSheetDialog.show();
         getApps.enqueue(new Callback<ResponseData>() {
@@ -215,7 +215,7 @@ public class UserInteraction extends AppCompatActivity {
                     switch (type){
                         case "report":
                             ApiService apiBug = ApiClient.getClient().create(ApiService.class);
-                            Call<ResponseBody> report = apiBug.reportBug(id, prio, etSubject.getText().toString(), etDetails.getText().toString(), "Reported", "Bearer "+getToken);
+                            Call<ResponseBody> report = apiBug.reportBug(id, type, prio, etSubject.getText().toString(), etDetails.getText().toString(), "Reported", "Bearer "+getToken);
                             report.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -255,7 +255,7 @@ public class UserInteraction extends AppCompatActivity {
 
                         case "request":
                             ApiService apiFeature = ApiClient.getClient().create(ApiService.class);
-                            Call<ResponseBody> request = apiFeature.requestFeature(id, prio, etSubject.getText().toString(), etDetails.getText().toString(),"Requested", "Bearer "+getToken);
+                            Call<ResponseBody> request = apiFeature.requestFeature(id, type,prio, etSubject.getText().toString(), etDetails.getText().toString(),"Requested", "Bearer "+getToken);
                             request.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -275,6 +275,7 @@ public class UserInteraction extends AppCompatActivity {
                                                 }
                                             });
                                             AlertDialog alertDialog = alertBuild.create();
+                                            alertDialog.setCanceledOnTouchOutside(false);
                                             alertDialog.show();
                                         }
                                         catch (Exception e){
@@ -298,5 +299,10 @@ public class UserInteraction extends AppCompatActivity {
             }
         });
 
+    }
+
+    public void showDetailBottomSheet(Context appContext, LayoutInflater layoutInflater){
+        final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(appContext, R.style.AppBottomSheetDialogTheme);
+        View content = layoutInflater.inflate(R.layout.bottom_sheet, null);
     }
 }

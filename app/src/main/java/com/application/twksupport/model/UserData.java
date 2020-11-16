@@ -7,6 +7,9 @@ public class UserData {
     @SerializedName("id")
     private String id;
 
+    @SerializedName("id_perusahaan")
+    private int id_perusahaan;
+
     @SerializedName("photo")
     private int photo;
 
@@ -19,8 +22,11 @@ public class UserData {
     @SerializedName("role")
     private String role;
 
-    @SerializedName("no_hp")
-    private String no_hp;
+    @SerializedName("fcm_token")
+    private String fcm_token;
+
+    @SerializedName("nama_perusahaan")
+    private String nama_perusahaan;
 
     public String getId() {
         return id;
@@ -28,6 +34,14 @@ public class UserData {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public int getId_perusahaan() {
+        return id_perusahaan;
+    }
+
+    public void setId_perusahaan(int id_perusahaan) {
+        this.id_perusahaan = id_perusahaan;
     }
 
     public int getPhoto() {
@@ -62,11 +76,19 @@ public class UserData {
         this.role = role;
     }
 
-    public String getNo_hp() {
-        return no_hp;
+    public String getFcm_token() {
+        return fcm_token;
     }
 
-    public void setNo_hp(String no_hp) {
-        this.no_hp = no_hp;
+    public void setFcm_token(String fcm_token) {
+        this.fcm_token = fcm_token;
+    }
+
+    public String getNama_perusahaan() {
+        return nama_perusahaan;
+    }
+
+    public void setNama_perusahaan(String nama_perusahaan) {
+        this.nama_perusahaan = nama_perusahaan;
     }
 }

@@ -1,5 +1,6 @@
 package com.application.twksupport;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -54,20 +55,26 @@ public class BugsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_bugs, container, false);
+        instance = this;
+
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
         swipeRefreshLayout = view.findViewById(R.id.refresh_bug);
-        instance = this;
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
-        final String role = getEmailUser.getString("role", "not Authenticated");
+        SharedPreferences getRoleUser = getActivity().getSharedPreferences("userInformation", 0);
+        final String role = getRoleUser.getString("role", "not Authenticated");
+        Log.d("role", ""+ role);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
                 switch (role){
-                    case "client":
+                    case "client-head":
                         addListDataBugsUser();
                         break;
 
-                    case "admin" :
+                    case "client-staff":
+                        addListDataBugsUser();
+                        break;
+
+                    case "twk-head" :
                         addListAdminBug();
                         break;
 
@@ -83,11 +90,15 @@ public class BugsFragment extends Fragment {
             @Override
             public void run() {
                 switch (role){
-                    case "client":
+                    case "client-head":
                         addListDataBugsUser();
                         break;
 
-                    case "admin" :
+                    case "client-staff":
+                        addListDataBugsUser();
+                        break;
+
+                    case "twk-head" :
                         addListAdminBug();
                         break;
 
@@ -103,11 +114,11 @@ public class BugsFragment extends Fragment {
     public void addListDataBugsUser(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
+        SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
         String getToken = _objpref.getString("jwttoken", "");
-        String email = getEmailUser.getString("email", "not Authenticated");
-        Log.d("BugsFragment", email);
-        Call<ResponseData> getData = api.getUserBugData(email, "Bearer "+getToken);
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
+        Log.d("BugsFragment", ""+idCompany);
+        Call<ResponseData> getData = api.getUserBugData(idCompany, "Bearer "+getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
@@ -133,7 +144,7 @@ public class BugsFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
-                Log.d("RETRO", "FAILED : respon gagal");
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
                 Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
@@ -155,7 +166,9 @@ public class BugsFragment extends Fragment {
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(BugsData databug) {
-                            Toast.makeText(getActivity(), ""+databug.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toStaff = new Intent(getActivity(), StaffListActivity.class);
+                            toStaff.putExtra(StaffListActivity.EXTRA_TICKET, databug);
+                            startActivity(toStaff);
                         }
                     });
                     mAdapter.notifyDataSetChanged();

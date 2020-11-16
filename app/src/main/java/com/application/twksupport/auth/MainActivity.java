@@ -93,7 +93,8 @@ public class MainActivity extends AppCompatActivity {
                             Gson objGson = new Gson();
                             TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
                             if (objResp.getToken() != null){
-                                userInformation.addUserInformation(objResp.getUser().getId(), objResp.getUser().getPhoto(), objResp.getUser().getName(), objResp.getUser().getEmail(), objResp.getUser().getRole(), objResp.getUser().getNo_hp());
+                                userInformation.addUserInformation(objResp.getUser().getId(), objResp.getUser().getId_perusahaan(),objResp.getUser().getPhoto(), objResp.getUser().getName(), objResp.getUser().getEmail(), objResp.getUser().getRole(), objResp.getUser().getFcm_token(), objResp.getUser().getNama_perusahaan());
+                                Log.d("nama_perusahaan", ""+objResp.getUser().getNama_perusahaan());
                                 sessionManager.createSession(objResp.getToken());
                                 Log.d(TAG, ResponseJson);
                                 handler.postDelayed(new Runnable() {

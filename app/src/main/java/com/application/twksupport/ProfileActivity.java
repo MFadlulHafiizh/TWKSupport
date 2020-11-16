@@ -39,6 +39,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void logout() {
         final SharedPreferences logoutPreferences = getSharedPreferences("JWTTOKEN", 0);
         String logoutToken = logoutPreferences.getString("jwttoken", "");
+        Log.d("logouttoken", ""+logoutToken);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<ResponseBody> logout = api.logoutUser(logoutToken);
         logout.enqueue(new Callback<ResponseBody>() {

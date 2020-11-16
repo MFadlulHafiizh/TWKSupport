@@ -1,6 +1,7 @@
 package com.application.twksupport;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -63,11 +64,15 @@ public class FeatureFragment extends Fragment {
             @Override
             public void onRefresh() {
                 switch (role){
-                    case "client":
+                    case "client-head":
                         addListDataFeatureUser();
                         break;
 
-                    case "admin" :
+                    case "client-staff":
+                        addListDataFeatureUser();
+                        break;
+
+                    case "twk-head" :
                         addListAdminFeature();
                         break;
 
@@ -84,11 +89,15 @@ public class FeatureFragment extends Fragment {
             @Override
             public void run() {
                 switch (role){
-                    case "client":
+                    case "client-head":
                         addListDataFeatureUser();
                         break;
 
-                    case "admin" :
+                    case "client-staff":
+                        addListDataFeatureUser();
+                        break;
+
+                    case "twk-head" :
                         addListAdminFeature();
                         break;
 
@@ -104,11 +113,11 @@ public class FeatureFragment extends Fragment {
 
     public void addListDataFeatureUser(){
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
+        SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
-        String email = getEmailUser.getString("email", "not Authenticated");
-        Call<ResponseData> getData = api.getUserFeatureData(email, "Bearer "+getToken);
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
+        Call<ResponseData> getData = api.getUserFeatureData(idCompany, "Bearer "+getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {

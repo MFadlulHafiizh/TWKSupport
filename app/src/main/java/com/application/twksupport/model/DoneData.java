@@ -1,6 +1,7 @@
 package com.application.twksupport.model;
 
 public class DoneData {
+    private String id_ticket;
     private String apps_name;
     private String priority;
     private String subject;
@@ -10,6 +11,14 @@ public class DoneData {
 
     public String getApps_name() {
         return apps_name;
+    }
+
+    public String getId_ticket() {
+        return id_ticket;
+    }
+
+    public void setId_ticket(String id_ticket) {
+        this.id_ticket = id_ticket;
     }
 
     public void setApps_name(String apps_name) {

@@ -1,6 +1,8 @@
 package com.application.twksupport.RestApi;
 
 import com.application.twksupport.model.ResponseData;
+import com.application.twksupport.model.StaffResponse;
+import com.application.twksupport.model.TokenResponse;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -25,6 +27,7 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("user/report-bug")
     Call<ResponseBody> reportBug(@Field("id_apps") int id_apps,
+                                 @Field("type") String type,
                                  @Field("priority") String priority,
                                  @Field("subject") String subject,
                                  @Field("detail") String detail,
@@ -33,18 +36,18 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("user/request-feature")
     Call<ResponseBody> requestFeature(@Field("id_apps") int id_apps,
+                                      @Field("type") String type,
                                       @Field("priority") String priority,
                                       @Field("subject") String subject,
                                       @Field("detail") String detail,
                                       @Field("status") String status,
                                       @Header("Authorization") String authToken);
-
     @GET("user/data-bug")
-    Call<ResponseData> getUserBugData(@Query("email") String set_emailUser,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserBugData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
     @GET("user/data-feature")
-    Call<ResponseData> getUserFeatureData(@Query("email") String set_emailUser,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserFeatureData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
     @GET("user/data-done")
-    Call<ResponseData> getUserDoneData(@Query("email") String set_emailUser,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserDoneData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
 
     @GET("admin/data-bug")
     Call<ResponseData> getAdminBugData(@Header("Authorization") String authToken);
@@ -52,9 +55,18 @@ public interface ApiService {
     Call<ResponseData> getAdminFeatureData(@Header("Authorization") String authToken);
     @GET("admin/data-done")
     Call<ResponseData> getAdminDoneData(@Header("Authorization") String authToken);
+    @GET("admin/getStaff")
+    Call<StaffResponse> getStaff(@Header("Authorization") String adminToken);
+
+    @FormUrlEncoded
+    @POST("admin/assignment")
+    Call<ResponseBody> assign(@Header("Authorization") String adminToken,
+                              @Field("id_user") String iduser,
+                              @Field("id_ticket") String idticket,
+                              @Field("dead_line") String date);
 
     @GET("user/getapp")
-    Call<ResponseData> getUserApps(@Query("email") String set_emailUser,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
 
     @GET("user")
     Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);

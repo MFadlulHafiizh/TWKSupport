@@ -1,6 +1,10 @@
 package com.application.twksupport.model;
 
-public class FeatureData {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class FeatureData implements Parcelable {
+    private String id_ticket;
     private String apps_name;
     private String priority;
     private String subject;
@@ -10,8 +14,20 @@ public class FeatureData {
     private String time_periodic;
     private String price;
 
+    public FeatureData(){
+
+    }
+
     public String getApps_name() {
         return apps_name;
+    }
+
+    public String getId_ticket() {
+        return id_ticket;
+    }
+
+    public void setId_ticket(String id_ticket) {
+        this.id_ticket = id_ticket;
     }
 
     public void setApps_name(String apps_name) {
@@ -73,4 +89,47 @@ public class FeatureData {
     public void setPrice(String price) {
         this.price = price;
     }
+
+
+    protected FeatureData(Parcel in) {
+        apps_name = in.readString();
+        id_ticket = in.readString();
+        priority = in.readString();
+        subject = in.readString();
+        detail = in.readString();
+        status = in.readString();
+        created_at = in.readString();
+        time_periodic = in.readString();
+        price = in.readString();
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(apps_name);
+        parcel.writeString(id_ticket);
+        parcel.writeString(priority);
+        parcel.writeString(subject);
+        parcel.writeString(detail);
+        parcel.writeString(status);
+        parcel.writeString(created_at);
+        parcel.writeString(time_periodic);
+        parcel.writeString(price);
+    }
+
+    public static final Creator<FeatureData> CREATOR = new Creator<FeatureData>() {
+        @Override
+        public FeatureData createFromParcel(Parcel in) {
+            return new FeatureData(in);
+        }
+
+        @Override
+        public FeatureData[] newArray(int size) {
+            return new FeatureData[size];
+        }
+    };
 }
