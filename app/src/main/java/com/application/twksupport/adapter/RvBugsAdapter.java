@@ -77,15 +77,15 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
         holder.date.setText(bd.getCreated_at());
         SharedPreferences getRoleUser = mContext.getSharedPreferences("userInformation", 0);
         final String role = getRoleUser.getString("role", "not Authenticated");
-        if (role.equals("client-head") || role.equals("client-staff")){
-            holder.itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    click.onItemClicked(mBugs.get(holder.getAdapterPosition()));
-                }
-            });
-        }
-        else if(role.equals("twk-head")){
+        //if (role.equals("client-head") || role.equals("client-staff")){
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click.onItemClicked(mBugs.get(holder.getAdapterPosition()));
+            }
+        });
+        //}
+        /*else if(role.equals("twk-head")){
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -123,7 +123,7 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
                     bottomSheetDialog.show();
                 }
             });
-        }
+        }*/
 
     }
 

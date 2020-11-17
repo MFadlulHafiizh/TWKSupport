@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import retrofit2.Response;
 
 public class StaffListActivity extends AppCompatActivity {
     public static final String EXTRA_TICKET = "extra_ticket";
+    public static final String EXTRA_DATE = "extra_date";
     private List<UserData> staffList = new ArrayList<>();
     private CacheData cacheData;
     private RecyclerView rvStaff;
@@ -39,19 +41,20 @@ public class StaffListActivity extends AppCompatActivity {
         setContentView(R.layout.activity_staff_list);
 
         BugsData getTicket = getIntent().getParcelableExtra(EXTRA_TICKET);
-
+        String getDate = getIntent().getStringExtra(EXTRA_DATE);
         String id_ticket = getTicket.getId_ticket();
+        Log.d("ticketvalues", "" + id_ticket);
         rvStaff = findViewById(R.id.rv_staff);
         rvStaff.setLayoutManager(new LinearLayoutManager(this));
         cacheData = new CacheData(getApplicationContext());
         cacheData.assignmentSetIdTicket(id_ticket);
         SharedPreferences assignment = getSharedPreferences("assignment", 0);
         String ticket_id = assignment.getString("ticket_id", "");
-        assignAct(ticket_id);
+        assignAct(ticket_id, getDate);
 
     }
 
-    private void assignAct(final String id_ticket) {
+    private void assignAct(final String id_ticket, final String date) {
         final SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
         final String getToken = _objpref.getString("jwttoken", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
@@ -91,24 +94,26 @@ public class StaffListActivity extends AppCompatActivity {
                                             pDialog.show();
                                             sweetAlertDialog.dismissWithAnimation();
                                             ApiService api = ApiClient.getClient().create(ApiService.class);
-                                            Call<ResponseBody> sendAssignment = api.assign("Bearer " + getToken, datauser.getId(), id_ticket, "2020-11-16");
+                                            Call<ResponseBody> sendAssignment = api.assign("Bearer " + getToken, datauser.getId(), id_ticket, date);
                                             Log.d("value", "" + datauser.getId() + " " + id_ticket);
                                             sendAssignment.enqueue(new Callback<ResponseBody>() {
                                                 @Override
                                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                     if (response.isSuccessful()) {
+                                                        pDialog.dismiss();
                                                         new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.SUCCESS_TYPE)
                                                                 .setTitleText("Success")
                                                                 .setContentText("Assigned to " + datauser.getName())
                                                                 .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                                     @Override
                                                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                                        onBackPressed();
+                                                                        Intent goBack = new Intent(StaffListActivity.this, UserActivity.class);
+                                                                        goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                        startActivity(goBack);
+                                                                        finish();
                                                                     }
                                                                 })
                                                                 .show();
-                                                        pDialog.dismiss();
-
                                                     } else {
                                                         Log.d("RETRO", "" + response.body());
                                                         pDialog.dismiss();

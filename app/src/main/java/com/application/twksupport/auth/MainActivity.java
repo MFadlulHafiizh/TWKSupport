@@ -3,6 +3,7 @@ package com.application.twksupport.auth;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import com.application.twksupport.R;
 import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.RestApi.ApiClient;
+import com.application.twksupport.StaffListActivity;
 import com.application.twksupport.UIUX.BtnProgress;
 import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
@@ -22,6 +24,7 @@ import com.application.twksupport.model.UserManager;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.gson.Gson;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -108,7 +111,12 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 },1000);
                             }else{
-                                Toast.makeText(MainActivity.this, "Email or password incorrect", Toast.LENGTH_SHORT).show();
+                                new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Sign In Failed")
+                                        .setContentText("Your email or password is incorrect")
+                                        .setConfirmText("Try again")
+                                        .setConfirmButtonBackgroundColor(Color.parseColor("#FFFF9800"))
+                                        .show();
                                 handler.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {

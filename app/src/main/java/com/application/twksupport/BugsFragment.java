@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
@@ -26,6 +27,7 @@ import com.application.twksupport.model.ResponseData;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -166,9 +168,9 @@ public class BugsFragment extends Fragment {
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(BugsData databug) {
-                            Intent toStaff = new Intent(getActivity(), StaffListActivity.class);
-                            toStaff.putExtra(StaffListActivity.EXTRA_TICKET, databug);
-                            startActivity(toStaff);
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_BUG, databug);
+                            startActivity(toDetail);
                         }
                     });
                     mAdapter.notifyDataSetChanged();
@@ -183,7 +185,20 @@ public class BugsFragment extends Fragment {
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
                 Log.d("RETRO", "FAILED : respon gagal");
-                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
+                SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
+                dialog.hideConfirmButton();
+                dialog.setTitleText("Oops...");
+                dialog.setContentText("Something went wrong!, Please check your internet connection");
+                dialog.setCancelText("exit");
+                dialog.showCancelButton(true);
+                dialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                            @Override
+                            public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                getActivity().finish();
+                                System.exit(0);
+                            }
+                        });
+                dialog.show();
             }
         });
     }
