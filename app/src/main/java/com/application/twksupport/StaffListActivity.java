@@ -16,6 +16,7 @@ import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.adapter.RvStaffListAdapter;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.CacheData;
+import com.application.twksupport.model.FeatureData;
 import com.application.twksupport.model.StaffResponse;
 import com.application.twksupport.model.UserData;
 
@@ -29,7 +30,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class StaffListActivity extends AppCompatActivity {
-    public static final String EXTRA_TICKET = "extra_ticket";
+    public static final String EXTRA_TICKET_BUG = "extra_ticket_bug";
+    public static final String EXTRA_TICKET_FITUR = "extra_ticket_fitur";
     public static final String EXTRA_DATE = "extra_date";
     private List<UserData> staffList = new ArrayList<>();
     private CacheData cacheData;
@@ -40,17 +42,23 @@ public class StaffListActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_staff_list);
 
-        BugsData getTicket = getIntent().getParcelableExtra(EXTRA_TICKET);
-        String getDate = getIntent().getStringExtra(EXTRA_DATE);
-        String id_ticket = getTicket.getId_ticket();
-        Log.d("ticketvalues", "" + id_ticket);
         rvStaff = findViewById(R.id.rv_staff);
         rvStaff.setLayoutManager(new LinearLayoutManager(this));
-        cacheData = new CacheData(getApplicationContext());
-        cacheData.assignmentSetIdTicket(id_ticket);
-        SharedPreferences assignment = getSharedPreferences("assignment", 0);
-        String ticket_id = assignment.getString("ticket_id", "");
-        assignAct(ticket_id, getDate);
+
+        BugsData getTicketBug = getIntent().getParcelableExtra(EXTRA_TICKET_BUG);
+        FeatureData getTicketFitur = getIntent().getParcelableExtra(EXTRA_TICKET_FITUR);
+        String getDate = getIntent().getStringExtra(EXTRA_DATE);
+        if (getIntent().hasExtra(EXTRA_TICKET_BUG)){
+            String id_ticket = getTicketBug.getId_ticket();
+            Log.d("ticketvalues", "" + id_ticket);
+            assignAct(id_ticket, getDate);
+        }
+        if (getIntent().hasExtra(EXTRA_TICKET_FITUR)){
+            String id_ticket = getTicketFitur.getId_ticket();
+            Log.d("ticketvalues", ""+id_ticket);
+            assignAct(id_ticket, getDate);
+
+        }
 
     }
 
@@ -71,7 +79,6 @@ public class StaffListActivity extends AppCompatActivity {
                         @Override
                         public void onItemClicked(final UserData datauser) {
                             Log.d("userid", "" + datauser.getId());
-                            cacheData.assignmentSetIdStaff(datauser.getId());
                             new SweetAlertDialog(StaffListActivity.this)
                                     .setTitleText("Are you sure?")
                                     .setContentText("Assign this to " + datauser.getName() + " ?")

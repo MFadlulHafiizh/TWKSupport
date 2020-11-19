@@ -13,6 +13,7 @@ public class FeatureData implements Parcelable {
     private String created_at;
     private String time_periodic;
     private String price;
+    private String aproval_stat;
 
     public FeatureData(){
 
@@ -90,6 +91,13 @@ public class FeatureData implements Parcelable {
         this.price = price;
     }
 
+    public String getAproval_stat() {
+        return aproval_stat;
+    }
+
+    public void setAproval_stat(String aproval_stat) {
+        this.aproval_stat = aproval_stat;
+    }
 
     protected FeatureData(Parcel in) {
         apps_name = in.readString();
@@ -101,6 +109,7 @@ public class FeatureData implements Parcelable {
         created_at = in.readString();
         time_periodic = in.readString();
         price = in.readString();
+        aproval_stat = in.readString();
     }
 
     @Override
@@ -119,6 +128,7 @@ public class FeatureData implements Parcelable {
         parcel.writeString(created_at);
         parcel.writeString(time_periodic);
         parcel.writeString(price);
+        parcel.writeString(aproval_stat);
     }
 
     public static final Creator<FeatureData> CREATOR = new Creator<FeatureData>() {

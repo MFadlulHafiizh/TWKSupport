@@ -115,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
                                         .setTitleText("Sign In Failed")
                                         .setContentText("Your email or password is incorrect")
                                         .setConfirmText("Try again")
-                                        .setConfirmButtonBackgroundColor(Color.parseColor("#FFFF9800"))
                                         .show();
                                 handler.postDelayed(new Runnable() {
                                     @Override

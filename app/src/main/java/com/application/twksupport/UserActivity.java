@@ -132,6 +132,10 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    private void pushNotificationRegister(){
+
+    }
+
     private void callUserInformation(){
         SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
         getToken = _objpref.getString("jwttoken", "missing");
@@ -214,9 +218,9 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
                 break;
 
-            case R.id.filter_menu:
+            /*case R.id.filter_menu:
                 userInteraction.showPopupFilter(this);
-                break;
+                break;*/
         }
         return true;
     }

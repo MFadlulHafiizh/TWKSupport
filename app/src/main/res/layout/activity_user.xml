@@ -61,6 +61,14 @@
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_home_bg"
+            app:layout_constraintTop_toTopOf="@id/viewpager"
+            app:layout_constraintBottom_toBottomOf="@id/viewpager"
+            app:layout_constraintLeft_toLeftOf="@id/viewpager"/>
+
         <androidx.viewpager.widget.ViewPager
             android:id="@+id/viewpager"
             android:layout_width="match_parent"

@@ -42,7 +42,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView txtPriority, txtAppname, txtSubject, txtDetail;
+    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle;
     private Button btnAssign;
     private LinearLayout container;
     public static final String EXTRA_BUG = "extra_bug";
@@ -52,8 +52,6 @@ public class DetailActivity extends AppCompatActivity {
     EditText etyear;
     EditText etmonth;
     EditText etday;
-    String sendId;
-    String status;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,36 +60,74 @@ public class DetailActivity extends AppCompatActivity {
         initialize();
 
         final BugsData bugsData = getIntent().getParcelableExtra(EXTRA_BUG);
-        txtPriority.setText(bugsData.getPriority());
-        txtAppname.setText(bugsData.getApps_name());
-        txtSubject.setText(bugsData.getSubject());
-        txtDetail.setText(bugsData.getDetail());
-        sendId = bugsData.getId_ticket();
-        status = bugsData.getStatus();
-        datePicker(etyear, etmonth, etday);
-        if (status.equals("Reported")) {
-            btnAssign.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    final String datePick = etyear.getText().toString() + "-" + etmonth.getText().toString() + "-" + etday.getText().toString();
-                    if (!datePick.equals("--")){
-                        Intent toStafflist = new Intent(DetailActivity.this, StaffListActivity.class);
-                        toStafflist.putExtra(StaffListActivity.EXTRA_TICKET, bugsData);
-                        toStafflist.putExtra(StaffListActivity.EXTRA_DATE, datePick);
-                        startActivity(toStafflist);
+        final FeatureData fiturData = getIntent().getParcelableExtra(EXTRA_FEATURE);
+
+        if (getIntent().hasExtra(EXTRA_BUG)){
+            txtPriority.setText(bugsData.getPriority());
+            txtAppname.setText(bugsData.getApps_name());
+            txtSubject.setText(bugsData.getSubject());
+            txtDetail.setText(bugsData.getDetail());
+            txtTitle.setText("Bug Report");
+            String status = bugsData.getStatus();
+            datePicker(etyear, etmonth, etday);
+            if (status.equals("Reported")) {
+                btnAssign.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String datePick = etyear.getText().toString() + "-" + etmonth.getText().toString() + "-" + etday.getText().toString();
+                        if (!datePick.equals("--")){
+                            Intent toStafflist = new Intent(DetailActivity.this, StaffListActivity.class);
+                            toStafflist.putExtra(StaffListActivity.EXTRA_TICKET_BUG, bugsData);
+                            toStafflist.putExtra(StaffListActivity.EXTRA_DATE, datePick);
+                            startActivity(toStafflist);
+                        }
+                        else{
+                            new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Please input the deadline")
+                                    .setConfirmText("Ok")
+                                    .setConfirmButtonBackgroundColor(Color.parseColor("#FFFF9800"))
+                                    .show();
+                        }
                     }
-                    else{
-                        new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                .setTitleText("Please input the deadline")
-                                .setConfirmText("Ok")
-                                .setConfirmButtonBackgroundColor(Color.parseColor("#FFFF9800"))
-                                .show();
-                    }
-                }
-            });
+                });
+            }
+            else {
+                container.setVisibility(View.INVISIBLE);
+            }
         }
-        else {
-            container.setVisibility(View.INVISIBLE);
+        else if (getIntent().hasExtra(EXTRA_FEATURE)){
+            txtPriority.setText(fiturData.getPriority());
+            txtAppname.setText(fiturData.getApps_name());
+            txtSubject.setText(fiturData.getSubject());
+            txtDetail.setText(fiturData.getDetail());
+            txtTitle.setText("Feature Request");
+            String aprovalStat = fiturData.getAproval_stat();
+            String status = fiturData.getStatus();
+            datePicker(etyear, etmonth, etday);
+            if (status.equals("Requested")){
+                btnAssign.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String datePick = etyear.getText().toString() + "-" + etmonth.getText().toString() + "-" + etday.getText().toString();
+                        if (!datePick.equals("--")){
+                            Intent toStafflist = new Intent(DetailActivity.this, StaffListActivity.class);
+                            toStafflist.putExtra(StaffListActivity.EXTRA_TICKET_FITUR, fiturData);
+                            toStafflist.putExtra(StaffListActivity.EXTRA_DATE, datePick);
+                            startActivity(toStafflist);
+                        }
+                        else{
+                            new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                    .setTitleText("Please input the deadline")
+                                    .setConfirmText("Ok")
+                                    .setConfirmButtonBackgroundColor(Color.parseColor("#FFFF9800"))
+                                    .show();
+                        }
+                    }
+                });
+            }
+            else {
+                container.setVisibility(View.INVISIBLE);
+            }
         }
 
     }
@@ -133,6 +169,7 @@ public class DetailActivity extends AppCompatActivity {
         txtAppname = findViewById(R.id.appnameDetail);
         txtSubject = findViewById(R.id.subjectDetail);
         txtDetail = findViewById(R.id.detail_content);
+        txtTitle = findViewById(R.id.item_type);
         btnAssign = findViewById(R.id.btn_assign);
         etyear = findViewById(R.id.et_year);
         etmonth = findViewById(R.id.et_month);

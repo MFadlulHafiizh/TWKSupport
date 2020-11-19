@@ -16,10 +16,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.RvBugsAdapter;
 import com.application.twksupport.adapter.RvFeatureAdapter;
 import com.application.twksupport.model.BugsData;
@@ -38,6 +40,7 @@ public class FeatureFragment extends Fragment {
     private RecyclerView rvFeature;
     private List<FeatureData> listFeature = new ArrayList<>();
     SwipeRefreshLayout swipeRefreshLayout;
+    private TextView filterbutton;
     private static FeatureFragment instance;
 
     public FeatureFragment() {
@@ -58,6 +61,14 @@ public class FeatureFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_feature, container, false);
         swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
         instance = this;
+        filterbutton = view.findViewById(R.id.filter_fragment);
+        final UserInteraction userInteraction = new UserInteraction();
+        filterbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userInteraction.showPopupFilter(getActivity());
+            }
+        });
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getEmailUser.getString("role", "not Authenticated");
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -166,7 +177,9 @@ public class FeatureFragment extends Fragment {
                     mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(FeatureData datafeature) {
-                            Toast.makeText(getActivity(), ""+datafeature.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_FEATURE, datafeature);
+                            startActivity(toDetail);
                         }
                     });
                     mAdapter.notifyDataSetChanged();
@@ -176,7 +189,6 @@ public class FeatureFragment extends Fragment {
                     Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
                     swipeRefreshLayout.setRefreshing(false);
                 }
-
             }
 
             @Override

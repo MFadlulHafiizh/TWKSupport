@@ -2,6 +2,7 @@ package com.application.twksupport;
 
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -16,10 +17,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.RvBugsAdapter;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.ResponseData;
@@ -37,6 +40,7 @@ public class BugsFragment extends Fragment {
     private RecyclerView rvBugs;
     private List<BugsData> listBugs = new ArrayList<>();
     private static BugsFragment instance;
+    private TextView filterbutton;
     SwipeRefreshLayout swipeRefreshLayout;
 
 
@@ -51,6 +55,7 @@ public class BugsFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -61,6 +66,15 @@ public class BugsFragment extends Fragment {
 
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
         swipeRefreshLayout = view.findViewById(R.id.refresh_bug);
+        filterbutton = view.findViewById(R.id.filter_fragment);
+        final UserInteraction userInteraction = new UserInteraction();
+        filterbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userInteraction.showPopupFilter(getActivity());
+            }
+        });
+
         SharedPreferences getRoleUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getRoleUser.getString("role", "not Authenticated");
         Log.d("role", ""+ role);
@@ -186,12 +200,10 @@ public class BugsFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
                 Log.d("RETRO", "FAILED : respon gagal");
                 SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
-                dialog.hideConfirmButton();
                 dialog.setTitleText("Oops...");
                 dialog.setContentText("Something went wrong!, Please check your internet connection");
-                dialog.setCancelText("exit");
-                dialog.showCancelButton(true);
-                dialog.setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                dialog.setConfirmText("exit");
+                dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
                                 getActivity().finish();

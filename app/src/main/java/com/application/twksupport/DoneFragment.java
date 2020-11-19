@@ -15,10 +15,12 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.RvBugsAdapter;
 import com.application.twksupport.adapter.RvDoneAdapter;
 import com.application.twksupport.model.BugsData;
@@ -36,6 +38,7 @@ public class DoneFragment extends Fragment {
     View view;
     private RecyclerView rvDone;
     private List<DoneData> listDone = new ArrayList<>();
+    private TextView filterbutton;
     SwipeRefreshLayout swipeRefreshLayout;
 
     public DoneFragment() {
@@ -53,6 +56,14 @@ public class DoneFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_done, container, false);
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getEmailUser.getString("role", "not Authenticated");
+        filterbutton = view.findViewById(R.id.filter_fragment);
+        final UserInteraction userInteraction = new UserInteraction();
+        filterbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                userInteraction.showPopupFilter(getActivity());
+            }
+        });
         rvDone = (RecyclerView) view.findViewById(R.id.rv_done);
         swipeRefreshLayout = view.findViewById(R.id.refresh_hasDone);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
@@ -113,7 +124,7 @@ public class DoneFragment extends Fragment {
         SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
         String getToken = _objpref.getString("jwttoken", "");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
-        Log.d("donefragment", ""+idCompany);
+        Log.d("donefragment", "" + idCompany);
         Call<ResponseData> getData = api.getUserDoneData(idCompany, "Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
