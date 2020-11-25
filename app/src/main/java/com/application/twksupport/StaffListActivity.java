@@ -108,10 +108,11 @@ public class StaffListActivity extends AppCompatActivity {
                                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                                                     if (response.isSuccessful()) {
                                                         pDialog.dismiss();
-                                                        new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.SUCCESS_TYPE)
-                                                                .setTitleText("Success")
-                                                                .setContentText("Assigned to " + datauser.getName())
-                                                                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        SweetAlertDialog sweet = new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+                                                        sweet.setTitleText("Success");
+                                                        sweet.setContentText("Assigned to " + datauser.getName());
+                                                        sweet.setCanceledOnTouchOutside(false);
+                                                        sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                                                     @Override
                                                                     public void onClick(SweetAlertDialog sweetAlertDialog) {
                                                                         Intent goBack = new Intent(StaffListActivity.this, UserActivity.class);
@@ -119,8 +120,8 @@ public class StaffListActivity extends AppCompatActivity {
                                                                         startActivity(goBack);
                                                                         finish();
                                                                     }
-                                                                })
-                                                                .show();
+                                                                });
+                                                        sweet.show();
                                                     } else {
                                                         Log.d("RETRO", "" + response.body());
                                                         pDialog.dismiss();

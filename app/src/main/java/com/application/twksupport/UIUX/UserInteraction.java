@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,7 +30,9 @@ import com.application.twksupport.FeatureFragment;
 import com.application.twksupport.R;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.StaffListActivity;
 import com.application.twksupport.UserActivity;
+import com.application.twksupport.auth.MainActivity;
 import com.application.twksupport.model.AppsUserData;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.UserAppManager;
@@ -40,6 +43,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
 import okhttp3.ResponseBody;
@@ -52,7 +56,7 @@ public class UserInteraction extends AppCompatActivity {
     TextView btmSheetTitle;
     private List<AppsUserData> listAppData = new ArrayList<>();
 
-    public void showPopupFilter(Context appContext){
+    public void showPopupFilter(Context appContext) {
         Spinner spinPriorityFiler, spinAppnameFilter;
         Button reset, apply;
         ImageButton close;
@@ -96,13 +100,13 @@ public class UserInteraction extends AppCompatActivity {
         }
     }
 
-    public void spinnerPriority(Context context, Spinner spinner){
+    public void spinnerPriority(Context context, Spinner spinner) {
         String priority[] = {"Low", "Middle", "High"};
         ArrayAdapter<String> spinner1Adapter = new ArrayAdapter<String>(context, R.layout.spinner_style, priority);
         spinner.setAdapter(spinner1Adapter);
     }
 
-    public void showBottomSheet(final Context appContext, final FloatingActionsMenu fabMenu, final BlurView blurView,  LayoutInflater yourLayout, String title, final String type) {
+    public void showBottomSheet(final Context appContext, final FloatingActionsMenu fabMenu, final BlurView blurView, LayoutInflater yourLayout, String title, final String type) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(appContext, R.style.AppBottomSheetDialogTheme);
         View content = yourLayout.inflate(R.layout.bottom_sheet, null);
         final Spinner spinPriority = (Spinner) content.findViewById(R.id.prioritySpinner);
@@ -114,7 +118,7 @@ public class UserInteraction extends AppCompatActivity {
         final EditText etDetails = bottomSheetDialog.findViewById(R.id.edtDetails);
         btmSheetTitle = bottomSheetDialog.findViewById(R.id.request_type);
         btmSheetTitle.setText(title);
-        switch (type){
+        switch (type) {
             case "report":
                 btnReportRequest.setText("Report");
                 break;
@@ -145,14 +149,14 @@ public class UserInteraction extends AppCompatActivity {
         final String getToken = _objpref.getString("jwttoken", "missing");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getApps = api.getUserApps(idCompany, "Bearer "+getToken);
+        Call<ResponseData> getApps = api.getUserApps(idCompany, "Bearer " + getToken);
         final String[] priority = new String[1];
         bottomSheetDialog.show();
         getApps.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
-                    Log.d("BottomSheet", ""+response.body().getUserApp());
+                if (response.isSuccessful()) {
+                    Log.d("BottomSheet", "" + response.body().getUserApp());
                     listAppData = response.body().getUserApp();
 
                     //SpinnerPriority
@@ -162,9 +166,10 @@ public class UserInteraction extends AppCompatActivity {
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                             String priorityValue = adapterView.getItemAtPosition(i).toString();
                             priority[0] = priorityValue;
-                            Log.d("value", ""+ priority[0]);
+                            Log.d("value", "" + priority[0]);
                             userAppManager.setPriority(priority[0]);
                         }
+
                         @Override
                         public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -179,7 +184,7 @@ public class UserInteraction extends AppCompatActivity {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                             int id_apps = listAppData.get(position).getId_apps();
-                            Log.d("appsselect", "id : "+id_apps);
+                            Log.d("appsselect", "id : " + id_apps);
                             userAppManager.setIdApps(id_apps);
                         }
 
@@ -188,18 +193,17 @@ public class UserInteraction extends AppCompatActivity {
 
                         }
                     });
-                    Log.d("BottomSheet", ""+listAppData);
+                    Log.d("BottomSheet", "" + listAppData);
 
-                }
-                else {
-                    Log.d("BottomSheet", ""+response.body());
+                } else {
+                    Log.d("BottomSheet", "" + response.body());
                     Toast.makeText(appContext, "Error 401, Unauthorized", Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-                Log.d("BottomSheet", ""+t.getMessage());
+                Log.d("BottomSheet", "" + t.getMessage());
             }
         });
 
@@ -210,20 +214,39 @@ public class UserInteraction extends AppCompatActivity {
                     SharedPreferences getPriorityAndId = appContext.getSharedPreferences("UserAppManager", 0);
                     String prio = getPriorityAndId.getString("priority", "");
                     int id = getPriorityAndId.getInt("id_apps", 0);
-                    Log.d("input", ""+id);
-                    Log.d("input", ""+prio);
-                    switch (type){
+                    Log.d("input", "" + id);
+                    Log.d("input", "" + prio);
+                    final SweetAlertDialog pDialog = new SweetAlertDialog(appContext, SweetAlertDialog.PROGRESS_TYPE);
+                    pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                    pDialog.setTitleText("Please wait...");
+                    pDialog.setCancelable(false);
+                    pDialog.show();
+                    switch (type) {
                         case "report":
                             ApiService apiBug = ApiClient.getClient().create(ApiService.class);
-                            Call<ResponseBody> report = apiBug.reportBug(id, type, prio, etSubject.getText().toString(), etDetails.getText().toString(), "Reported", "Bearer "+getToken);
+                            Call<ResponseBody> report = apiBug.reportBug(id, type, prio, etSubject.getText().toString(), etDetails.getText().toString(), "Reported", "Bearer " + getToken);
                             report.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    if (response.isSuccessful()){
+                                    if (response.isSuccessful()) {
+                                        pDialog.dismiss();
                                         try {
                                             String ResponseJson = response.body().string();
-                                            Log.d("reportBug", ""+ResponseJson);
-                                            AlertDialog.Builder alertBuild = new AlertDialog.Builder(view.getContext());
+                                            Log.d("reportBug", "" + ResponseJson);
+                                            SweetAlertDialog sweet = new SweetAlertDialog(appContext, SweetAlertDialog.SUCCESS_TYPE);
+                                            sweet.setTitleText("Your " + type + " has sended");
+                                            sweet.setContentText("Wait for next response");
+                                            sweet.setCanceledOnTouchOutside(false);
+                                            sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    sweetAlertDialog.dismiss();
+                                                    BugsFragment.getInstance().addListDataBugsUser();
+                                                    bottomSheetDialog.dismiss();
+                                                }
+                                            });
+                                            sweet.show();
+                                           /* AlertDialog.Builder alertBuild = new AlertDialog.Builder(view.getContext());
                                             alertBuild.setTitle("Your "+ type + " has sended");
                                             alertBuild.setMessage("Wait for next response");
                                             alertBuild.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
@@ -235,38 +258,58 @@ public class UserInteraction extends AppCompatActivity {
                                                 }
                                             });
                                             AlertDialog alertDialog = alertBuild.create();
-                                            alertDialog.show();
-                                        }
-                                        catch (Exception e){
+                                            alertDialog.show();*/
+                                        } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                    }
-                                    else {
-                                        Toast.makeText(appContext, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        Log.d("reportBug", "" + response.body());
+                                        new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
+                                                .setTitleText("Oppss")
+                                                .setContentText("Server error, please try again later")
+                                                .show();
                                     }
                                 }
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(appContext, "Error"+t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    pDialog.dismiss();
+                                    new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Oppss")
+                                            .setContentText("Can't connect to server, please check your internet connection")
+                                            .show();
                                 }
                             });
                             break;
 
                         case "request":
                             ApiService apiFeature = ApiClient.getClient().create(ApiService.class);
-                            Call<ResponseBody> request = apiFeature.requestFeature(id, type,prio, etSubject.getText().toString(), etDetails.getText().toString(),"Requested", "Bearer "+getToken);
+                            Call<ResponseBody> request = apiFeature.requestFeature(id, type, prio, etSubject.getText().toString(), etDetails.getText().toString(), "Requested", "Bearer " + getToken);
                             request.enqueue(new Callback<ResponseBody>() {
                                 @Override
                                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                    if (response.isSuccessful()){
+                                    if (response.isSuccessful()) {
+                                        pDialog.dismiss();
                                         try {
                                             String responJSON = response.body().string();
-                                            Log.d("reportBug", ""+responJSON);
-                                            AlertDialog.Builder alertBuild = new AlertDialog.Builder(view.getContext());
+                                            Log.d("requestFeature", "" + responJSON);
+                                            SweetAlertDialog sweet = new SweetAlertDialog(appContext, SweetAlertDialog.SUCCESS_TYPE);
+                                            sweet.setTitleText("Your " + type + " has sended");
+                                            sweet.setContentText("Wait for next response");
+                                            sweet.setCanceledOnTouchOutside(false);
+                                            sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                @Override
+                                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                    sweetAlertDialog.dismiss();
+                                                    FeatureFragment.getInstance().addListDataFeatureUser();
+                                                    bottomSheetDialog.dismiss();
+                                                }
+                                            });
+                                            sweet.show();
+                                            /*AlertDialog.Builder alertBuild = new AlertDialog.Builder(view.getContext());
                                             alertBuild.setTitle("Your "+ type + " has sended");
                                             alertBuild.setMessage("Wait for next response");
-                                            alertBuild.setNegativeButton("Ok", new DialogInterface.OnClickListener() {
+                                            alertBuild.setNegativeButton("Ok", new DialogInterface.OnClickListener(                        ) {
                                                 @Override
                                                 public void onClick(DialogInterface dialogInterface, int i) {
                                                     dialogInterface.dismiss();
@@ -276,32 +319,40 @@ public class UserInteraction extends AppCompatActivity {
                                             });
                                             AlertDialog alertDialog = alertBuild.create();
                                             alertDialog.setCanceledOnTouchOutside(false);
-                                            alertDialog.show();
-                                        }
-                                        catch (Exception e){
+                                            alertDialog.show();*/
+                                        } catch (Exception e) {
                                             e.printStackTrace();
                                         }
-                                    }
-                                    else {
-                                        Toast.makeText(appContext, "Unauthorized", Toast.LENGTH_SHORT).show();
+                                    } else {
+                                        new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
+                                                .setTitleText("Oppss")
+                                                .setContentText("Server error, please try again later")
+                                                .show();
                                     }
                                 }
+
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(appContext, "Error"+t.getMessage(), Toast.LENGTH_SHORT).show();
+                                    pDialog.dismiss();
+                                    new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
+                                            .setTitleText("Oppss")
+                                            .setContentText("Can't connect to server, please check your internet connection")
+                                            .show();
                                 }
                             });
                             break;
                     }
                 } else {
-                    Toast.makeText(appContext, "Please input data correctly", Toast.LENGTH_SHORT).show();
+                    new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
+                            .setTitleText("Please input data correctly")
+                            .show();
                 }
             }
         });
 
     }
 
-    public void showDetailBottomSheet(Context appContext, LayoutInflater layoutInflater){
+    public void showDetailBottomSheet(Context appContext, LayoutInflater layoutInflater) {
         final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(appContext, R.style.AppBottomSheetDialogTheme);
         View content = layoutInflater.inflate(R.layout.bottom_sheet, null);
     }

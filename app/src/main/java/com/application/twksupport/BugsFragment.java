@@ -143,6 +143,7 @@ public class BugsFragment extends Fragment {
                     listBugs = response.body().getBugData();
                     RvBugsAdapter mAdapter = new RvBugsAdapter(listBugs, getContext());
                     rvBugs.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
                     rvBugs.smoothScrollToPosition(0);
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {

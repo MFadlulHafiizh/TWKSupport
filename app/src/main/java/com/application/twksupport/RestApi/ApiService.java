@@ -11,7 +11,9 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
@@ -64,6 +66,14 @@ public interface ApiService {
                               @Field("id_user") String iduser,
                               @Field("id_ticket") String idticket,
                               @Field("dead_line") String date);
+
+    @FormUrlEncoded
+    @PATCH("admin/make-agreement/{id_ticket}")
+    Call<ResponseBody> makeAgreement(@Header("Authorization") String adminToken,
+                                     @Path("id_ticket") String id_ticket,
+                                     @Field("price") String price,
+                                     @Field("time_periodic") String time_periodic,
+                                     @Field("status") String status);
 
     @GET("user/getapp")
     Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);

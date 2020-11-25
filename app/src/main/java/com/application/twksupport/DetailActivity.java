@@ -17,6 +17,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
@@ -43,8 +44,9 @@ import retrofit2.Response;
 
 public class DetailActivity extends AppCompatActivity {
     private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle;
-    private Button btnAssign;
-    private LinearLayout container;
+    private Button btnAssign, btnAgreement;
+    private EditText etPrice;
+    private LinearLayout container, container_price;
     public static final String EXTRA_BUG = "extra_bug";
     public static final String EXTRA_FEATURE = "extra_feature";
     DatePickerDialog.OnDateSetListener setListener;
@@ -61,8 +63,12 @@ public class DetailActivity extends AppCompatActivity {
 
         final BugsData bugsData = getIntent().getParcelableExtra(EXTRA_BUG);
         final FeatureData fiturData = getIntent().getParcelableExtra(EXTRA_FEATURE);
+        final SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
+        final String getToken = _objpref.getString("jwttoken", "");
 
         if (getIntent().hasExtra(EXTRA_BUG)){
+            container_price.setVisibility(View.GONE);
+            btnAgreement.setVisibility(View.GONE);
             txtPriority.setText(bugsData.getPriority());
             txtAppname.setText(bugsData.getApps_name());
             txtSubject.setText(bugsData.getSubject());
@@ -104,7 +110,44 @@ public class DetailActivity extends AppCompatActivity {
             String aprovalStat = fiturData.getAproval_stat();
             String status = fiturData.getStatus();
             datePicker(etyear, etmonth, etday);
-            if (status.equals("Requested")){
+            if(status.equals("Requested") && aprovalStat == null){
+                btnAssign.setVisibility(View.GONE);
+                btnAgreement.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        final String datePick = etyear.getText().toString() + "-" + etmonth.getText().toString() + "-" + etday.getText().toString();
+                        if (!datePick.equals("--")){
+                            ApiService api = ApiClient.getClient().create(ApiService.class);
+                            Call<ResponseBody> makeAgreement = api.makeAgreement("Bearer "+getToken,fiturData.getId_ticket(), etPrice.getText().toString(), datePick, "Need Agreement");
+                            makeAgreement.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    if (response.isSuccessful()){
+                                        try {
+                                            String JSONResponse = response.body().string();
+                                            Toast.makeText(DetailActivity.this, ""+JSONResponse, Toast.LENGTH_SHORT).show();
+                                        }
+                                        catch (Exception e){
+                                            e.printStackTrace();
+                                        }
+                                    }
+                                    else{
+                                        Toast.makeText(DetailActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                        Log.d("401", "result : "+response.body());
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Log.d("detailactivity", ""+t.getMessage());
+                                }
+                            });
+                        }
+                    }
+                });
+            }
+            else if (status.equals("Requested") && aprovalStat != null){
+                btnAgreement.setVisibility(View.GONE);
                 btnAssign.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -176,5 +219,8 @@ public class DetailActivity extends AppCompatActivity {
         etday = findViewById(R.id.et_day);
         btnOpenDate = findViewById(R.id.btn_openDate);
         container = findViewById(R.id.containerAssign);
+        container_price = findViewById(R.id.container_price);
+        btnAgreement = findViewById(R.id.btn_agreement);
+        etPrice = findViewById(R.id.price);
     }
 }

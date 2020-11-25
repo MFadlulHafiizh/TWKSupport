@@ -72,6 +72,8 @@
         android:fontFamily="@font/comfortaa_regular"
         android:hint="Email"
         android:paddingStart="16dp"
+        android:maxLines="1"
+        android:inputType="textEmailAddress"
         android:textSize="14sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -98,9 +100,10 @@
             android:drawableStart="@drawable/ic_vpn_key"
             android:drawablePadding="12dp"
             android:fontFamily="@font/comfortaa_regular"
+            android:maxLines="1"
             android:hint="Password"
             android:paddingStart="16dp"
-            android:password="true"
+            android:inputType="textPassword"
             android:textSize="14sp" />
 
     </com.google.android.material.textfield.TextInputLayout>

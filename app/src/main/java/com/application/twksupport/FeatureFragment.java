@@ -143,6 +143,7 @@ public class FeatureFragment extends Fragment {
                         }
                     });
                     mAdapter.notifyDataSetChanged();
+                    rvFeature.smoothScrollToPosition(0);
                     swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
