@@ -139,7 +139,9 @@ public class FeatureFragment extends Fragment {
                     mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(FeatureData datafeature) {
-                            Toast.makeText(getActivity(), ""+datafeature.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_FEATURE, datafeature);
+                            startActivity(toDetail);
                         }
                     });
                     mAdapter.notifyDataSetChanged();

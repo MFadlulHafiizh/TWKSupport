@@ -149,7 +149,9 @@ public class BugsFragment extends Fragment {
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(BugsData databug) {
-                            Toast.makeText(getActivity(), ""+databug.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_BUG, databug);
+                            startActivity(toDetail);
                         }
                     });
                 }
@@ -162,7 +164,18 @@ public class BugsFragment extends Fragment {
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
                 Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
-                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
+                SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
+                dialog.setTitleText("Oops...");
+                dialog.setContentText("Something went wrong!, Please check your internet connection");
+                dialog.setConfirmText("exit");
+                dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        getActivity().finish();
+                        System.exit(0);
+                    }
+                });
+                dialog.show();
             }
         });
     }
