@@ -3,12 +3,12 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/blackCharcoal"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    tools:context=".TwkStaffActivity">
 
     <include
-        layout="@layout/toolbar" />
+        layout="@layout/toolbar"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/userActivity"
@@ -17,7 +17,6 @@
         android:background="@color/blackCharcoal"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior"
         tools:context=".UserActivity">
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/tabss"
         android:layout_width="match_parent"
@@ -25,10 +24,10 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:gravity="center">
+        android:paddingLeft="16dp">
 
         <com.google.android.material.tabs.TabLayout
-            android:id="@+id/tabs"
+            android:id="@+id/staff_tabs"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:transitionName="tabContent"
@@ -47,17 +46,13 @@
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Bugs" />
+                android:text="To do" />
 
             <com.google.android.material.tabs.TabItem
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Feature" />
+                android:text="Has done" />
 
-            <com.google.android.material.tabs.TabItem
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Done" />
         </com.google.android.material.tabs.TabLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -65,50 +60,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_home_bg"
-            app:layout_constraintTop_toTopOf="@id/viewpager"
-            app:layout_constraintBottom_toBottomOf="@id/viewpager"
-            app:layout_constraintLeft_toLeftOf="@id/viewpager"/>
+            app:layout_constraintTop_toTopOf="@id/viewpagerStaff"
+            app:layout_constraintBottom_toBottomOf="@id/viewpagerStaff"
+            app:layout_constraintLeft_toLeftOf="@id/viewpagerStaff"/>
 
         <androidx.viewpager.widget.ViewPager
-            android:id="@+id/viewpager"
+            android:id="@+id/viewpagerStaff"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             app:layout_constraintTop_toBottomOf="@+id/tabss"
             app:layout_constraintBottom_toBottomOf="parent"/>
-
-        <eightbitlab.com.blurview.BlurView
-            android:id="@+id/blur_bg"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-
-        <com.getbase.floatingactionbutton.FloatingActionsMenu
-            android:id="@+id/fab_menu"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            app:fab_addButtonColorNormal="@color/RedDefault"
-            app:fab_addButtonColorPressed="@android:color/holo_red_light"
-            app:fab_labelStyle="@style/customFab"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent">
-
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_requestFeature"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/defaultWhite"
-                app:fab_icon="@drawable/featureicon"
-                app:fab_size="mini"
-                app:fab_title="Request Feature" />
-
-            <com.getbase.floatingactionbutton.FloatingActionButton
-                android:id="@+id/fab_bugReport"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:fab_colorNormal="@color/defaultWhite"
-                app:fab_icon="@drawable/ic_bug"
-                app:fab_size="mini"
-                app:fab_title="Report Bugs" />
-        </com.getbase.floatingactionbutton.FloatingActionsMenu>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

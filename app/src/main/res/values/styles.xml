@@ -34,14 +34,14 @@
     </style>
     
     <style name="expandedBarTextStyle" parent="AppTheme">
-        <item name="android:textSize">14sp</item>
+        <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">@font/comfortaa_bold</item>
-        <item name="android:textColor">@color/textGrey</item>
+        <item name="android:textColor">@color/blackCharcoal</item>
     </style>
 
     <style name="collapsedBarTextStyle" parent="AppTheme">
         <item name="android:textSize">14sp</item>
-        <item name="android:textColor">@color/defaultWhite</item>
+        <item name="android:textColor">@color/blackCharcoal</item>
         <item name="android:fontFamily">@font/comfortaa_bold</item>
     </style>
 

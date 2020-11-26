@@ -188,7 +188,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         viewPager = findViewById(R.id.viewpager);
         floatMenu = findViewById(R.id.fab_menu);
         blurView = findViewById(R.id.blur_bg);
-        tool = findViewById(R.id.toolbarnotification);
+        tool = findViewById(R.id.toolbar);
         appbar = (AppBarLayout) tool.getParent();
         userImage = appbar.findViewById(R.id.account_pict);
         userName = appbar.findViewById(R.id.userName);

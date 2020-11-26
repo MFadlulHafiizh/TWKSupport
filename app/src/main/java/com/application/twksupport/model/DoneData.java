@@ -1,13 +1,40 @@
 package com.application.twksupport.model;
 
-public class DoneData {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+public class DoneData implements Parcelable {
     private String id_ticket;
+    private String type;
     private String apps_name;
     private String priority;
     private String subject;
     private String detail;
     private String status;
     private String created_at;
+
+    protected DoneData(Parcel in) {
+        id_ticket = in.readString();
+        type = in.readString();
+        apps_name = in.readString();
+        priority = in.readString();
+        subject = in.readString();
+        detail = in.readString();
+        status = in.readString();
+        created_at = in.readString();
+    }
+
+    public static final Creator<DoneData> CREATOR = new Creator<DoneData>() {
+        @Override
+        public DoneData createFromParcel(Parcel in) {
+            return new DoneData(in);
+        }
+
+        @Override
+        public DoneData[] newArray(int size) {
+            return new DoneData[size];
+        }
+    };
 
     public String getApps_name() {
         return apps_name;
@@ -19,6 +46,14 @@ public class DoneData {
 
     public void setId_ticket(String id_ticket) {
         this.id_ticket = id_ticket;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public void setApps_name(String apps_name) {
@@ -63,5 +98,22 @@ public class DoneData {
 
     public void setCreated_at(String created_at) {
         this.created_at = created_at;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(id_ticket);
+        dest.writeString(type);
+        dest.writeString(apps_name);
+        dest.writeString(priority);
+        dest.writeString(subject);
+        dest.writeString(detail);
+        dest.writeString(status);
+        dest.writeString(created_at);
     }
 }

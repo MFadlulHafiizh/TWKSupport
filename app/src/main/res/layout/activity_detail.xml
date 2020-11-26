@@ -17,6 +17,11 @@
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            app:expandedTitleTextAppearance="@style/expandedBarTextStyle"
+            app:collapsedTitleTextAppearance="@style/collapsedBarTextStyle"
+            app:contentScrim="@color/defaultWhite"
+            app:expandedTitleMarginTop="109dp"
+            app:expandedTitleGravity="center_horizontal"
             android:background="@color/defaultWhite"
             app:layout_scrollFlags="scroll|snap|exitUntilCollapsed">
 
@@ -34,19 +39,10 @@
                     android:src="@drawable/logo" />
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="8dp"
-                    android:fontFamily="@font/comfortaa_bold"
-                    android:text="TWK SUPPORT"
-                    android:textColor="@color/blackCharcoal"
-                    android:textSize="18sp" />
-
-                <TextView
                     android:id="@+id/item_type"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="52dp"
                     android:layout_marginBottom="24dp"
                     android:fontFamily="@font/comfortaa_bold"
                     tools:text="Bug Report"
@@ -54,6 +50,13 @@
                     android:textSize="14sp" />
 
             </LinearLayout>
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/tlbar_detail"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/defaultWhite"
+                app:title="TWK SUPPORT"/>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
     </com.google.android.material.appbar.AppBarLayout>

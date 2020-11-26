@@ -2,19 +2,13 @@ package com.application.twksupport;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
-import android.app.ActivityOptions;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Pair;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.appcompat.widget.Toolbar;
-
 import com.application.twksupport.model.UserData;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -45,7 +39,7 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     protected void initialize(){
-        toolbar = findViewById(R.id.toolbarnotification);
+        toolbar = findViewById(R.id.toolbar);
         appBarLayout = (AppBarLayout) toolbar.getParent();
         accountImage = appBarLayout.findViewById(R.id.account_pict);
         userName = appBarLayout.findViewById(R.id.userName);

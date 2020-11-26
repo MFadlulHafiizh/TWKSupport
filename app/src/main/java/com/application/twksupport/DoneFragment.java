@@ -1,6 +1,7 @@
 package com.application.twksupport;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
@@ -138,7 +139,9 @@ public class DoneFragment extends Fragment {
                     mAdapter.setClick(new RvDoneAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(DoneData datadone) {
-                            Toast.makeText(getActivity(), "" + datadone.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_DONE, datadone);
+                            startActivity(toDetail);
                         }
                     });
                     mAdapter.notifyDataSetChanged();

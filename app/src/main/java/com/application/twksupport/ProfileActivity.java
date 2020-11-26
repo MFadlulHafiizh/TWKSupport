@@ -61,6 +61,7 @@ public class ProfileActivity extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(ProfileActivity.this, "Unkonwn Error, please try again", Toast.LENGTH_SHORT).show();
+                    logoutPreferences.edit().remove("jwttoken").commit();
                     Intent login = new Intent(getApplicationContext(), MainActivity.class);
                     login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(login);

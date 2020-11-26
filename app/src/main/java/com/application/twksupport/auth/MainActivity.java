@@ -16,6 +16,7 @@ import com.application.twksupport.R;
 import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.StaffListActivity;
+import com.application.twksupport.TwkStaffActivity;
 import com.application.twksupport.UIUX.BtnProgress;
 import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
@@ -99,17 +100,27 @@ public class MainActivity extends AppCompatActivity {
                                 userInformation.addUserInformation(objResp.getUser().getId(), objResp.getUser().getId_perusahaan(),objResp.getUser().getPhoto(), objResp.getUser().getName(), objResp.getUser().getEmail(), objResp.getUser().getRole(), objResp.getUser().getFcm_token(), objResp.getUser().getNama_perusahaan());
                                 Log.d("nama_perusahaan", ""+objResp.getUser().getNama_perusahaan());
                                 sessionManager.createSession(objResp.getToken());
+                                String role = objResp.getUser().getRole();
                                 Log.d(TAG, ResponseJson);
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        btnProgress.buttonFinished();
-                                        Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
-                                        startActivity(toUser);
-                                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                        finish();
-                                    }
-                                },1000);
+                                if (role.equals("twk-head") || role.equals("client-head") || role.equals("client-staff")){
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            btnProgress.buttonFinished();
+                                            Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
+                                            startActivity(toUser);
+                                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                            finish();
+                                        }
+                                    },500);
+                                }else {
+                                    btnProgress.buttonFinished();
+                                    Intent toStaff = new Intent(getApplicationContext(), TwkStaffActivity.class);
+                                    startActivity(toStaff);
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    finish();
+                                }
+
                             }else{
                                 new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
                                         .setTitleText("Sign In Failed")

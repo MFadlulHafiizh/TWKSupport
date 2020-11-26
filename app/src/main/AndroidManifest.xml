@@ -14,7 +14,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".StaffListActivity"></activity>
+        <activity android:name=".TwkStaffActivity"></activity>
+        <activity android:name=".StaffListActivity" />
 
         <service android:name=".notification.NotifFirebase">
             <intent-filter>

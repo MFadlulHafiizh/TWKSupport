@@ -12,6 +12,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.application.twksupport.R;
+import com.application.twksupport.TwkStaffActivity;
 import com.application.twksupport.UserActivity;
 
 public class SplashActivity extends AppCompatActivity {
@@ -53,11 +54,21 @@ public class SplashActivity extends AppCompatActivity {
 
     private void actUserLogin(){
         SharedPreferences _objpref=getSharedPreferences("JWTTOKEN", 0);
+        SharedPreferences getRole = getSharedPreferences("userInformation", 0);
+        String role = getRole.getString("role", "");
         if (_objpref.getString("jwttoken", "") != ""){
             Log.d("Splashauth", ""+_objpref.getString("jwttoken", ""));
-            Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
-            startActivity(toUser);
-            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            Log.d("Splashauth", ""+role);
+            if (role.equals("twk-head") || role.equals("client-head") || role.equals("client-staff")) {
+                Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
+                startActivity(toUser);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }else {
+                Intent toStaff = new Intent(getApplicationContext(), TwkStaffActivity.class);
+                startActivity(toStaff);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+            }
+
         }
         else {
             Intent login = new Intent(SplashActivity.this, MainActivity.class);

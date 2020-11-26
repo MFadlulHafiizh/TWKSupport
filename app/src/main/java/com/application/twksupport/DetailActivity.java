@@ -1,5 +1,6 @@
 package com.application.twksupport;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -8,6 +9,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
@@ -16,9 +18,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.appcompat.widget.Toolbar;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.model.BugsData;
+import com.application.twksupport.model.DoneData;
 import com.application.twksupport.model.FeatureData;
 import java.util.Calendar;
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -26,17 +30,18 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
 import static com.application.twksupport.R.id.client_ageedisaree;
-import static com.application.twksupport.R.id.containerAssign;
+import static com.application.twksupport.R.id.tlbar_detail;
 
 public class DetailActivity extends AppCompatActivity {
     private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic;
     private Button btnAssign, btnAgreement;
     private EditText etPrice;
+    private Toolbar det_toolbar;
     private LinearLayout container, container_price, containerAdminAct, clientAgreeDisagree;
     public static final String EXTRA_BUG = "extra_bug";
     public static final String EXTRA_FEATURE = "extra_feature";
+    public static final String EXTRA_DONE = "extra_done";
     DatePickerDialog.OnDateSetListener setListener;
     ImageButton btnOpenDate;
     EditText etyear;
@@ -49,8 +54,13 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         initialize();
 
+        setSupportActionBar(det_toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         final BugsData bugsData = getIntent().getParcelableExtra(EXTRA_BUG);
         final FeatureData fiturData = getIntent().getParcelableExtra(EXTRA_FEATURE);
+        final DoneData doneData = getIntent().getParcelableExtra(EXTRA_DONE);
         final SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
         final SharedPreferences role = getSharedPreferences("userInformation", 0);
         final String getToken = _objpref.getString("jwttoken", "");
@@ -166,11 +176,13 @@ public class DetailActivity extends AppCompatActivity {
                         container.setVisibility(View.INVISIBLE);
                     }
                 }
+                else {
+                    setDetailDone(doneData);
+                }
                 break;
 
             case "client-head":
                 container_price.setVisibility(View.GONE);
-
                 if (getIntent().hasExtra(EXTRA_BUG)){
                     container.setVisibility(View.GONE);
                     txtPriority.setText(bugsData.getPriority());
@@ -196,9 +208,21 @@ public class DetailActivity extends AppCompatActivity {
                         container.setVisibility(View.GONE);
                     }
                 }
+                else {
+                    setDetailDone(doneData);
+                }
                 break;
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            onBackPressed();
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        }
+        return true;
     }
 
     private void datePicker(final EditText dateYear, EditText dateMonth, EditText dateDay) {
@@ -233,6 +257,24 @@ public class DetailActivity extends AppCompatActivity {
 
     }
 
+    private void setDetailDone(DoneData doneData){
+        container.setVisibility(View.GONE);
+        txtPriority.setText(doneData.getPriority());
+        txtAppname.setText(doneData.getApps_name());
+        txtSubject.setText(doneData.getSubject());
+        txtDetail.setText(doneData.getDetail());
+        String getType = doneData.getType();
+        switch (getType){
+            case "Report":
+                txtTitle.setText("Bug Report");
+                break;
+
+            case "Request":
+                txtTitle.setText("Feature Request");
+                break;
+        }
+    }
+
     private void initialize() {
         txtPriority = findViewById(R.id.priorityDetail);
         txtAppname = findViewById(R.id.appnameDetail);
@@ -251,5 +293,7 @@ public class DetailActivity extends AppCompatActivity {
         clientAgreeDisagree = findViewById(client_ageedisaree);
         txtDeadlineOrTimePeriodic = findViewById(R.id.txt_deadlineOrTimePeriodic);
         containerAdminAct = findViewById(R.id.container_adminAction);
+        det_toolbar = findViewById(R.id.tlbar_detail);
     }
+
 }
