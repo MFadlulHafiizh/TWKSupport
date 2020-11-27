@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +42,9 @@ public class BugsFragment extends Fragment {
     private RecyclerView rvBugs;
     private List<BugsData> listBugs = new ArrayList<>();
     private static BugsFragment instance;
-    private TextView filterbutton;
+    private TextView filterbutton, txtErrorMessage;
+    private Button tryAgain;
+    private LinearLayout error_container;
     SwipeRefreshLayout swipeRefreshLayout;
 
 
@@ -53,19 +57,16 @@ public class BugsFragment extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_bugs, container, false);
         instance = this;
 
+        error_container = view.findViewById(R.id.error_frame);
+        txtErrorMessage = view.findViewById(R.id.error_message);
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
         swipeRefreshLayout = view.findViewById(R.id.refresh_bug);
+        tryAgain = view.findViewById(R.id.btn_tryAgain);
         filterbutton = view.findViewById(R.id.filter_fragment);
         final UserInteraction userInteraction = new UserInteraction();
         filterbutton.setOnClickListener(new View.OnClickListener() {
@@ -74,13 +75,34 @@ public class BugsFragment extends Fragment {
                 userInteraction.showPopupFilter(getActivity());
             }
         });
-
         SharedPreferences getRoleUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getRoleUser.getString("role", "not Authenticated");
         Log.d("role", ""+ role);
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                switch (role){
+                    case "client-head":
+                        addListDataBugsUser();
+                        break;
+
+                    case "client-staff":
+                        addListDataBugsUser();
+                        break;
+
+                    case "twk-head" :
+                        addListAdminBug();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
                 switch (role){
                     case "client-head":
                         addListDataBugsUser();
@@ -128,6 +150,7 @@ public class BugsFragment extends Fragment {
     }
 
     public void addListDataBugsUser(){
+        error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
@@ -162,9 +185,11 @@ public class BugsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-                swipeRefreshLayout.setRefreshing(false);
                 Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
-                SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
+                swipeRefreshLayout.setRefreshing(false);
+                /*SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
                 dialog.setTitleText("Oops...");
                 dialog.setContentText("Something went wrong!, Please check your internet connection");
                 dialog.setConfirmText("exit");
@@ -175,12 +200,13 @@ public class BugsFragment extends Fragment {
                         System.exit(0);
                     }
                 });
-                dialog.show();
+                dialog.show();*/
             }
         });
     }
 
     protected void addListAdminBug(){
+        error_container.setVisibility(View.GONE);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
@@ -211,20 +237,10 @@ public class BugsFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
-                Log.d("RETRO", "FAILED : respon gagal");
-                SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
-                dialog.setTitleText("Oops...");
-                dialog.setContentText("Something went wrong!, Please check your internet connection");
-                dialog.setConfirmText("exit");
-                dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                            @Override
-                            public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                getActivity().finish();
-                                System.exit(0);
-                            }
-                        });
-                dialog.show();
             }
         });
     }

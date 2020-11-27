@@ -7,7 +7,25 @@ public class ResponseData {
     private List<BugsData> bugData;
     private List<FeatureData> featureData;
     private List<DoneData> doneData;
+    private List<DoneData> hasDone;
+    private List<TodoData> todoData;
     private List<AppsUserData> userApp;
+
+    public List<DoneData> getHasDone() {
+        return hasDone;
+    }
+
+    public void setHasDone(List<DoneData> hasDone) {
+        this.hasDone = hasDone;
+    }
+
+    public List<TodoData> getTodoData() {
+        return todoData;
+    }
+
+    public void setTodoData(List<TodoData> todoData) {
+        this.todoData = todoData;
+    }
 
     public String getMessage() {
         return message;

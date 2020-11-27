@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -39,7 +41,9 @@ public class DoneFragment extends Fragment {
     View view;
     private RecyclerView rvDone;
     private List<DoneData> listDone = new ArrayList<>();
-    private TextView filterbutton;
+    private TextView filterbutton, txtErrorMessage;
+    private Button tryAgain;
+    private LinearLayout error_container;
     SwipeRefreshLayout swipeRefreshLayout;
 
     public DoneFragment() {
@@ -55,10 +59,16 @@ public class DoneFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_done, container, false);
+
         SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
         final String role = getEmailUser.getString("role", "not Authenticated");
         filterbutton = view.findViewById(R.id.filter_fragment);
+        error_container = view.findViewById(R.id.error_frame);
+        txtErrorMessage = view.findViewById(R.id.error_message);
+        tryAgain = view.findViewById(R.id.btn_tryAgain);
+
         final UserInteraction userInteraction = new UserInteraction();
+
         filterbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -67,28 +77,6 @@ public class DoneFragment extends Fragment {
         });
         rvDone = (RecyclerView) view.findViewById(R.id.rv_done);
         swipeRefreshLayout = view.findViewById(R.id.refresh_hasDone);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                switch (role) {
-                    case "client-head":
-                        addListDataDone();
-                        break;
-
-                    case "client-staff":
-                        addListDataDone();
-                        break;
-
-
-                    case "twk-head":
-                        addListDoneAdmin();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
         rvDone.setLayoutManager(new LinearLayoutManager(getContext()));
         swipeRefreshLayout.setRefreshing(true);
         Handler handler = new Handler();
@@ -109,17 +97,73 @@ public class DoneFragment extends Fragment {
                         addListDoneAdmin();
                         break;
 
+                    case "twk-staff":
+                        addListStaffHasDone();
+                        break;
+
                     default:
                         break;
                 }
             }
         }, 50);
 
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (role) {
+                    case "client-head":
+                        addListDataDone();
+                        break;
+
+                    case "client-staff":
+                        addListDataDone();
+                        break;
+
+                    case "twk-head":
+                        addListDoneAdmin();
+                        break;
+
+                    case "twk-staff":
+                        addListStaffHasDone();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
+                switch (role) {
+                    case "client-head":
+                        addListDataDone();
+                        break;
+
+                    case "client-staff":
+                        addListDataDone();
+                        break;
+
+                    case "twk-head":
+                        addListDoneAdmin();
+                        break;
+
+                    case "twk-staff":
+                        addListStaffHasDone();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
 
         return view;
     }
 
     protected void addListDataDone() {
+        error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
@@ -149,18 +193,20 @@ public class DoneFragment extends Fragment {
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
-
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     protected void addListDoneAdmin() {
+        error_container.setVisibility(View.GONE);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
         ApiService api = ApiClient.getClient().create(ApiService.class);
@@ -188,8 +234,51 @@ public class DoneFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
-                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    protected void addListStaffHasDone(){
+        error_container.setVisibility(View.GONE);
+        final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
+        SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
+        String getToken = _objpref.getString("jwttoken", "");
+        String idStaff = getCompanyUser.getString("id", "");
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseData> staffDone = api.getStaffDoneData("Bearer "+getToken, idStaff);
+        staffDone.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()){
+                    listDone = response.body().getHasDone();
+                    Log.d("RETRO", "resultSuccess : "+response.body());
+                    RvDoneAdapter mAdapter = new RvDoneAdapter(listDone, getContext());
+                    rvDone.setAdapter(mAdapter);
+                    mAdapter.setClick(new RvDoneAdapter.ItemClick() {
+                        @Override
+                        public void onItemClicked(DoneData datadone) {
+                            Toast.makeText(getActivity(), "" + datadone.getPriority(), Toast.LENGTH_SHORT).show();
+                        }
+                    });
+                    mAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+
+                }else{
+                    Log.d("RETRO", "resultFail : "+response.body());
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
+                swipeRefreshLayout.setRefreshing(false);
             }
         });
     }

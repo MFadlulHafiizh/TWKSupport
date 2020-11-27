@@ -26,6 +26,15 @@ public interface ApiService {
     Call<ResponseBody> getToken(@Field("email") String email,
                                 @Field("password") String password);
 
+    @GET("logout")
+    Call<ResponseBody> logoutUser(@Query("token") String logoutToken);
+
+    @GET("user/getapp")
+    Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
+
+    @GET("user")
+    Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);
+
     @FormUrlEncoded
     @POST("user/report-bug")
     Call<ResponseBody> reportBug(@Field("id_apps") int id_apps,
@@ -75,13 +84,14 @@ public interface ApiService {
                                      @Field("time_periodic") String time_periodic,
                                      @Field("status") String status);
 
-    @GET("user/getapp")
-    Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
+    @GET("twkstaff/todo")
+    Call<ResponseData> getJobs(@Header("Authorization") String staffToken,
+                               @Query("id_user") String staffId);
 
-    @GET("user")
-    Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);
+    @GET("twkstaff/hasdone")
+    Call<ResponseData> getStaffDoneData(@Header("Authorization") String staffToken,
+                                        @Query("id_user") String staffId);
 
-    @GET("logout")
-    Call<ResponseBody> logoutUser(@Query("token") String logoutToken);
+
 
 }

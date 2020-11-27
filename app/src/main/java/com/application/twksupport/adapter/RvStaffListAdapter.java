@@ -1,9 +1,12 @@
 package com.application.twksupport.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,7 @@ import com.application.twksupport.R;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.UserData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.MyViewHolder> {
@@ -49,6 +53,13 @@ public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.
                 click.onItemClicked(stafflist.get(holder.getAdapterPosition()));
             }
         });
+        if (ud.isSelected){
+            holder.staffrowContainer.setBackgroundResource(R.drawable.tv_show_selected_bg);
+            holder.iconSelected.setVisibility(View.VISIBLE);
+        }else{
+            holder.staffrowContainer.setBackgroundColor(Color.WHITE);
+            holder.iconSelected.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -56,7 +67,15 @@ public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.
         return stafflist.size();
     }
 
-
+    public List<UserData> getSelectedStaff(){
+        List<UserData> selectedStaff = new ArrayList<>();
+        for (UserData stafflist : stafflist){
+            if (stafflist.isSelected){
+                selectedStaff.add(stafflist);
+            }
+        }
+        return selectedStaff;
+    }
 
     public interface ItemClick{
         void onItemClicked(UserData datauser);
@@ -64,11 +83,15 @@ public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView tvStaffName, tvStaffEmail;
+        LinearLayout staffrowContainer;
+        ImageView iconSelected;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            staffrowContainer = itemView.findViewById(R.id.row_staff_container);
             tvStaffName = itemView.findViewById(R.id.staff_name);
             tvStaffEmail =itemView.findViewById(R.id.staff_email);
+            iconSelected = itemView.findViewById(R.id.icon_selected);
         }
     }
 }

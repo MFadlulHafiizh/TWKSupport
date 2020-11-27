@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,7 +42,9 @@ public class FeatureFragment extends Fragment {
     private RecyclerView rvFeature;
     private List<FeatureData> listFeature = new ArrayList<>();
     SwipeRefreshLayout swipeRefreshLayout;
-    private TextView filterbutton;
+    private TextView filterbutton, txtErrorMessage;
+    private Button tryAgain;
+    private LinearLayout error_container;
     private static FeatureFragment instance;
 
     public FeatureFragment() {
@@ -61,6 +65,9 @@ public class FeatureFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_feature, container, false);
         swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
         instance = this;
+        error_container = view.findViewById(R.id.error_frame);
+        txtErrorMessage = view.findViewById(R.id.error_message);
+        tryAgain = view.findViewById(R.id.btn_tryAgain);
         filterbutton = view.findViewById(R.id.filter_fragment);
         final UserInteraction userInteraction = new UserInteraction();
         filterbutton.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +81,28 @@ public class FeatureFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                switch (role){
+                    case "client-head":
+                        addListDataFeatureUser();
+                        break;
+
+                    case "client-staff":
+                        addListDataFeatureUser();
+                        break;
+
+                    case "twk-head" :
+                        addListAdminFeature();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
                 switch (role){
                     case "client-head":
                         addListDataFeatureUser();
@@ -123,6 +152,7 @@ public class FeatureFragment extends Fragment {
 
 
     public void addListDataFeatureUser(){
+        error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
@@ -157,14 +187,16 @@ public class FeatureFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
-                Log.d("RETRO", "FAILED : respon gagal");
-                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     protected void addListAdminFeature(){
+        error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "");
@@ -196,9 +228,10 @@ public class FeatureFragment extends Fragment {
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
-                Log.d("RETRO", "FAILED : respon gagal");
-                Toast.makeText(getActivity(), "Unknown System Error, Please check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.application.twksupport.adapter.SectionsPagerAdapter;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.tabs.TabLayout;
 
@@ -44,6 +45,9 @@ public class TwkStaffActivity extends AppCompatActivity {
         staffEmail.setText(email);
         staffName.setText(name);
 
+        setUpWithViewPager(viewPagerStaff);
+        staffTabs.setupWithViewPager(viewPagerStaff);
+
         staffImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,6 +64,13 @@ public class TwkStaffActivity extends AppCompatActivity {
         staffName = findViewById(R.id.userName);
         staffEmail = findViewById(R.id.userEmail);
         staffTabs = findViewById(R.id.staff_tabs);
+    }
+
+    private void setUpWithViewPager(ViewPager myViewPager){
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        adapter.addFragment(new StaffToDoFragment(), "To do");
+        adapter.addFragment(new DoneFragment(), "Has done");
+        myViewPager.setAdapter(adapter);
     }
 
     @Override
