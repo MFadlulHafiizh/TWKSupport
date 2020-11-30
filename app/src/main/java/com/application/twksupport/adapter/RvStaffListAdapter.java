@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.application.twksupport.R;
+import com.application.twksupport.UIUX.TvShowListener;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.UserData;
 
@@ -22,9 +23,11 @@ import java.util.List;
 public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.MyViewHolder> {
     private List<UserData> stafflist;
     private ItemClick click;
+    private TvShowListener tvShowListener;
 
-    public RvStaffListAdapter(List<UserData> stafflist) {
+    public RvStaffListAdapter(List<UserData> stafflist, TvShowListener tvShowListener) {
         this.stafflist = stafflist;
+        this.tvShowListener = tvShowListener;
     }
 
     public void setClick(ItemClick click) {
@@ -42,17 +45,11 @@ public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.
 
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, int position) {
-        UserData ud = stafflist.get(position);
+        final UserData ud = stafflist.get(position);
 
         holder.tvStaffName.setText(ud.getName());
         holder.tvStaffEmail.setText(ud.getEmail());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                click.onItemClicked(stafflist.get(holder.getAdapterPosition()));
-            }
-        });
         if (ud.isSelected){
             holder.staffrowContainer.setBackgroundResource(R.drawable.tv_show_selected_bg);
             holder.iconSelected.setVisibility(View.VISIBLE);
@@ -60,6 +57,27 @@ public class RvStaffListAdapter extends RecyclerView.Adapter<RvStaffListAdapter.
             holder.staffrowContainer.setBackgroundColor(Color.WHITE);
             holder.iconSelected.setVisibility(View.GONE);
         }
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                click.onItemClicked(stafflist.get(holder.getAdapterPosition()));
+                if(ud.isSelected){
+                    holder.staffrowContainer.setBackgroundColor(Color.WHITE);
+                    holder.iconSelected.setVisibility(View.GONE);
+                    ud.isSelected = false;
+                    if (getSelectedStaff().size() == 0 ){
+                        tvShowListener.onTvShowAction(false);
+                    }
+                }else {
+                    holder.staffrowContainer.setBackgroundResource(R.drawable.tv_show_selected_bg);
+                    holder.iconSelected.setVisibility(View.VISIBLE);
+                    ud.isSelected = true;
+                    tvShowListener.onTvShowAction(true);
+                }
+
+            }
+        });
     }
 
     @Override

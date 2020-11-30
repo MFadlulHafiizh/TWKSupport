@@ -24,10 +24,12 @@ public interface ApiService {
     })
     @POST("login")
     Call<ResponseBody> getToken(@Field("email") String email,
-                                @Field("password") String password);
+                                @Field("password") String password,
+                                @Field("fcm_token") String fcm_token);
 
-    @GET("logout")
-    Call<ResponseBody> logoutUser(@Query("token") String logoutToken);
+    @GET("logout/{id}")
+    Call<ResponseBody> logoutUser(@Path("id") String id_user,
+                                  @Query("token") String logoutToken);
 
     @GET("user/getapp")
     Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);

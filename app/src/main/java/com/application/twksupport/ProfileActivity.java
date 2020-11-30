@@ -38,10 +38,13 @@ public class ProfileActivity extends AppCompatActivity {
 
     private void logout() {
         final SharedPreferences logoutPreferences = getSharedPreferences("JWTTOKEN", 0);
+        final SharedPreferences logoutPrefer = getSharedPreferences("userInformation", 0);
         String logoutToken = logoutPreferences.getString("jwttoken", "");
+        String deleteFcmWithId = logoutPrefer.getString("id", "");
         Log.d("logouttoken", ""+logoutToken);
+        Log.d("logouttoken", ""+deleteFcmWithId);
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseBody> logout = api.logoutUser(logoutToken);
+        Call<ResponseBody> logout = api.logoutUser(deleteFcmWithId, logoutToken);
         logout.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

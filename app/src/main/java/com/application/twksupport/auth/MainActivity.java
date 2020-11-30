@@ -23,6 +23,7 @@ import com.application.twksupport.UserActivity;
 import com.application.twksupport.model.UserData;
 import com.application.twksupport.model.UserManager;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -38,7 +39,6 @@ public class MainActivity extends AppCompatActivity {
     private View btnSignIn;
     private SessionManager sessionManager;
     private UserManager userInformation;
-    private UserData userData;
     private static final String TAG = MainActivity.class.getSimpleName();
     private boolean exit = false;
 
@@ -87,7 +87,9 @@ public class MainActivity extends AppCompatActivity {
             final BtnProgress btnProgress = new BtnProgress(MainActivity.this, view);
             final Handler handler = new Handler();
             ApiService service = ApiClient.getClient().create(ApiService.class);
-            Call<ResponseBody> srvLogin = service.getToken(email, password);
+            String fcm = FirebaseInstanceId.getInstance().getToken();
+            Log.d("ofofavae", ""+fcm);
+            Call<ResponseBody> srvLogin = service.getToken(email, password, fcm);
             srvLogin.enqueue(new Callback<ResponseBody>() {
                 @Override
                 public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

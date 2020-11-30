@@ -43,7 +43,14 @@
         android:id="@+id/btnpopup_assign"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Assign"
+        android:layout_margin="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
+        style="@style/AppBottomSheetDialogTheme"
+        android:background="@drawable/button_green"
+        android:textColor="@color/defaultWhite"
+        android:fontFamily="@font/comfortaa_bold"
+        android:textSize="14sp"
         android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
