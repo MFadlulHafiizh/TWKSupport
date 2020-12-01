@@ -84,6 +84,12 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
                             btn_assignPopUp.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
+                                    final List<UserData> selectedStaff = mAdapter.getSelectedStaff();
+                                    final ArrayList<String> idStaff = new ArrayList<>();
+                                    for (int i = 0; i < selectedStaff.size(); i++) {
+                                        idStaff.add(selectedStaff.get(i).getId());
+                                        Log.d("selectedStaff", "staffid: " + selectedStaff.get(i).getId());
+                                    }
                                     new SweetAlertDialog(StaffListActivity.this)
                                             .setTitleText("Are you sure?")
                                             .setContentText("Assign this to selected staff?")
@@ -106,63 +112,45 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
                                                     pDialog.show();
                                                     sweetAlertDialog.dismissWithAnimation();
                                                     ApiService api = ApiClient.getClient().create(ApiService.class);
-                                                    List<UserData> selectedStaff = mAdapter.getSelectedStaff();
-
-                                                    for (int i = 0; i < selectedStaff.size(); i++) {
-                                                        Call<ResponseBody> sendAssignment = api.assign("Bearer " + getToken, selectedStaff.get(i).getId(), id_ticket, date);
-                                                        Log.d("value", "" + selectedStaff.get(i).getId() + " " + id_ticket);
-                                                        sendAssignment.enqueue(new Callback<ResponseBody>() {
-                                                            @Override
-                                                            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                                                if (response.isSuccessful()) {
-                                                                    /*SweetAlertDialog sweet = new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.SUCCESS_TYPE);
-                                                                    sweet.setTitleText("Success");
-                                                                    sweet.setContentText("Assigned to " + datauser.getName());
-                                                                    sweet.setCanceledOnTouchOutside(false);
-                                                                    sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                                                                        @Override
-                                                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                                            Intent goBack = new Intent(StaffListActivity.this, UserActivity.class);
-                                                                            goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                                            startActivity(goBack);
-                                                                            finish();
-                                                                        }
-                                                                    });
-                                                                    sweet.show();*/
-                                                                } else {
-                                                                   /* Log.d("RETRO", "" + response.body());
-                                                                    new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                                                            .setTitleText("Oops...")
-                                                                            .setContentText("Something went wrong!")
-                                                                            .show();*/
-                                                                }
-                                                            }
-
-                                                            @Override
-                                                            public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                                                /*pDialog.dismiss();
+                                                    Call<ResponseBody> sendAssignment = api.assign("Bearer " + getToken, idStaff, id_ticket, date);
+                                                    Log.d("value", "" + idStaff + " " + id_ticket);
+                                                    sendAssignment.enqueue(new Callback<ResponseBody>() {
+                                                        @Override
+                                                        public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                                            pDialog.dismiss();
+                                                            if (response.isSuccessful()) {
+                                                                SweetAlertDialog sweet = new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+                                                                sweet.setTitleText("Success");
+                                                                sweet.setContentText("Assigned to selected user");
+                                                                sweet.setCanceledOnTouchOutside(false);
+                                                                sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                                    @Override
+                                                                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                                        Intent goBack = new Intent(StaffListActivity.this, UserActivity.class);
+                                                                        goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                                        startActivity(goBack);
+                                                                        finish();
+                                                                    }
+                                                                });
+                                                                sweet.show();
+                                                            } else {
+                                                                Log.d("RETRO", "" + response.body());
                                                                 new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.ERROR_TYPE)
                                                                         .setTitleText("Oops...")
-                                                                        .setContentText("Something went wrong!, Check your internet connection")
-                                                                        .show();*/
+                                                                        .setContentText("Something went wrong!")
+                                                                        .show();
                                                             }
-                                                        });
-                                                    }
-                                                    pDialog.dismiss();
-                                                    SweetAlertDialog sweet = new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.SUCCESS_TYPE);
-                                                    sweet.setTitleText("Success");
-                                                    sweet.setContentText("Assigned to selected staff");
-                                                    sweet.setCanceledOnTouchOutside(false);
-                                                    sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        }
+
                                                         @Override
-                                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                                            Intent goBack = new Intent(StaffListActivity.this, UserActivity.class);
-                                                            goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK|Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                            startActivity(goBack);
-                                                            finish();
+                                                        public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                                            pDialog.dismiss();
+                                                            new SweetAlertDialog(StaffListActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                                                    .setTitleText("Oops...")
+                                                                    .setContentText("Something went wrong!, Check your internet connection")
+                                                                    .show();
                                                         }
                                                     });
-                                                    sweet.show();
                                                 }
                                             })
                                             .show();
@@ -185,9 +173,9 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
 
     @Override
     public void onTvShowAction(Boolean isSelected) {
-        if (isSelected){
+        if (isSelected) {
             btn_assignPopUp.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             btn_assignPopUp.setVisibility(View.GONE);
         }
     }

@@ -4,6 +4,9 @@ import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.StaffResponse;
 import com.application.twksupport.model.TokenResponse;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -74,7 +77,7 @@ public interface ApiService {
     @FormUrlEncoded
     @POST("admin/assignment")
     Call<ResponseBody> assign(@Header("Authorization") String adminToken,
-                              @Field("id_user") String iduser,
+                              @Field("id_user[]") ArrayList<String> iduser,
                               @Field("id_ticket") String idticket,
                               @Field("dead_line") String date);
 
