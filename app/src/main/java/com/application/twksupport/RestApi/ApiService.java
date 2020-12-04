@@ -59,16 +59,20 @@ public interface ApiService {
                                       @Field("status") String status,
                                       @Header("Authorization") String authToken);
     @GET("user/data-bug")
-    Call<ResponseData> getUserBugData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserBugData(@Query("id_perusahaan") int idCompany,
+                                      @Query("page") int page,
+                                      @Header("Authorization") String authToken);
     @GET("user/data-feature")
-    Call<ResponseData> getUserFeatureData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserFeatureData(@Query("id_perusahaan") int idCompany,
+                                          @Query("page") int page,
+                                          @Header("Authorization") String authToken);
     @GET("user/data-done")
     Call<ResponseData> getUserDoneData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
 
     @GET("admin/data-bug")
-    Call<ResponseData> getAdminBugData(@Header("Authorization") String authToken);
+    Call<ResponseData> getAdminBugData(@Query("page")int page, @Header("Authorization") String authToken);
     @GET("admin/data-feature")
-    Call<ResponseData> getAdminFeatureData(@Header("Authorization") String authToken);
+    Call<ResponseData> getAdminFeatureData(@Query("page")int page, @Header("Authorization") String authToken);
     @GET("admin/data-done")
     Call<ResponseData> getAdminDoneData(@Header("Authorization") String authToken);
     @GET("admin/getStaff")

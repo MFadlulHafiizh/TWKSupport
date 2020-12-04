@@ -1,5 +1,6 @@
 package com.application.twksupport.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -14,12 +15,12 @@ import com.application.twksupport.model.FeatureData;
 import java.util.List;
 
 public class RvFeatureAdapter extends RecyclerView.Adapter<RvFeatureAdapter.MyViewHolder> {
-    private Context context;
+    private Activity activity;
     private List<FeatureData> mFeature;
     private ItemClick click;
 
-    public RvFeatureAdapter(List<FeatureData> mFeature, Context context) {
-        this.context = context;
+    public RvFeatureAdapter(List<FeatureData> mFeature, Activity activity) {
+        this.activity = activity;
         this.mFeature = mFeature;
     }
 

@@ -96,5 +96,9 @@
             tools:listitem="@layout/cardview_item_layout"/>
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+    <ProgressBar
+        android:id="@+id/progresbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
 </LinearLayout>

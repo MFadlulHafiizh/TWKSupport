@@ -241,6 +241,8 @@ public class UserInteraction extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                                     sweetAlertDialog.dismiss();
+                                                    BugsFragment.getInstance().getListBugs().clear();
+                                                    BugsFragment.getInstance().setPage(1);
                                                     BugsFragment.getInstance().addListDataBugsUser();
                                                     bottomSheetDialog.dismiss();
                                                 }

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -40,15 +41,23 @@ import retrofit2.Response;
 public class FeatureFragment extends Fragment {
     View view;
     private RecyclerView rvFeature;
+    private RvFeatureAdapter mAdapter;
     private List<FeatureData> listFeature = new ArrayList<>();
-    SwipeRefreshLayout swipeRefreshLayout;
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
     private TextView filterbutton, txtErrorMessage;
     private Button tryAgain;
     private LinearLayout error_container;
     private static FeatureFragment instance;
+    SwipeRefreshLayout swipeRefreshLayout;
+    private int page = 1;
+    private int last_page = 1;
 
-    public FeatureFragment() {
+    public List<FeatureData> getListFeature() {
+        return listFeature;
+    }
 
+    public void setPage(int page) {
+        this.page = page;
     }
 
     public static FeatureFragment getInstance(){
@@ -63,12 +72,75 @@ public class FeatureFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_feature, container, false);
-        swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
         instance = this;
+
+        //initializeComponent
         error_container = view.findViewById(R.id.error_frame);
         txtErrorMessage = view.findViewById(R.id.error_message);
+        rvFeature = (RecyclerView) view.findViewById(R.id.rv_feature);
+        swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
         tryAgain = view.findViewById(R.id.btn_tryAgain);
         filterbutton = view.findViewById(R.id.filter_fragment);
+        swipeRefreshLayout.setRefreshing(true);
+
+        //prepeareRecycleView
+        mAdapter = new RvFeatureAdapter(listFeature, getActivity());
+        rvFeature.setLayoutManager(linearLayoutManager);
+        rvFeature.setHasFixedSize(true);
+        rvFeature.setAdapter(mAdapter);
+
+        //LaunchMain
+        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
+        final String role = getEmailUser.getString("role", "not Authenticated");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (role) {
+                    case "twk-head":
+                        addListAdminFeature();
+                        rvFeature.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page) {
+                                    if (visibleItemCount + pastVisibleItem >= total) {
+                                        page++;
+                                        addListAdminFeature();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
+                        break;
+                    default:
+                        addListDataFeatureUser();
+                        rvFeature.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page) {
+                                    if (visibleItemCount + pastVisibleItem >= total) {
+                                        page++;
+                                        addListDataFeatureUser();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
+                        break;
+                }
+            }
+        }, 50);
+
+        //onRefresh
+        refreshData(swipeRefreshLayout, role);
+
+        //filter
         final UserInteraction userInteraction = new UserInteraction();
         filterbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,76 +148,6 @@ public class FeatureFragment extends Fragment {
                 userInteraction.showPopupFilter(getActivity());
             }
         });
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
-        final String role = getEmailUser.getString("role", "not Authenticated");
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                switch (role){
-                    case "client-head":
-                        addListDataFeatureUser();
-                        break;
-
-                    case "client-staff":
-                        addListDataFeatureUser();
-                        break;
-
-                    case "twk-head" :
-                        addListAdminFeature();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-        tryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swipeRefreshLayout.setRefreshing(true);
-                switch (role){
-                    case "client-head":
-                        addListDataFeatureUser();
-                        break;
-
-                    case "client-staff":
-                        addListDataFeatureUser();
-                        break;
-
-                    case "twk-head" :
-                        addListAdminFeature();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-        rvFeature = (RecyclerView) view.findViewById(R.id.rv_feature);
-        rvFeature.setLayoutManager(new LinearLayoutManager(getContext()));
-        swipeRefreshLayout.setRefreshing(true);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                switch (role){
-                    case "client-head":
-                        addListDataFeatureUser();
-                        break;
-
-                    case "client-staff":
-                        addListDataFeatureUser();
-                        break;
-
-                    case "twk-head" :
-                        addListAdminFeature();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        },50);
 
         return view;
     }
@@ -158,14 +160,18 @@ public class FeatureFragment extends Fragment {
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
-        Call<ResponseData> getData = api.getUserFeatureData(idCompany, "Bearer "+getToken);
+        Call<ResponseData> getData = api.getUserFeatureData(idCompany, page,"Bearer "+getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
-                    listFeature = response.body().getFeatureData();
-                    RvFeatureAdapter mAdapter = new RvFeatureAdapter(listFeature, getContext());
-                    rvFeature.setAdapter(mAdapter);
+                    Log.d("RETRO", "RESPONSE : " + response.body().getFeatureData());
+                    List<FeatureData> responseBody = response.body().getFeatureData();
+                    listFeature.addAll(responseBody);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getFitur_page_total();
+                    Log.d("lastpage", ""+last_page);
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(FeatureData datafeature) {
@@ -174,9 +180,6 @@ public class FeatureFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    rvFeature.smoothScrollToPosition(0);
-                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
@@ -200,15 +203,18 @@ public class FeatureFragment extends Fragment {
         ApiService api = ApiClient.getClient().create(ApiService.class);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "");
-        Call<ResponseData> getData = api.getAdminFeatureData("Bearer "+getToken);
+        Call<ResponseData> getData = api.getAdminFeatureData(page,"Bearer "+getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
-                    listFeature = response.body().getFeatureData();
-                    Log.d("feature", ""+listFeature);
-                    RvFeatureAdapter mAdapter = new RvFeatureAdapter(listFeature, getContext());
-                    rvFeature.setAdapter(mAdapter);
+                    Log.d("RETRO", "RESPONSE : " + response.body().getFeatureData());
+                    List<FeatureData> responseBody = response.body().getFeatureData();
+                    listFeature.addAll(responseBody);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getFitur_page_total();
+                    Log.d("lastpage", ""+last_page);
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(FeatureData datafeature) {
@@ -217,8 +223,6 @@ public class FeatureFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
@@ -234,5 +238,52 @@ public class FeatureFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void refreshData(final SwipeRefreshLayout swipeRefreshLayout, final String role){
+
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
+                switch (role) {
+                    case "twk-head":
+                        listFeature.clear();
+                        page = 1;
+                        addListAdminFeature();
+                        break;
+
+                    default:
+                        listFeature.clear();
+                        page = 1;
+                        addListDataFeatureUser();
+                        break;
+                }
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (role) {
+                    case "twk-head":
+                        page = 1;
+                        if (listFeature!=null){
+                            listFeature.clear();
+                        }
+                        addListAdminFeature();
+                        break;
+
+                    default:
+                        page = 1;
+                        if (listFeature != null){
+                            listFeature.clear();
+                        }
+                        addListDataFeatureUser();
+                }
+            }
+        });
+
+
     }
 }

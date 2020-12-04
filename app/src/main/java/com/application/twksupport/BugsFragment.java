@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +31,11 @@ import com.application.twksupport.adapter.RvBugsAdapter;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.ResponseData;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,19 +47,28 @@ import retrofit2.Response;
 public class BugsFragment extends Fragment {
     View view;
     private RecyclerView rvBugs;
+    private RvBugsAdapter mAdapter;
     private List<BugsData> listBugs = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
     private static BugsFragment instance;
     private TextView filterbutton, txtErrorMessage;
     private Button tryAgain;
     private LinearLayout error_container;
+    private int page = 1;
+    private int last_page = 1;
     SwipeRefreshLayout swipeRefreshLayout;
+    ProgressBar progressBar;
 
 
-    public BugsFragment(){
-
+    public List<BugsData> getListBugs() {
+        return listBugs;
     }
 
-    public static BugsFragment getInstance(){
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public static BugsFragment getInstance() {
         return instance;
     }
 
@@ -62,12 +78,74 @@ public class BugsFragment extends Fragment {
         view = inflater.inflate(R.layout.fragment_bugs, container, false);
         instance = this;
 
+        //initialize ComponentView
         error_container = view.findViewById(R.id.error_frame);
         txtErrorMessage = view.findViewById(R.id.error_message);
         rvBugs = (RecyclerView) view.findViewById(R.id.rv_bugs);
         swipeRefreshLayout = view.findViewById(R.id.refresh_bug);
         tryAgain = view.findViewById(R.id.btn_tryAgain);
         filterbutton = view.findViewById(R.id.filter_fragment);
+        progressBar = view.findViewById(R.id.progresbar);
+        swipeRefreshLayout.setRefreshing(true);
+
+        //prepare recycleview
+        mAdapter = new RvBugsAdapter(listBugs, getActivity());
+        rvBugs.setLayoutManager(linearLayoutManager);
+        rvBugs.setHasFixedSize(true);
+        rvBugs.setAdapter(mAdapter);
+
+        //launchMain
+        SharedPreferences getRoleUser = getActivity().getSharedPreferences("userInformation", 0);
+        final String role = getRoleUser.getString("role", "not Authenticated");
+        Handler handler = new Handler();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                switch (role) {
+                    case "twk-head":
+                        addListAdminBug();
+                        rvBugs.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page) {
+                                    if (visibleItemCount + pastVisibleItem >= total) {
+                                        page++;
+                                        addListAdminBug();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
+                        break;
+                    default:
+                        addListDataBugsUser();
+                        rvBugs.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page) {
+                                    if (visibleItemCount + pastVisibleItem >= total) {
+                                        page++;
+                                        addListDataBugsUser();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
+                        break;
+                }
+            }
+        }, 50);
+
+        //onRefresh
+        refreshData(swipeRefreshLayout, role);
+
+        //filter
         final UserInteraction userInteraction = new UserInteraction();
         filterbutton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,99 +153,29 @@ public class BugsFragment extends Fragment {
                 userInteraction.showPopupFilter(getActivity());
             }
         });
-        SharedPreferences getRoleUser = getActivity().getSharedPreferences("userInformation", 0);
-        final String role = getRoleUser.getString("role", "not Authenticated");
-        Log.d("role", ""+ role);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                switch (role){
-                    case "client-head":
-                        addListDataBugsUser();
-                        break;
-
-                    case "client-staff":
-                        addListDataBugsUser();
-                        break;
-
-                    case "twk-head" :
-                        addListAdminBug();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-        tryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swipeRefreshLayout.setRefreshing(true);
-                switch (role){
-                    case "client-head":
-                        addListDataBugsUser();
-                        break;
-
-                    case "client-staff":
-                        addListDataBugsUser();
-                        break;
-
-                    case "twk-head" :
-                        addListAdminBug();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-        rvBugs.setLayoutManager(new LinearLayoutManager(getContext()));
-        swipeRefreshLayout.setRefreshing(true);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                switch (role){
-                    case "client-head":
-                        addListDataBugsUser();
-                        break;
-
-                    case "client-staff":
-                        addListDataBugsUser();
-                        break;
-
-                    case "twk-head" :
-                        addListAdminBug();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        },50);
 
         return view;
     }
 
-    public void addListDataBugsUser(){
+    public void addListDataBugsUser() {
         error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
         String getToken = _objpref.getString("jwttoken", "");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
-        Log.d("BugsFragment", ""+idCompany);
-        Call<ResponseData> getData = api.getUserBugData(idCompany, "Bearer "+getToken);
+        Log.d("BugsFragment", "" + idCompany);
+        Call<ResponseData> getData = api.getUserBugData(idCompany, page, "Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() != null) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getBugData());
-                    listBugs = response.body().getBugData();
-                    RvBugsAdapter mAdapter = new RvBugsAdapter(listBugs, getContext());
-                    rvBugs.setAdapter(mAdapter);
+                    List<BugsData> responseBody = response.body().getBugData();
+                    listBugs.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
-                    rvBugs.smoothScrollToPosition(0);
+                    last_page = response.body().getBug_page_total();
+                    progressBar.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
@@ -177,48 +185,39 @@ public class BugsFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                }
-                else {
+                } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                Log.d("RETRO", "FAILED : respon gagal" + t.getMessage());
                 error_container.setVisibility(View.VISIBLE);
                 txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
-                /*SweetAlertDialog dialog = new SweetAlertDialog(getActivity(), SweetAlertDialog.ERROR_TYPE);
-                dialog.setTitleText("Oops...");
-                dialog.setContentText("Something went wrong!, Please check your internet connection");
-                dialog.setConfirmText("exit");
-                dialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
-                    @Override
-                    public void onClick(SweetAlertDialog sweetAlertDialog) {
-                        getActivity().finish();
-                        System.exit(0);
-                    }
-                });
-                dialog.show();*/
             }
         });
     }
 
-    protected void addListAdminBug(){
+    protected void addListAdminBug() {
         error_container.setVisibility(View.GONE);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getData = api.getAdminBugData("Bearer "+getToken);
+        Call<ResponseData> getData = api.getAdminBugData(page,"Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() != null) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getBugData());
-                    listBugs = response.body().getBugData();
-                    RvBugsAdapter mAdapter = new RvBugsAdapter(listBugs, getContext());
-                    rvBugs.setAdapter(mAdapter);
+                    List<BugsData> responseBody = response.body().getBugData();
+                    listBugs.addAll(responseBody);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getBug_page_total();
+                    Log.d("lastpage", ""+last_page);
+                    progressBar.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(BugsData databug) {
@@ -227,21 +226,64 @@ public class BugsFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-                else {
+                } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-                Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
+                Log.d("RETRO", "FAILED : respon gagal" + t.getMessage());
                 error_container.setVisibility(View.VISIBLE);
                 txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void refreshData(final SwipeRefreshLayout swipeRefreshLayout, final String role){
+
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
+                switch (role) {
+                    case "twk-head":
+                        listBugs.clear();
+                        page = 1;
+                        addListAdminBug();
+                        break;
+
+                    default:
+                        listBugs.clear();
+                        page = 1;
+                        addListDataBugsUser();
+                        break;
+                }
+            }
+        });
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (role) {
+                    case "twk-head":
+                        page = 1;
+                        if (listBugs!=null){
+                            listBugs.clear();
+                        }
+                        addListAdminBug();
+                        break;
+
+                    default:
+                        page = 1;
+                        if (listBugs != null){
+                            listBugs.clear();
+                        }
+                        addListDataBugsUser();
+                }
+            }
+        });
+
     }
 }
