@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class DoneData implements Parcelable {
+    private String nama_perusahaan;
     private String id_ticket;
     private String type;
     private String apps_name;
@@ -14,6 +15,7 @@ public class DoneData implements Parcelable {
     private String created_at;
 
     protected DoneData(Parcel in) {
+        nama_perusahaan = in.readString();
         id_ticket = in.readString();
         type = in.readString();
         apps_name = in.readString();
@@ -35,6 +37,14 @@ public class DoneData implements Parcelable {
             return new DoneData[size];
         }
     };
+
+    public String getNama_perusahaan() {
+        return nama_perusahaan;
+    }
+
+    public void setNama_perusahaan(String nama_perusahaan) {
+        this.nama_perusahaan = nama_perusahaan;
+    }
 
     public String getApps_name() {
         return apps_name;
@@ -107,6 +117,7 @@ public class DoneData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nama_perusahaan);
         dest.writeString(id_ticket);
         dest.writeString(type);
         dest.writeString(apps_name);

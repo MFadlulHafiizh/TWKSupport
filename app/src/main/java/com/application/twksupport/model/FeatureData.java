@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class FeatureData implements Parcelable {
+    private String nama_perusahaan;
     private String id_ticket;
     private String apps_name;
     private String priority;
@@ -17,6 +18,14 @@ public class FeatureData implements Parcelable {
 
     public FeatureData(){
 
+    }
+
+    public String getNama_perusahaan() {
+        return nama_perusahaan;
+    }
+
+    public void setNama_perusahaan(String nama_perusahaan) {
+        this.nama_perusahaan = nama_perusahaan;
     }
 
     public String getApps_name() {
@@ -100,6 +109,7 @@ public class FeatureData implements Parcelable {
     }
 
     protected FeatureData(Parcel in) {
+        nama_perusahaan = in.readString();
         apps_name = in.readString();
         id_ticket = in.readString();
         priority = in.readString();
@@ -119,6 +129,7 @@ public class FeatureData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(nama_perusahaan);
         parcel.writeString(apps_name);
         parcel.writeString(id_ticket);
         parcel.writeString(priority);

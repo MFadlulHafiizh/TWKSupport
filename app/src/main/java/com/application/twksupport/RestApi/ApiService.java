@@ -67,14 +67,17 @@ public interface ApiService {
                                           @Query("page") int page,
                                           @Header("Authorization") String authToken);
     @GET("user/data-done")
-    Call<ResponseData> getUserDoneData(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserDoneData(@Query("id_perusahaan") int idCompany,
+                                       @Query("page") int page,
+                                       @Header("Authorization") String authToken);
 
     @GET("admin/data-bug")
     Call<ResponseData> getAdminBugData(@Query("page")int page, @Header("Authorization") String authToken);
     @GET("admin/data-feature")
     Call<ResponseData> getAdminFeatureData(@Query("page")int page, @Header("Authorization") String authToken);
     @GET("admin/data-done")
-    Call<ResponseData> getAdminDoneData(@Header("Authorization") String authToken);
+    Call<ResponseData> getAdminDoneData(@Query("page") int page, @Header("Authorization") String authToken);
+
     @GET("admin/getStaff")
     Call<StaffResponse> getStaff(@Header("Authorization") String adminToken);
 
@@ -95,10 +98,12 @@ public interface ApiService {
 
     @GET("twkstaff/todo")
     Call<ResponseData> getJobs(@Header("Authorization") String staffToken,
+                               @Query("page") int page,
                                @Query("id_user") String staffId);
 
     @GET("twkstaff/hasdone")
-    Call<ResponseData> getStaffDoneData(@Header("Authorization") String staffToken,
+    Call<ResponseData> getStaffDoneData(@Query("page") int page,
+                                        @Header("Authorization") String staffToken,
                                         @Query("id_user") String staffId);
 
 

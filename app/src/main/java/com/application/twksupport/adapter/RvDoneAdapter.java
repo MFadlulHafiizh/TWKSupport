@@ -1,5 +1,6 @@
 package com.application.twksupport.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.view.LayoutInflater;
@@ -15,12 +16,12 @@ import java.util.List;
 
 public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHolder> {
 
-    private Context mContext;
+    private Activity activity;
     private List<DoneData> mDone;
     private ItemClick click;
 
-    public RvDoneAdapter(List<DoneData> mDone, Context mContext) {
-        this.mContext = mContext;
+    public RvDoneAdapter(List<DoneData> mDone, Activity activity) {
+        this.activity = activity;
         this.mDone = mDone;
     }
 

@@ -19,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -51,6 +52,7 @@ public class FeatureFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
     private int page = 1;
     private int last_page = 1;
+    private ProgressBar progressBar;
 
     public List<FeatureData> getListFeature() {
         return listFeature;
@@ -81,6 +83,7 @@ public class FeatureFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.refresh_feature);
         tryAgain = view.findViewById(R.id.btn_tryAgain);
         filterbutton = view.findViewById(R.id.filter_fragment);
+        progressBar = view.findViewById(R.id.progresbar_feature);
         swipeRefreshLayout.setRefreshing(true);
 
         //prepeareRecycleView
@@ -108,6 +111,7 @@ public class FeatureFragment extends Fragment {
                                 if (page < last_page) {
                                     if (visibleItemCount + pastVisibleItem >= total) {
                                         page++;
+                                        progressBar.setVisibility(View.VISIBLE);
                                         addListAdminFeature();
                                     }
                                 }
@@ -126,6 +130,7 @@ public class FeatureFragment extends Fragment {
                                 if (page < last_page) {
                                     if (visibleItemCount + pastVisibleItem >= total) {
                                         page++;
+                                        progressBar.setVisibility(View.VISIBLE);
                                         addListDataFeatureUser();
                                     }
                                 }
@@ -135,7 +140,7 @@ public class FeatureFragment extends Fragment {
                         break;
                 }
             }
-        }, 50);
+        }, 10);
 
         //onRefresh
         refreshData(swipeRefreshLayout, role);
@@ -170,6 +175,11 @@ public class FeatureFragment extends Fragment {
                     listFeature.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
                     last_page = response.body().getFitur_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else{
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
                     Log.d("lastpage", ""+last_page);
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvFeatureAdapter.ItemClick() {
@@ -213,6 +223,11 @@ public class FeatureFragment extends Fragment {
                     listFeature.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
                     last_page = response.body().getFitur_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else{
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
                     Log.d("lastpage", ""+last_page);
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvFeatureAdapter.ItemClick() {

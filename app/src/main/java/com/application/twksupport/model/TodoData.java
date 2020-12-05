@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class TodoData implements Parcelable {
+    private String nama_perusahaan;
     private String id_assignment;
     private String id_ticket;
     private String deadline;
@@ -16,6 +17,7 @@ public class TodoData implements Parcelable {
     private String created_at;
 
     protected TodoData(Parcel in) {
+        nama_perusahaan = in.readString();
         id_assignment = in.readString();
         id_ticket = in.readString();
         deadline = in.readString();
@@ -39,6 +41,14 @@ public class TodoData implements Parcelable {
             return new TodoData[size];
         }
     };
+
+    public String getNama_perusahaan() {
+        return nama_perusahaan;
+    }
+
+    public void setNama_perusahaan(String nama_perusahaan) {
+        this.nama_perusahaan = nama_perusahaan;
+    }
 
     public String getId_assignment() {
         return id_assignment;
@@ -127,6 +137,7 @@ public class TodoData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(nama_perusahaan);
         dest.writeString(id_assignment);
         dest.writeString(id_ticket);
         dest.writeString(deadline);

@@ -1,45 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:paddingTop="16dp"
     android:paddingLeft="32dp"
+    android:paddingTop="16dp"
     android:paddingRight="32dp"
     tools:background="@color/blackCharcoal"
     tools:context=".DoneFragment">
 
     <LinearLayout
         android:id="@+id/error_frame"
-        android:padding="16dp"
-        android:gravity="center"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Oppss..."
-            android:textSize="16sp"
             android:layout_marginTop="10dp"
             android:fontFamily="@font/comfortaa_bold"
-            android:textColor="@color/defaultWhite"/>
+            android:text="Oppss..."
+            android:textColor="@color/defaultWhite"
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/error_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="24dp"
-            android:textAlignment="center"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            tools:text="Can't connect to server please check your internet connection"
-            android:textSize="12sp"
             android:fontFamily="@font/comfortaa_regular"
-            android:textColor="@color/defaultWhite"/>
+            android:paddingHorizontal="24dp"
+            android:textAlignment="center"
+            android:textColor="@color/defaultWhite"
+            android:textSize="12sp"
+            tools:text="Can't connect to server please check your internet connection" />
 
         <Button
             android:id="@+id/btn_tryAgain"
@@ -50,14 +51,14 @@
             android:fontFamily="@font/comfortaa_regular"
             android:gravity="center"
             android:text="Try Again"
-            android:textColor="@color/blueFigma"/>
+            android:textColor="@color/blueFigma" />
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="6dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:paddingBottom="6dp">
 
         <TextView
             android:id="@+id/txt_done"
@@ -65,23 +66,23 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:fontFamily="@font/comfortaa_regular"
+            android:paddingBottom="6dp"
             android:text="@string/has_done"
             android:textColor="@android:color/white"
-            android:textSize="16sp"
-            android:paddingBottom="6dp"/>
+            android:textSize="16sp" />
 
         <TextView
             android:id="@+id/filter_fragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingHorizontal="7dp"
+            android:background="@drawable/filter_button_bg"
             android:drawableRight="@drawable/ic_filter_fragment"
-            android:text="Filter"
-            android:fontFamily="@font/comfortaa_regular"
-            android:textColor="@color/defaultWhite"
-            android:paddingVertical="4dp"
             android:drawablePadding="7dp"
-            android:background="@drawable/filter_button_bg"/>
+            android:fontFamily="@font/comfortaa_regular"
+            android:paddingHorizontal="7dp"
+            android:paddingVertical="4dp"
+            android:text="Filter"
+            android:textColor="@color/defaultWhite" />
 
     </LinearLayout>
 
@@ -90,12 +91,29 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_done"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:listitem="@layout/cardview_item_layout"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/rv_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    tools:listitem="@layout/cardview_item_layout" />
+
+                <ProgressBar
+                    android:id="@+id/progressbar_done"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="invisible"/>
+            </LinearLayout>
+
+        </ScrollView>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </LinearLayout>

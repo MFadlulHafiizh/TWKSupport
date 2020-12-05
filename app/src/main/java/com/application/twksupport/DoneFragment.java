@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,122 +42,118 @@ import retrofit2.Response;
 public class DoneFragment extends Fragment {
     View view;
     private RecyclerView rvDone;
+    private RvDoneAdapter mAdapter;
     private List<DoneData> listDone = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
     private TextView filterbutton, txtErrorMessage;
     private Button tryAgain;
     private LinearLayout error_container;
+    private int page = 1;
+    private int last_page = 1;
+    private ProgressBar progressBar;
     SwipeRefreshLayout swipeRefreshLayout;
-
-    public DoneFragment() {
-
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_done, container, false);
 
-        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
-        final String role = getEmailUser.getString("role", "not Authenticated");
-        filterbutton = view.findViewById(R.id.filter_fragment);
+        //initializeComponentView
         error_container = view.findViewById(R.id.error_frame);
         txtErrorMessage = view.findViewById(R.id.error_message);
-        tryAgain = view.findViewById(R.id.btn_tryAgain);
-
-        final UserInteraction userInteraction = new UserInteraction();
-
-        filterbutton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                userInteraction.showPopupFilter(getActivity());
-            }
-        });
         rvDone = (RecyclerView) view.findViewById(R.id.rv_done);
         swipeRefreshLayout = view.findViewById(R.id.refresh_hasDone);
-        rvDone.setLayoutManager(new LinearLayoutManager(getContext()));
+        tryAgain = view.findViewById(R.id.btn_tryAgain);
+        filterbutton = view.findViewById(R.id.filter_fragment);
+        progressBar = view.findViewById(R.id.progressbar_done);
         swipeRefreshLayout.setRefreshing(true);
+
+        //prepare RecycleView
+        mAdapter = new RvDoneAdapter(listDone, getActivity());
+        rvDone.setLayoutManager(linearLayoutManager);
+        rvDone.setHasFixedSize(true);
+        rvDone.setAdapter(mAdapter);
+
+        //LaunchMain
+        SharedPreferences getEmailUser = getActivity().getSharedPreferences("userInformation", 0);
+        final String role = getEmailUser.getString("role", "not Authenticated");
         Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 switch (role) {
-                    case "client-head":
-                        addListDataDone();
-                        break;
-
-                    case "client-staff":
-                        addListDataDone();
-                        break;
-
-
                     case "twk-head":
                         addListDoneAdmin();
+                        rvDone.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page){
+                                    if (visibleItemCount + pastVisibleItem >= total){
+                                        page++;
+                                        progressBar.setVisibility(View.VISIBLE);
+                                        addListDoneAdmin();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
                         break;
 
                     case "twk-staff":
                         addListStaffHasDone();
+                        rvDone.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page){
+                                    if (visibleItemCount + pastVisibleItem >= total){
+                                        page++;
+                                        progressBar.setVisibility(View.VISIBLE);
+                                        addListStaffHasDone();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
                         break;
 
                     default:
+                        addListDataDone();
+                        rvDone.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                            @Override
+                            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                                int visibleItemCount = linearLayoutManager.getChildCount();
+                                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                                int total = mAdapter.getItemCount();
+                                if (page < last_page){
+                                    if (visibleItemCount + pastVisibleItem >= total){
+                                        page++;
+                                        progressBar.setVisibility(View.VISIBLE);
+                                        addListDataDone();
+                                    }
+                                }
+                                super.onScrolled(recyclerView, dx, dy);
+                            }
+                        });
                         break;
                 }
             }
-        }, 50);
+        }, 10);
+        final UserInteraction userInteraction = new UserInteraction();
 
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+        //onRefresh
+        refreshData(swipeRefreshLayout, role);
+
+        //filter
+        filterbutton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onRefresh() {
-                switch (role) {
-                    case "client-head":
-                        addListDataDone();
-                        break;
-
-                    case "client-staff":
-                        addListDataDone();
-                        break;
-
-                    case "twk-head":
-                        addListDoneAdmin();
-                        break;
-
-                    case "twk-staff":
-                        addListStaffHasDone();
-                        break;
-
-                    default:
-                        break;
-                }
-            }
-        });
-        tryAgain.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                swipeRefreshLayout.setRefreshing(true);
-                switch (role) {
-                    case "client-head":
-                        addListDataDone();
-                        break;
-
-                    case "client-staff":
-                        addListDataDone();
-                        break;
-
-                    case "twk-head":
-                        addListDoneAdmin();
-                        break;
-
-                    case "twk-staff":
-                        addListStaffHasDone();
-                        break;
-
-                    default:
-                        break;
-                }
+            public void onClick(View view) {
+                userInteraction.showPopupFilter(getActivity());
             }
         });
 
@@ -170,16 +168,24 @@ public class DoneFragment extends Fragment {
         String getToken = _objpref.getString("jwttoken", "");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
         Log.d("donefragment", "" + idCompany);
-        Call<ResponseData> getData = api.getUserDoneData(idCompany, "Bearer " + getToken);
+        Call<ResponseData> getData = api.getUserDoneData(idCompany, page,"Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getDoneData());
-                    listDone = response.body().getDoneData();
-                    Log.d("datauser", "" + listDone);
-                    RvDoneAdapter mAdapter = new RvDoneAdapter(listDone, getContext());
-                    rvDone.setAdapter(mAdapter);
+                    List<DoneData> responseBody = response.body().getDoneData();
+                    listDone.addAll(responseBody);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getDone_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                    Log.d("totalpage", ""+last_page);
+                    swipeRefreshLayout.setRefreshing(false);
+
                     mAdapter.setClick(new RvDoneAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(DoneData datadone) {
@@ -188,8 +194,6 @@ public class DoneFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -210,22 +214,31 @@ public class DoneFragment extends Fragment {
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getData = api.getAdminDoneData("Bearer " + getToken);
+        Call<ResponseData> getData = api.getAdminDoneData(page,"Bearer " + getToken);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()) {
-                    listDone = response.body().getDoneData();
-                    RvDoneAdapter mAdapter = new RvDoneAdapter(listDone, getContext());
-                    rvDone.setAdapter(mAdapter);
+                    Log.d("RETRO", "RESPONSE : " + response.body().getDoneData());
+                    List<DoneData> responseBody = response.body().getDoneData();
+                    listDone.addAll(responseBody);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getDone_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                    Log.d("totalpage", ""+last_page);
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvDoneAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(DoneData datadone) {
-                            Toast.makeText(getActivity(), "" + datadone.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_DONE, datadone);
+                            startActivity(toDetail);
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -249,23 +262,31 @@ public class DoneFragment extends Fragment {
         String getToken = _objpref.getString("jwttoken", "");
         String idStaff = getCompanyUser.getString("id", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> staffDone = api.getStaffDoneData("Bearer "+getToken, idStaff);
+        Call<ResponseData> staffDone = api.getStaffDoneData(page, "Bearer "+getToken, idStaff);
         staffDone.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
-                    listDone = response.body().getHasDone();
-                    Log.d("RETRO", "resultSuccess : "+response.body());
-                    RvDoneAdapter mAdapter = new RvDoneAdapter(listDone, getContext());
-                    rvDone.setAdapter(mAdapter);
+                    Log.d("RETRO", "RESPONSE : " + response.body().getHasDone());
+                    List<DoneData> responseBody = response.body().getHasDone();
+                    listDone.addAll(responseBody);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getStaff_done_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                    Log.d("totalpage", ""+last_page);
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvDoneAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(DoneData datadone) {
-                            Toast.makeText(getActivity(), "" + datadone.getPriority(), Toast.LENGTH_SHORT).show();
+                            Intent toDetail = new Intent(getActivity(), DetailActivity.class);
+                            toDetail.putExtra(DetailActivity.EXTRA_DONE, datadone);
+                            startActivity(toDetail);
                         }
                     });
-                    mAdapter.notifyDataSetChanged();
-                    swipeRefreshLayout.setRefreshing(false);
 
                 }else{
                     Log.d("RETRO", "resultFail : "+response.body());
@@ -281,5 +302,59 @@ public class DoneFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(false);
             }
         });
+    }
+
+    private void refreshData(final SwipeRefreshLayout swipeRefreshLayout, final String role){
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                switch (role) {
+                    case "twk-head":
+                        listDone.clear();
+                        page = 1;
+                        addListDoneAdmin();
+                        break;
+
+                    case "twk-staff":
+                        listDone.clear();
+                        page = 1;
+                        addListStaffHasDone();
+                        break;
+
+                    default:
+                        listDone.clear();
+                        page = 1;
+                        addListDataDone();
+                        break;
+                }
+            }
+        });
+        tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swipeRefreshLayout.setRefreshing(true);
+                switch (role) {
+                    case "twk-head":
+                        listDone.clear();
+                        page = 1;
+                        addListDoneAdmin();
+                        break;
+
+                    case "twk-staff":
+                        listDone.clear();
+                        page = 1;
+                        addListStaffHasDone();
+                        break;
+
+                    default:
+                        listDone.clear();
+                        page = 1;
+                        addListDataDone();
+                        break;
+                }
+            }
+        });
+
     }
 }

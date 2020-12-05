@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,14 +14,18 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.UIUX.UserInteraction;
+import com.application.twksupport.adapter.RvStaffListAdapter;
 import com.application.twksupport.adapter.RvTodoAdapter;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.TodoData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import retrofit2.Call;
@@ -30,8 +35,13 @@ import retrofit2.Response;
 public class StaffToDoFragment extends Fragment {
     View view;
     private RecyclerView rvTodo;
+    private RvTodoAdapter mAdapter;
+    private List<TodoData> listjobs = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
     private TextView filterbutton;
-    private List<TodoData> listjobs;
+    private int page = 1;
+    private int last_page = 1;
+    private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
 
     public StaffToDoFragment() {
@@ -42,15 +52,55 @@ public class StaffToDoFragment extends Fragment {
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_staff_to_do, container, false);
 
+        //initializeComponentView
         rvTodo = view.findViewById(R.id.rv_todo);
         swipeRefreshLayout = view.findViewById(R.id.refresh_todo);
+        filterbutton = view.findViewById(R.id.filter_todo);
+        progressBar = view.findViewById(R.id.progresbar_todo);
         swipeRefreshLayout.setRefreshing(true);
-        rvTodo.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        //prepareRecycleView
+        mAdapter = new RvTodoAdapter(listjobs, getActivity());
+        rvTodo.setLayoutManager(linearLayoutManager);
+        rvTodo.setHasFixedSize(true);
+        rvTodo.setAdapter(mAdapter);
+
+
+        //launchMain
         getJobs();
+        rvTodo.addOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                int visibleItemCount = linearLayoutManager.getChildCount();
+                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                int total = mAdapter.getItemCount();
+                if (page < last_page) {
+                    if (visibleItemCount + pastVisibleItem >= total) {
+                        page++;
+                        progressBar.setVisibility(View.VISIBLE);
+                        getJobs();
+                    }
+                }
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
+
+        //onRefresh
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                page = 1;
+                listjobs.clear();
                 getJobs();
+            }
+        });
+
+        //filter
+        final UserInteraction userInteraction = new UserInteraction();
+        filterbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                userInteraction.showPopupFilter(getActivity());
             }
         });
         return view;
@@ -62,25 +112,29 @@ public class StaffToDoFragment extends Fragment {
         String tokenStaff = _objresp.getString("jwttoken", "");
         String idStaff = getIdStaff.getString("id", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> jobsData = api.getJobs("Bearer "+tokenStaff, idStaff);
+        Call<ResponseData> jobsData = api.getJobs("Bearer "+tokenStaff, page, idStaff);
         jobsData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
-                    listjobs = response.body().getTodoData();
-                    Log.d("staffjob", ""+listjobs);
-                    RvTodoAdapter mAdapter = new RvTodoAdapter(getContext(), listjobs);
-                    rvTodo.setAdapter(mAdapter);
+                    List<TodoData> responseBody = response.body().getTodoData();
+                    listjobs.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
-                    rvTodo.smoothScrollToPosition(0);
+                    last_page = response.body().getStaff_todo_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else{
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvTodoAdapter.ItemClick() {
                         @Override
                         public void onItemClicked(TodoData jobdata) {
                             Intent toDetail = new Intent(getActivity(), DetailActivity.class);
-
+                            toDetail.putExtra(DetailActivity.EXTRA_JOBS, jobdata);
+                            startActivity(toDetail);
                         }
                     });
-                    swipeRefreshLayout.setRefreshing(false);
                 }else{
                     Log.d("staffjob", ""+response.body());
                     swipeRefreshLayout.setRefreshing(false);

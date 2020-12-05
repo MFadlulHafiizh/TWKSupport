@@ -85,7 +85,7 @@ public class BugsFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.refresh_bug);
         tryAgain = view.findViewById(R.id.btn_tryAgain);
         filterbutton = view.findViewById(R.id.filter_fragment);
-        progressBar = view.findViewById(R.id.progresbar);
+        progressBar = view.findViewById(R.id.progresbar_bug);
         swipeRefreshLayout.setRefreshing(true);
 
         //prepare recycleview
@@ -113,6 +113,7 @@ public class BugsFragment extends Fragment {
                                 if (page < last_page) {
                                     if (visibleItemCount + pastVisibleItem >= total) {
                                         page++;
+                                        progressBar.setVisibility(View.VISIBLE);
                                         addListAdminBug();
                                     }
                                 }
@@ -131,6 +132,7 @@ public class BugsFragment extends Fragment {
                                 if (page < last_page) {
                                     if (visibleItemCount + pastVisibleItem >= total) {
                                         page++;
+                                        progressBar.setVisibility(View.VISIBLE);
                                         addListDataBugsUser();
                                     }
                                 }
@@ -140,7 +142,7 @@ public class BugsFragment extends Fragment {
                         break;
                 }
             }
-        }, 50);
+        }, 10);
 
         //onRefresh
         refreshData(swipeRefreshLayout, role);
@@ -175,7 +177,11 @@ public class BugsFragment extends Fragment {
                     listBugs.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
                     last_page = response.body().getBug_page_total();
-                    progressBar.setVisibility(View.GONE);
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else{
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
@@ -215,6 +221,11 @@ public class BugsFragment extends Fragment {
                     listBugs.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
                     last_page = response.body().getBug_page_total();
+                    if (page == last_page){
+                        progressBar.setVisibility(View.GONE);
+                    }else{
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
                     Log.d("lastpage", ""+last_page);
                     progressBar.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);

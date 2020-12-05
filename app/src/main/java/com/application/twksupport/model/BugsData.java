@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class BugsData implements Parcelable {
+    private String nama_perusahaan;
     private String id_ticket;
     private String apps_name;
     private String type;
@@ -19,6 +20,7 @@ public class BugsData implements Parcelable {
     }
 
     protected BugsData(Parcel in) {
+        nama_perusahaan = in.readString();
         id_ticket = in.readString();
         apps_name = in.readString();
         type = in.readString();
@@ -40,6 +42,14 @@ public class BugsData implements Parcelable {
             return new BugsData[size];
         }
     };
+
+    public String getNama_perusahaan() {
+        return nama_perusahaan;
+    }
+
+    public void setNama_perusahaan(String nama_perusahaan) {
+        this.nama_perusahaan = nama_perusahaan;
+    }
 
     public String getId_ticket() {
         return id_ticket;
@@ -112,6 +122,7 @@ public class BugsData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(nama_perusahaan);
         parcel.writeString(id_ticket);
         parcel.writeString(apps_name);
         parcel.writeString(type);

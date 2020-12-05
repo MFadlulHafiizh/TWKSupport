@@ -8,6 +8,9 @@ import java.util.List;
 public class ResponseData {
     private int bug_page_total;
     private int fitur_page_total;
+    private int done_page_total;
+    private int staff_done_page_total;
+    private int staff_todo_page_total;
     private List<BugsData> dataBug;
     private List<FeatureData> featureData;
     private List<DoneData> doneData;
@@ -17,6 +20,30 @@ public class ResponseData {
 
     public List<DoneData> getHasDone() {
         return hasDone;
+    }
+
+    public int getDone_page_total() {
+        return done_page_total;
+    }
+
+    public void setDone_page_total(int done_page_total) {
+        this.done_page_total = done_page_total;
+    }
+
+    public int getStaff_done_page_total() {
+        return staff_done_page_total;
+    }
+
+    public int getStaff_todo_page_total() {
+        return staff_todo_page_total;
+    }
+
+    public void setStaff_todo_page_total(int staff_todo_page_total) {
+        this.staff_todo_page_total = staff_todo_page_total;
+    }
+
+    public void setStaff_done_page_total(int staff_done_page_total) {
+        this.staff_done_page_total = staff_done_page_total;
     }
 
     public void setHasDone(List<DoneData> hasDone) {

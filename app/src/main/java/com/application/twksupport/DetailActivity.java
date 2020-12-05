@@ -24,6 +24,8 @@ import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.DoneData;
 import com.application.twksupport.model.FeatureData;
+import com.application.twksupport.model.TodoData;
+
 import java.util.Calendar;
 import cn.pedant.SweetAlert.SweetAlertDialog;
 import okhttp3.ResponseBody;
@@ -31,17 +33,17 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import static com.application.twksupport.R.id.client_ageedisaree;
-import static com.application.twksupport.R.id.tlbar_detail;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic;
-    private Button btnAssign, btnAgreement;
+    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, ptname;
+    private Button btnAssign, btnAgreement, btnStaff;
     private EditText etPrice;
     private Toolbar det_toolbar;
     private LinearLayout container, container_price, containerAdminAct, clientAgreeDisagree;
     public static final String EXTRA_BUG = "extra_bug";
     public static final String EXTRA_FEATURE = "extra_feature";
     public static final String EXTRA_DONE = "extra_done";
+    public static final String EXTRA_JOBS = "extra_jobs";
     DatePickerDialog.OnDateSetListener setListener;
     ImageButton btnOpenDate;
     EditText etyear;
@@ -61,6 +63,7 @@ public class DetailActivity extends AppCompatActivity {
         final BugsData bugsData = getIntent().getParcelableExtra(EXTRA_BUG);
         final FeatureData fiturData = getIntent().getParcelableExtra(EXTRA_FEATURE);
         final DoneData doneData = getIntent().getParcelableExtra(EXTRA_DONE);
+        final TodoData jobsData = getIntent().getParcelableExtra(EXTRA_JOBS);
         final SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
         final SharedPreferences role = getSharedPreferences("userInformation", 0);
         final String getToken = _objpref.getString("jwttoken", "");
@@ -73,6 +76,8 @@ public class DetailActivity extends AppCompatActivity {
                 if (getIntent().hasExtra(EXTRA_BUG)){
                     container_price.setVisibility(View.GONE);
                     btnAgreement.setVisibility(View.GONE);
+                    ptname.setVisibility(View.VISIBLE);
+                    ptname.setText(bugsData.getNama_perusahaan());
                     txtPriority.setText(bugsData.getPriority());
                     txtAppname.setText(bugsData.getApps_name());
                     txtSubject.setText(bugsData.getSubject());
@@ -106,12 +111,16 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
                 else if (getIntent().hasExtra(EXTRA_FEATURE)){
+                    ptname.setVisibility(View.VISIBLE);
+                    ptname.setText(fiturData.getNama_perusahaan());
                     txtPriority.setText(fiturData.getPriority());
                     txtAppname.setText(fiturData.getApps_name());
                     txtSubject.setText(fiturData.getSubject());
                     txtDetail.setText(fiturData.getDetail());
+                    txtDeadlineOrTimePeriodic.setText("Time Periodic :");
                     txtTitle.setText("Feature Request");
                     String aprovalStat = fiturData.getAproval_stat();
+                    Log.d("aproval", ""+aprovalStat);
                     String status = fiturData.getStatus();
                     datePicker(etyear, etmonth, etday);
                     if(status.equals("Requested") && aprovalStat == null){
@@ -119,6 +128,11 @@ public class DetailActivity extends AppCompatActivity {
                         btnAgreement.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
+                                final SweetAlertDialog pDialog = new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+                                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                                pDialog.setTitleText("Loading");
+                                pDialog.setCancelable(false);
+                                pDialog.show();
                                 final String datePick = etyear.getText().toString() + "-" + etmonth.getText().toString() + "-" + etday.getText().toString();
                                 if (!datePick.equals("--")){
                                     ApiService api = ApiClient.getClient().create(ApiService.class);
@@ -126,10 +140,23 @@ public class DetailActivity extends AppCompatActivity {
                                     makeAgreement.enqueue(new Callback<ResponseBody>() {
                                         @Override
                                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                                            if (response.isSuccessful()){
+                                            pDialog.dismiss();
+                                            if (response.isSuccessful() && etPrice.getText().toString() != null){
                                                 try {
-                                                    String JSONResponse = response.body().string();
-                                                    Toast.makeText(DetailActivity.this, ""+JSONResponse, Toast.LENGTH_SHORT).show();
+                                                    SweetAlertDialog sweet = new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+                                                    sweet.setTitleText("Success");
+                                                    sweet.setContentText("Aproval was submitted");
+                                                    sweet.setCanceledOnTouchOutside(false);
+                                                    sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                                        @Override
+                                                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                                            Intent goBack = new Intent(DetailActivity.this, UserActivity.class);
+                                                            goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                            startActivity(goBack);
+                                                            finish();
+                                                        }
+                                                    });
+                                                    sweet.show();
                                                 }
                                                 catch (Exception e){
                                                     e.printStackTrace();
@@ -143,6 +170,7 @@ public class DetailActivity extends AppCompatActivity {
 
                                         @Override
                                         public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                            pDialog.dismiss();
                                             Log.d("detailactivity", ""+t.getMessage());
                                         }
                                     });
@@ -150,8 +178,12 @@ public class DetailActivity extends AppCompatActivity {
                             }
                         });
                     }
-                    else if (status.equals("Requested") && aprovalStat != null){
+                    else if (status.equals("Requested") && aprovalStat.equals("Accepted")){
                         btnAgreement.setVisibility(View.GONE);
+                        containerAdminAct.setVisibility(View.GONE);
+                        txtAprovalStat.setText(aprovalStat);
+                        txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
+                        txtAprovalStat.setVisibility(View.VISIBLE);
                         btnAssign.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
@@ -178,6 +210,37 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 else {
                     setDetailDone(doneData);
+                }
+                break;
+
+            case "twk-staff":
+                container.setVisibility(View.GONE);
+                if (getIntent().hasExtra(EXTRA_JOBS)){
+                    btnStaff.setVisibility(View.VISIBLE);
+                    ptname.setVisibility(View.VISIBLE);
+                    if (jobsData.getType().equals("Report")){
+                        txtTitle.setText("Bug Report");
+                    }else {
+                        txtTitle.setText("Feature Request");
+                    }
+                    ptname.setText(jobsData.getNama_perusahaan());
+                    txtPriority.setText(jobsData.getPriority());
+                    txtAppname.setText(jobsData.getApps_name());
+                    txtSubject.setText(jobsData.getSubject());
+                    txtDetail.setText(jobsData.getDetail());
+                }
+                else{
+                    ptname.setVisibility(View.VISIBLE);
+                    if (doneData.getType().equals("Report")){
+                        txtTitle.setText("Bug Report");
+                    }else {
+                        txtTitle.setText("Feature Request");
+                    }
+                    ptname.setText(doneData.getNama_perusahaan());
+                    txtPriority.setText(doneData.getPriority());
+                    txtAppname.setText(doneData.getApps_name());
+                    txtSubject.setText(doneData.getSubject());
+                    txtDetail.setText(doneData.getDetail());
                 }
                 break;
 
@@ -282,6 +345,7 @@ public class DetailActivity extends AppCompatActivity {
         txtDetail = findViewById(R.id.detail_content);
         txtTitle = findViewById(R.id.item_type);
         btnAssign = findViewById(R.id.btn_assign);
+        btnStaff = findViewById(R.id.btn_staff);
         etyear = findViewById(R.id.et_year);
         etmonth = findViewById(R.id.et_month);
         etday = findViewById(R.id.et_day);
@@ -294,6 +358,8 @@ public class DetailActivity extends AppCompatActivity {
         txtDeadlineOrTimePeriodic = findViewById(R.id.txt_deadlineOrTimePeriodic);
         containerAdminAct = findViewById(R.id.container_adminAction);
         det_toolbar = findViewById(R.id.tlbar_detail);
+        txtAprovalStat = findViewById(R.id.aprovalStat);
+        ptname = findViewById(R.id.pt_name);
     }
 
 }

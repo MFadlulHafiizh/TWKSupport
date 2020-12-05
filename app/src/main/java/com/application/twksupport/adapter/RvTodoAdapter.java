@@ -1,5 +1,6 @@
 package com.application.twksupport.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Color;
 import android.util.Log;
@@ -16,12 +17,12 @@ import java.util.List;
 
 public class RvTodoAdapter extends RecyclerView.Adapter<RvTodoAdapter.MyViewHolder> {
 
-    private Context context;
+    private Activity activity;
     private List<TodoData> todoList;
     private ItemClick click;
 
-    public RvTodoAdapter(Context context, List<TodoData> todoList) {
-        this.context = context;
+    public RvTodoAdapter( List<TodoData> todoList, Activity activity) {
+        this.activity = activity;
         this.todoList = todoList;
     }
 
