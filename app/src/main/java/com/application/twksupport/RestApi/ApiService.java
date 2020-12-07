@@ -37,6 +37,9 @@ public interface ApiService {
     @GET("notification")
     Call<ResponseData> getListNotification(@Query("page") int page,@Query("id_user") String id_user);
 
+    @PATCH("notification/readat/{id_notif}")
+    Call<ResponseBody> markAsRead(@Path("id_notif") String id_notif, @Query("read_at") int read_at);
+
     @GET("user/getapp")
     Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
 

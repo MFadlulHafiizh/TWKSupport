@@ -14,6 +14,8 @@ public class NotificationData implements Parcelable {
     private String detail;
     private String status;
     private String created_at;
+    private int read_at;
+    private String aproval_stat;
 
     protected NotificationData(Parcel in) {
         id_notif = in.readString();
@@ -26,6 +28,8 @@ public class NotificationData implements Parcelable {
         detail = in.readString();
         status = in.readString();
         created_at = in.readString();
+        read_at = in.readInt();
+        aproval_stat = in.readString();
     }
 
     public static final Creator<NotificationData> CREATOR = new Creator<NotificationData>() {
@@ -120,6 +124,22 @@ public class NotificationData implements Parcelable {
         this.created_at = created_at;
     }
 
+    public int getRead_at() {
+        return read_at;
+    }
+
+    public void setRead_at(int read_at) {
+        this.read_at = read_at;
+    }
+
+    public String getAproval_stat() {
+        return aproval_stat;
+    }
+
+    public void setAproval_stat(String aproval_stat) {
+        this.aproval_stat = aproval_stat;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -137,5 +157,7 @@ public class NotificationData implements Parcelable {
         dest.writeString(detail);
         dest.writeString(status);
         dest.writeString(created_at);
+        dest.writeInt(read_at);
+        dest.writeString(aproval_stat);
     }
 }

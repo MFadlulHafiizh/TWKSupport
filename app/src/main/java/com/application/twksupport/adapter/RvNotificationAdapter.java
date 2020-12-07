@@ -1,21 +1,19 @@
 package com.application.twksupport.adapter;
 
-import android.app.Activity;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-
 import com.application.twksupport.R;
 import com.application.twksupport.model.NotificationData;
-
 import java.util.List;
 
 public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAdapter.MyViewHolder> {
+
     private List<NotificationData> mNotif;
     private ItemClick click;
 
@@ -46,6 +44,11 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
         }else if(nd.getPriority().equals("Low")){
             holder.txtPriority.setTextColor(Color.parseColor("#809CFF"));
         }
+        if (nd.getRead_at() == 1){
+            holder.imgNotifIndicator.setVisibility(View.GONE);
+        }else {
+            holder.imgNotifIndicator.setVisibility(View.VISIBLE);
+        }
         holder.txtPriority.setText(nd.getPriority());
         holder.txtSubject.setText(nd.getSubject());
         holder.txtAppname.setText(nd.getApps_name());
@@ -55,6 +58,7 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
             @Override
             public void onClick(View v) {
                 click.onItemClicked(mNotif.get(holder.getAdapterPosition()));
+                holder.imgNotifIndicator.setVisibility(View.GONE);
             }
         });
     }
@@ -70,13 +74,14 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         private TextView txtPriority, txtSubject, txtAppname, txtStatus;
+        private ImageView imgNotifIndicator;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
-
             txtPriority = itemView.findViewById(R.id.priority_notif);
             txtSubject = itemView.findViewById(R.id.subject_notif);
             txtAppname = itemView.findViewById(R.id.appname_notif);
             txtStatus = itemView.findViewById(R.id.status_notif);
+            imgNotifIndicator = itemView.findViewById(R.id.notif_indicator);
         }
     }
 }

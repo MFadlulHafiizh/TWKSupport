@@ -32,6 +32,7 @@ import com.google.android.material.appbar.AppBarLayout;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -130,15 +131,30 @@ public class NotificationActivity extends AppCompatActivity {
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvNotificationAdapter.ItemClick() {
                         @Override
-                        public void onItemClicked(NotificationData notifData) {
-                            Intent toDetail = new Intent(NotificationActivity.this, DetailActivity.class);
-                            //toDetail.putExtra(DetailActivity.EXTRA_NOTIF, notifData);
-                            //startActivity(toDetail);
+                        public void onItemClicked(final NotificationData notifData) {
+                            ApiService api = ApiClient.getClient().create(ApiService.class);
+                            Call<ResponseBody> markAsRead = api.markAsRead(notifData.getId_notif(), 1);
+                            Log.d("clickedNotif", ""+notifData.getId_notif());
+                            markAsRead.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    Intent toDetail = new Intent(NotificationActivity.this, DetailActivity.class);
+                                    toDetail.putExtra(DetailActivity.EXTRA_NOTIF, notifData);
+                                    startActivity(toDetail);
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(NotificationActivity.this, "failed", Toast.LENGTH_SHORT).show();
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            });
                         }
                     });
                 }else {
                     Log.d("RETRO", "errror: "+response.body());
                     Toast.makeText(NotificationActivity.this, "Error 401", Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                 }
             }
 
