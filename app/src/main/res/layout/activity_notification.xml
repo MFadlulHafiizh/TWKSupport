@@ -19,7 +19,7 @@
             android:transitionName="tabContent"
             android:layout_width="wrap_content"
             android:layout_height="0dp"
-            android:layout_weight="0.6"
+            android:layout_weight="0.1"
             android:background="@drawable/notiftop"
             android:orientation="horizontal">
 
@@ -35,7 +35,7 @@
 
             <TextView
                 android:id="@+id/notif_count"
-                android:layout_width="30dp"
+                android:layout_width="50dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center_vertical"
                 android:layout_marginLeft="16dp"
@@ -46,14 +46,44 @@
                 tools:text="14" />
         </LinearLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rv_notif"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_marginTop="5dp"
-            android:layout_weight="5"
-            tools:listitem="@layout/card_notif_item"/>
+            android:padding="10dp"
+            android:layout_weight="1"
+            android:orientation="vertical">
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:id="@+id/refresh_notif"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
+                <ScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:id="@+id/rv_notif"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            tools:listitem="@layout/card_notif_item"/>
+
+                        <ProgressBar
+                            android:id="@+id/progresbar_notif"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:indeterminateTintMode="src_atop"
+                            android:indeterminateTint="@color/RedDefault"
+                            android:visibility="invisible"/>
+                    </LinearLayout>
+
+                </ScrollView>
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </LinearLayout>
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

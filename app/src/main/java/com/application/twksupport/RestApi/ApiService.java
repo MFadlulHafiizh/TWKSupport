@@ -34,6 +34,9 @@ public interface ApiService {
     Call<ResponseBody> logoutUser(@Path("id") String id_user,
                                   @Query("token") String logoutToken);
 
+    @GET("notification")
+    Call<ResponseData> getListNotification(@Query("page") int page,@Query("id_user") String id_user);
+
     @GET("user/getapp")
     Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
 

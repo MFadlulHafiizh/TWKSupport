@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -16,6 +17,7 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.widget.Toolbar;
@@ -32,10 +34,13 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+
+import static android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD;
 import static com.application.twksupport.R.id.client_ageedisaree;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, ptname;
+    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, txtPtname,txtDeadlineStaff;
+    private TableRow rowDeadlineStaff;
     private Button btnAssign, btnAgreement, btnStaff;
     private EditText etPrice;
     private Toolbar det_toolbar;
@@ -44,6 +49,7 @@ public class DetailActivity extends AppCompatActivity {
     public static final String EXTRA_FEATURE = "extra_feature";
     public static final String EXTRA_DONE = "extra_done";
     public static final String EXTRA_JOBS = "extra_jobs";
+    public static final String EXTRA_NOTIF = "extra_notif";
     DatePickerDialog.OnDateSetListener setListener;
     ImageButton btnOpenDate;
     EditText etyear;
@@ -56,6 +62,7 @@ public class DetailActivity extends AppCompatActivity {
         setContentView(R.layout.activity_detail);
         initialize();
 
+        det_toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back);
         setSupportActionBar(det_toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -70,14 +77,18 @@ public class DetailActivity extends AppCompatActivity {
         final String getRole = role.getString("role", "");
         Log.d("roleDetail", ""+getRole);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            txtDetail.setJustificationMode(JUSTIFICATION_MODE_INTER_WORD);
+        }
+
         switch (getRole){
             case "twk-head":
                 clientAgreeDisagree.setVisibility(View.GONE);
                 if (getIntent().hasExtra(EXTRA_BUG)){
                     container_price.setVisibility(View.GONE);
                     btnAgreement.setVisibility(View.GONE);
-                    ptname.setVisibility(View.VISIBLE);
-                    ptname.setText(bugsData.getNama_perusahaan());
+                    txtPtname.setVisibility(View.VISIBLE);
+                    txtPtname.setText(bugsData.getNama_perusahaan());
                     txtPriority.setText(bugsData.getPriority());
                     txtAppname.setText(bugsData.getApps_name());
                     txtSubject.setText(bugsData.getSubject());
@@ -111,8 +122,8 @@ public class DetailActivity extends AppCompatActivity {
                     }
                 }
                 else if (getIntent().hasExtra(EXTRA_FEATURE)){
-                    ptname.setVisibility(View.VISIBLE);
-                    ptname.setText(fiturData.getNama_perusahaan());
+                    txtPtname.setVisibility(View.VISIBLE);
+                    txtPtname.setText(fiturData.getNama_perusahaan());
                     txtPriority.setText(fiturData.getPriority());
                     txtAppname.setText(fiturData.getApps_name());
                     txtSubject.setText(fiturData.getSubject());
@@ -215,28 +226,30 @@ public class DetailActivity extends AppCompatActivity {
 
             case "twk-staff":
                 container.setVisibility(View.GONE);
+                rowDeadlineStaff.setVisibility(View.VISIBLE);
                 if (getIntent().hasExtra(EXTRA_JOBS)){
                     btnStaff.setVisibility(View.VISIBLE);
-                    ptname.setVisibility(View.VISIBLE);
+                    txtPtname.setVisibility(View.VISIBLE);
                     if (jobsData.getType().equals("Report")){
                         txtTitle.setText("Bug Report");
                     }else {
                         txtTitle.setText("Feature Request");
                     }
-                    ptname.setText(jobsData.getNama_perusahaan());
+                    txtDeadlineStaff.setText("Deadline : "+jobsData.getDeadline());
+                    txtPtname.setText(jobsData.getNama_perusahaan());
                     txtPriority.setText(jobsData.getPriority());
                     txtAppname.setText(jobsData.getApps_name());
                     txtSubject.setText(jobsData.getSubject());
                     txtDetail.setText(jobsData.getDetail());
                 }
                 else{
-                    ptname.setVisibility(View.VISIBLE);
+                    txtPtname.setVisibility(View.VISIBLE);
                     if (doneData.getType().equals("Report")){
                         txtTitle.setText("Bug Report");
                     }else {
                         txtTitle.setText("Feature Request");
                     }
-                    ptname.setText(doneData.getNama_perusahaan());
+                    txtPtname.setText(doneData.getNama_perusahaan());
                     txtPriority.setText(doneData.getPriority());
                     txtAppname.setText(doneData.getApps_name());
                     txtSubject.setText(doneData.getSubject());
@@ -244,7 +257,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 break;
 
-            case "client-head":
+            default:
                 container_price.setVisibility(View.GONE);
                 if (getIntent().hasExtra(EXTRA_BUG)){
                     container.setVisibility(View.GONE);
@@ -359,7 +372,9 @@ public class DetailActivity extends AppCompatActivity {
         containerAdminAct = findViewById(R.id.container_adminAction);
         det_toolbar = findViewById(R.id.tlbar_detail);
         txtAprovalStat = findViewById(R.id.aprovalStat);
-        ptname = findViewById(R.id.pt_name);
+        txtPtname = findViewById(R.id.pt_name);
+        txtDeadlineStaff = findViewById(R.id.txtDeadlineStaff);
+        rowDeadlineStaff = findViewById(R.id.rowDeadlineStaff);
     }
 
 }

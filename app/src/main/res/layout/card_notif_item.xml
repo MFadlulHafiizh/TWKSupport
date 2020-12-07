@@ -1,108 +1,107 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
+<LinearLayout android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:paddingStart="16dp"
-    android:paddingEnd="16dp"
-    android:paddingTop="8dp">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:gravity="center_vertical">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/containerPriority"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="@id/card"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="@id/card">
-
-        <TextView
-            android:id="@+id/priority"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="3dp"
-            android:fontFamily="@font/comfortaa_bold"
-            android:text="High"
-            android:textColor="@color/RedDefault"
-            android:textSize="14sp"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/priority"
-            android:layout_marginTop="5dp"
-            android:text="@string/priority"
-            android:textSize="12sp"
-            app:layout_constraintLeft_toLeftOf="@id/priority"
-            app:layout_constraintRight_toRightOf="@id/priority"
-            app:layout_constraintTop_toBottomOf="@id/priority" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/card"
+    <TableLayout
+        android:id="@+id/priorityGroup"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
+        android:layout_weight="0.3"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <TableRow
+            android:gravity="center_horizontal|bottom">
+            <TextView
+                android:id="@+id/priority_notif"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/comfortaa_bold"
+                android:textSize="14sp"
+                android:gravity="center"
+                tools:text="Middle"
+                android:textColor="@color/RedDefault"/>
+        </TableRow>
+        <TableRow
+            android:gravity="center_horizontal|top">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text="@string/priority"
+                android:textSize="12sp"
+                android:gravity="center"/>
+        </TableRow>
+    </TableLayout>
+
+    <androidx.cardview.widget.CardView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_marginTop="8dp"
+        android:clickable="true"
+        android:layout_marginRight="12dp"
         android:layout_marginBottom="8dp"
-        app:cardCornerRadius="8dp"
-        app:layout_constraintLeft_toRightOf="@id/containerPriority"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:cardCornerRadius="8dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginBottom="9dp">
+            android:layout_marginVertical="9dp">
 
             <TextView
-                android:id="@+id/subject_item"
-                android:layout_width="wrap_content"
+                android:id="@+id/subject_notif"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
                 android:fontFamily="@font/comfortaa_regular"
                 android:text="Subject"
+                android:maxLines="2"
+                android:ellipsize="end"
                 android:textColor="@color/blackCharcoal"
                 android:textSize="12dp"
                 app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toLeftOf="@+id/statusHome"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/appname"
+                android:id="@+id/appname_notif"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/subject_item"
-                android:layout_marginTop="14dp"
+                android:layout_below="@id/subject_notif"
                 android:text="App Name"
+                android:layout_marginTop="14dp"
                 android:textSize="12sp"
-                app:layout_constraintLeft_toLeftOf="@id/subject_item"
-                app:layout_constraintTop_toBottomOf="@id/subject_item" />
+                app:layout_constraintTop_toBottomOf="@id/subject_notif"
+                app:layout_constraintLeft_toLeftOf="@id/subject_notif" />
 
             <TextView
-                android:id="@+id/status"
+                android:id="@+id/status_notif"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:text="Status"
+                android:layout_marginRight="12dp"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"/>
 
             <TextView
-                android:id="@+id/date"
+                android:id="@+id/dateHome"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/status"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="14dp"
                 android:text="dd-mm-yyyy"
+                android:layout_below="@+id/status"
+                android:layout_marginTop="14dp"
+                android:layout_alignParentRight="true"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintRight_toRightOf="@id/status" />
+                app:layout_constraintRight_toRightOf="@id/status_notif"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
     </androidx.cardview.widget.CardView>
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

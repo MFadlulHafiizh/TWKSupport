@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "398586809172",
+    "project_id": "twksupport-b966e",
+    "storage_bucket": "twksupport-b966e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:398586809172:android:a2e6e9fbde96b1a69856c1",
+        "android_client_info": {
+          "package_name": "com.application.twksupport"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "398586809172-v5s8i8i0bhsfvlp8dfu7rroaoktktnju.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.application.twksupport",
+            "certificate_hash": "c24eaedf47586f6894f7e138c7951ed8dfdce625"
+          }
+        },
+        {
+          "client_id": "398586809172-2pbgen2mcl5knvob7beb0pr4fa1jjg6t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB505Lnf8jjvWfKAApMtRXKHqz5qlHn55o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "398586809172-2pbgen2mcl5knvob7beb0pr4fa1jjg6t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

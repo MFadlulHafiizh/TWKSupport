@@ -15,12 +15,23 @@ import androidx.core.app.NotificationCompat;
 
 import com.application.twksupport.NotificationActivity;
 import com.application.twksupport.R;
+import com.application.twksupport.auth.SessionManager;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import static android.content.ContentValues.TAG;
 
 public class NotificationServices extends FirebaseMessagingService {
+    private SessionManager sessionManager;
+    @Override
+    public void onNewToken(String s) {
+        super.onNewToken(s);
+        Log.d("onNewToken", "RefreshedToken:"+s);
+        sessionManager = new SessionManager(getApplicationContext());
+        sessionManager.createNotificationReceiver(s);
+    }
+
     @Override
     public void onMessageReceived(@NonNull RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);

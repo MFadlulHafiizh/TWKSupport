@@ -11,12 +11,31 @@ public class ResponseData {
     private int done_page_total;
     private int staff_done_page_total;
     private int staff_todo_page_total;
+    private int last_page_notif;
+    private int notifCount;
     private List<BugsData> dataBug;
     private List<FeatureData> featureData;
     private List<DoneData> doneData;
     private List<DoneData> hasDone;
     private List<TodoData> todoData;
     private List<AppsUserData> userApp;
+    private List<NotificationData> notifData;
+
+    public int getLast_page_notif() {
+        return last_page_notif;
+    }
+
+    public void setLast_page_notif(int last_page_notif) {
+        this.last_page_notif = last_page_notif;
+    }
+
+    public int getNotifCount() {
+        return notifCount;
+    }
+
+    public void setNotifCount(int notifCount) {
+        this.notifCount = notifCount;
+    }
 
     public List<DoneData> getHasDone() {
         return hasDone;
@@ -104,5 +123,21 @@ public class ResponseData {
 
     public void setUserApp(List<AppsUserData> userApp) {
         this.userApp = userApp;
+    }
+
+    public List<BugsData> getDataBug() {
+        return dataBug;
+    }
+
+    public void setDataBug(List<BugsData> dataBug) {
+        this.dataBug = dataBug;
+    }
+
+    public List<NotificationData> getNotifData() {
+        return notifData;
+    }
+
+    public void setNotifData(List<NotificationData> notifData) {
+        this.notifData = notifData;
     }
 }

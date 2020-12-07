@@ -3,11 +3,10 @@ package com.application.twksupport.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-public class TodoData implements Parcelable {
-    private String nama_perusahaan;
-    private String id_assignment;
+public class NotificationData implements Parcelable {
+    private String id_notif;
+    private String from;
     private String id_ticket;
-    private String dead_line;
     private String apps_name;
     private String type;
     private String priority;
@@ -16,11 +15,10 @@ public class TodoData implements Parcelable {
     private String status;
     private String created_at;
 
-    protected TodoData(Parcel in) {
-        nama_perusahaan = in.readString();
-        id_assignment = in.readString();
+    protected NotificationData(Parcel in) {
+        id_notif = in.readString();
+        from = in.readString();
         id_ticket = in.readString();
-        dead_line = in.readString();
         apps_name = in.readString();
         type = in.readString();
         priority = in.readString();
@@ -30,32 +28,32 @@ public class TodoData implements Parcelable {
         created_at = in.readString();
     }
 
-    public static final Creator<TodoData> CREATOR = new Creator<TodoData>() {
+    public static final Creator<NotificationData> CREATOR = new Creator<NotificationData>() {
         @Override
-        public TodoData createFromParcel(Parcel in) {
-            return new TodoData(in);
+        public NotificationData createFromParcel(Parcel in) {
+            return new NotificationData(in);
         }
 
         @Override
-        public TodoData[] newArray(int size) {
-            return new TodoData[size];
+        public NotificationData[] newArray(int size) {
+            return new NotificationData[size];
         }
     };
 
-    public String getNama_perusahaan() {
-        return nama_perusahaan;
+    public String getId_notif() {
+        return id_notif;
     }
 
-    public void setNama_perusahaan(String nama_perusahaan) {
-        this.nama_perusahaan = nama_perusahaan;
+    public void setId_notif(String id_notif) {
+        this.id_notif = id_notif;
     }
 
-    public String getId_assignment() {
-        return id_assignment;
+    public String getFrom() {
+        return from;
     }
 
-    public void setId_assignment(String id_assignment) {
-        this.id_assignment = id_assignment;
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public String getId_ticket() {
@@ -64,14 +62,6 @@ public class TodoData implements Parcelable {
 
     public void setId_ticket(String id_ticket) {
         this.id_ticket = id_ticket;
-    }
-
-    public String getDeadline() {
-        return dead_line;
-    }
-
-    public void setDeadline(String deadline) {
-        this.dead_line = deadline;
     }
 
     public String getApps_name() {
@@ -137,10 +127,9 @@ public class TodoData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(nama_perusahaan);
-        dest.writeString(id_assignment);
+        dest.writeString(id_notif);
+        dest.writeString(from);
         dest.writeString(id_ticket);
-        dest.writeString(dead_line);
         dest.writeString(apps_name);
         dest.writeString(type);
         dest.writeString(priority);

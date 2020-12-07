@@ -295,6 +295,7 @@ public class FeatureFragment extends Fragment {
                             listFeature.clear();
                         }
                         addListDataFeatureUser();
+                        break;
                 }
             }
         });

@@ -25,7 +25,7 @@ public class SessionManager {
 
     public void createNotificationReceiver(String fcm_token){
         editor.putString(KEY_NOTIF, fcm_token);
-        editor.apply();
+        editor.commit();
     }
 
 

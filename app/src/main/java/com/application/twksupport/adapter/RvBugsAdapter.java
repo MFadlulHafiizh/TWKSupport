@@ -61,7 +61,6 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
     @Override
     public void onBindViewHolder(@NonNull final MyViewHolder holder, final int position) {
         final BugsData bd = mBugs.get(position);
-        if (bd.getType().equals("Report")){
             if (bd.getPriority().equals("High")){
                 holder.tv_priority.setTextColor(Color.parseColor("#D13C4F"));
             }
@@ -85,7 +84,7 @@ public class RvBugsAdapter extends RecyclerView.Adapter<RvBugsAdapter.MyViewHold
                     click.onItemClicked(mBugs.get(holder.getAdapterPosition()));
                 }
             });
-        }
+
 
         //}
         /*else if(role.equals("twk-head")){

@@ -227,7 +227,6 @@ public class BugsFragment extends Fragment {
                         progressBar.setVisibility(View.INVISIBLE);
                     }
                     Log.d("lastpage", ""+last_page);
-                    progressBar.setVisibility(View.GONE);
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.setClick(new RvBugsAdapter.ItemClick() {
                         @Override
@@ -292,6 +291,7 @@ public class BugsFragment extends Fragment {
                             listBugs.clear();
                         }
                         addListDataBugsUser();
+                        break;
                 }
             }
         });

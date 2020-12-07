@@ -266,6 +266,7 @@ public class UserInteraction extends AppCompatActivity {
                                         }
                                     } else {
                                         Log.d("reportBug", "" + response.body());
+                                        pDialog.dismiss();
                                         new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
                                                 .setTitleText("Oppss")
                                                 .setContentText("Server error, please try again later")
@@ -303,6 +304,8 @@ public class UserInteraction extends AppCompatActivity {
                                                 @Override
                                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
                                                     sweetAlertDialog.dismiss();
+                                                    FeatureFragment.getInstance().getListFeature().clear();
+                                                    FeatureFragment.getInstance().setPage(1);
                                                     FeatureFragment.getInstance().addListDataFeatureUser();
                                                     bottomSheetDialog.dismiss();
                                                 }

@@ -22,11 +22,11 @@
             android:resource="@color/RedDefault" />
         <activity android:name=".TwkStaffActivity"></activity>
         <activity android:name=".StaffListActivity" />
-<!--        <service android:name=".notification.NotifFirebase">-->
-<!--            <intent-filter>-->
-<!--                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />-->
-<!--            </intent-filter>-->
-<!--        </service>-->
+        <!--<service android:name=".notification.NotifFirebase">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>-->
         <service
             android:name=".notification.NotificationServices"
             android:enabled="true"
