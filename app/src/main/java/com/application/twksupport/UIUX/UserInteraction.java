@@ -329,6 +329,7 @@ public class UserInteraction extends AppCompatActivity {
                                             e.printStackTrace();
                                         }
                                     } else {
+                                        pDialog.dismiss();
                                         new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
                                                 .setTitleText("Oppss")
                                                 .setContentText("Server error, please try again later")

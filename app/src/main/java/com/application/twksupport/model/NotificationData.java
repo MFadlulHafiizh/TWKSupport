@@ -5,6 +5,7 @@ import android.os.Parcelable;
 
 public class NotificationData implements Parcelable {
     private String id_notif;
+    private String nama_perusahaan;
     private String from;
     private String id_ticket;
     private String apps_name;
@@ -14,11 +15,14 @@ public class NotificationData implements Parcelable {
     private String detail;
     private String status;
     private String created_at;
+    private int price;
+    private String time_periodic;
     private int read_at;
     private String aproval_stat;
 
     protected NotificationData(Parcel in) {
         id_notif = in.readString();
+        nama_perusahaan = in.readString();
         from = in.readString();
         id_ticket = in.readString();
         apps_name = in.readString();
@@ -30,6 +34,8 @@ public class NotificationData implements Parcelable {
         created_at = in.readString();
         read_at = in.readInt();
         aproval_stat = in.readString();
+        price = in.readInt();
+        time_periodic = in.readString();
     }
 
     public static final Creator<NotificationData> CREATOR = new Creator<NotificationData>() {
@@ -50,6 +56,14 @@ public class NotificationData implements Parcelable {
 
     public void setId_notif(String id_notif) {
         this.id_notif = id_notif;
+    }
+
+    public String getNama_perusahaan() {
+        return nama_perusahaan;
+    }
+
+    public void setNama_perusahaan(String nama_perusahaan) {
+        this.nama_perusahaan = nama_perusahaan;
     }
 
     public String getFrom() {
@@ -140,6 +154,22 @@ public class NotificationData implements Parcelable {
         this.aproval_stat = aproval_stat;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
+    public String getTime_periodic() {
+        return time_periodic;
+    }
+
+    public void setTime_periodic(String time_periodic) {
+        this.time_periodic = time_periodic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -148,6 +178,7 @@ public class NotificationData implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(id_notif);
+        dest.writeString(nama_perusahaan);
         dest.writeString(from);
         dest.writeString(id_ticket);
         dest.writeString(apps_name);
@@ -159,5 +190,7 @@ public class NotificationData implements Parcelable {
         dest.writeString(created_at);
         dest.writeInt(read_at);
         dest.writeString(aproval_stat);
+        dest.writeInt(price);
+        dest.writeString(time_periodic);
     }
 }

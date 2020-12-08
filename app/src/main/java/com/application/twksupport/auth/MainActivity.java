@@ -24,6 +24,7 @@ import com.application.twksupport.model.TokenResponse;
 import com.application.twksupport.UserActivity;
 import com.application.twksupport.model.UserData;
 import com.application.twksupport.model.UserManager;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
@@ -52,18 +53,21 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         FirebaseMessaging.getInstance().getToken()
                 .addOnCompleteListener(new OnCompleteListener<String>() {
                     @Override
                     public void onComplete(@NonNull Task<String> task) {
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "Fetching FCM registration token failed", task.getException());
+                            SweetAlertDialog sweet = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE);
+                            sweet.setTitleText("Play services not working properly");
+                            sweet.setContentText("Some features or notification service may not work properly on your device, please synchronize or update your google play service");
+                            sweet.show();
                             return;
                         }
                         // Get new FCM registration token
                         String token = task.getResult();
-                        Log.d("fcmoeoe", ""+token);
+                        Log.d("fcmoeoe", "" + token);
                     }
                 });
 
@@ -86,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (exit){
+        if (exit) {
             super.onBackPressed();
             return;
         }
@@ -108,76 +112,72 @@ public class MainActivity extends AppCompatActivity {
             final Handler handler = new Handler();
             SharedPreferences getFcm = getSharedPreferences("JWTTOKEN", 0);
             fcm = getFcm.getString("fcm_token", "");
-            Log.d("fcmoemoe", ""+fcm);
+            Log.d("fcmoemoe", "" + fcm);
             ApiService service = ApiClient.getClient().create(ApiService.class);
-            if (fcm != null){
-                Call<ResponseBody> srvLogin = service.getToken(email, password, fcm);
-                srvLogin.enqueue(new Callback<ResponseBody>() {
-                    @Override
-                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                        if (response.isSuccessful()) {
-                            try {
-                                String ResponseJson = response.body().string();
-                                Gson objGson = new Gson();
-                                TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
-                                if (objResp.getToken() != null){
-                                    userInformation.addUserInformation(objResp.getUser().getId(), objResp.getUser().getId_perusahaan(),objResp.getUser().getPhoto(), objResp.getUser().getName(), objResp.getUser().getEmail(), objResp.getUser().getRole(), objResp.getUser().getFcm_token(), objResp.getUser().getNama_perusahaan());
-                                    Log.d("nama_perusahaan", ""+objResp.getUser().getNama_perusahaan());
-                                    sessionManager.createSession(objResp.getToken());
-                                    String role = objResp.getUser().getRole();
-                                    Log.d(TAG, ResponseJson);
-                                    if (role.equals("twk-head") || role.equals("client-head") || role.equals("client-staff")){
-                                        handler.postDelayed(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                btnProgress.buttonFinished();
-                                                Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
-                                                startActivity(toUser);
-                                                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                                finish();
-                                            }
-                                        },500);
-                                    }else {
-                                        btnProgress.buttonFinished();
-                                        Intent toStaff = new Intent(getApplicationContext(), TwkStaffActivity.class);
-                                        startActivity(toStaff);
-                                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
-                                        finish();
-                                    }
 
-                                }else{
-                                    new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
-                                            .setTitleText("Sign In Failed")
-                                            .setContentText("Your email or password is incorrect")
-                                            .setConfirmText("Try again")
-                                            .show();
+            Call<ResponseBody> srvLogin = service.getToken(email, password, fcm);
+            srvLogin.enqueue(new Callback<ResponseBody>() {
+                @Override
+                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                    if (response.isSuccessful()) {
+                        try {
+                            String ResponseJson = response.body().string();
+                            Gson objGson = new Gson();
+                            TokenResponse objResp = objGson.fromJson(ResponseJson, TokenResponse.class);
+                            if (objResp.getToken() != null) {
+                                userInformation.addUserInformation(objResp.getUser().getId(), objResp.getUser().getId_perusahaan(), objResp.getUser().getPhoto(), objResp.getUser().getName(), objResp.getUser().getEmail(), objResp.getUser().getRole(), objResp.getUser().getFcm_token(), objResp.getUser().getNama_perusahaan());
+                                Log.d("nama_perusahaan", "" + objResp.getUser().getNama_perusahaan());
+                                sessionManager.createSession(objResp.getToken());
+                                String role = objResp.getUser().getRole();
+                                Log.d(TAG, ResponseJson);
+                                if (role.equals("twk-head") || role.equals("client-head") || role.equals("client-staff")) {
                                     handler.postDelayed(new Runnable() {
                                         @Override
                                         public void run() {
-                                            btnProgress.buttonError();
+                                            btnProgress.buttonFinished();
+                                            Intent toUser = new Intent(getApplicationContext(), UserActivity.class);
+                                            startActivity(toUser);
+                                            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                            finish();
                                         }
-                                    },1000);
+                                    }, 500);
+                                } else {
+                                    btnProgress.buttonFinished();
+                                    Intent toStaff = new Intent(getApplicationContext(), TwkStaffActivity.class);
+                                    startActivity(toStaff);
+                                    overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                                    finish();
                                 }
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                Log.d("MainActivity", ""+e.getMessage());
-                                btnProgress.buttonError();
+
+                            } else {
+                                new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE)
+                                        .setTitleText("Sign In Failed")
+                                        .setContentText("Your email or password is incorrect")
+                                        .setConfirmText("Try again")
+                                        .show();
+                                handler.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        btnProgress.buttonError();
+                                    }
+                                }, 1000);
                             }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Log.d("MainActivity", "" + e.getMessage());
+                            btnProgress.buttonError();
                         }
                     }
+                }
 
-                    @Override
-                    public void onFailure(Call<ResponseBody> call, Throwable t) {
-                        btnProgress.buttonError();
-                        Toast.makeText(MainActivity.this, "System error occured, please check our internet connection", Toast.LENGTH_SHORT).show();
+                @Override
+                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                    btnProgress.buttonError();
+                    Toast.makeText(MainActivity.this, "System error occured, please check our internet connection", Toast.LENGTH_SHORT).show();
 
-                    }
-                });
-            }else {
-                Toast.makeText(this, "Your notitification token is not generated", Toast.LENGTH_SHORT).show();
-                btnProgress.buttonError();
-            }
+                }
+            });
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -3,6 +3,7 @@ package com.application.twksupport.RestApi;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.StaffResponse;
 import com.application.twksupport.model.TokenResponse;
+import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,8 @@ import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface ApiService {
+
+    //allUsers
     @FormUrlEncoded
     @Headers({
             "Accept: application/json",
@@ -35,13 +38,15 @@ public interface ApiService {
                                   @Query("token") String logoutToken);
 
     @GET("notification")
-    Call<ResponseData> getListNotification(@Query("page") int page,@Query("id_user") String id_user);
+    Call<ResponseData> getListNotification(@Query("page") int page, @Query("id_user") String id_user);
 
     @PATCH("notification/readat/{id_notif}")
     Call<ResponseBody> markAsRead(@Path("id_notif") String id_notif, @Query("read_at") int read_at);
 
+
+    //ForClientAct
     @GET("user/getapp")
-    Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany,@Header("Authorization") String authToken);
+    Call<ResponseData> getUserApps(@Query("id_perusahaan") int idCompany, @Header("Authorization") String authToken);
 
     @GET("user")
     Call<ResponseBody> getUserInformation(@Header("Authorization") String authorization);
@@ -55,6 +60,7 @@ public interface ApiService {
                                  @Field("detail") String detail,
                                  @Field("status") String status,
                                  @Header("Authorization") String authToken);
+
     @FormUrlEncoded
     @POST("user/request-feature")
     Call<ResponseBody> requestFeature(@Field("id_apps") int id_apps,
@@ -64,23 +70,38 @@ public interface ApiService {
                                       @Field("detail") String detail,
                                       @Field("status") String status,
                                       @Header("Authorization") String authToken);
+
     @GET("user/data-bug")
     Call<ResponseData> getUserBugData(@Query("id_perusahaan") int idCompany,
                                       @Query("page") int page,
                                       @Header("Authorization") String authToken);
+
     @GET("user/data-feature")
     Call<ResponseData> getUserFeatureData(@Query("id_perusahaan") int idCompany,
                                           @Query("page") int page,
                                           @Header("Authorization") String authToken);
+
     @GET("user/data-done")
     Call<ResponseData> getUserDoneData(@Query("id_perusahaan") int idCompany,
                                        @Query("page") int page,
                                        @Header("Authorization") String authToken);
 
+    @PATCH("user/agreement-act/{id_ticket}")
+    Call<JsonObject> clientAgreementAct(@Header("Authorization") String token,
+                                        @Path("id_ticket") String id_ticket,
+                                        @Query("nama_perusahaan") String nama_perusahaan,
+                                        @Query("apps_name") String apps_name,
+                                        @Query("aproval_stat") String aproval_stat,
+                                        @Query("status") String status);
+
+
+    //AdminAct
     @GET("admin/data-bug")
-    Call<ResponseData> getAdminBugData(@Query("page")int page, @Header("Authorization") String authToken);
+    Call<ResponseData> getAdminBugData(@Query("page") int page, @Header("Authorization") String authToken);
+
     @GET("admin/data-feature")
-    Call<ResponseData> getAdminFeatureData(@Query("page")int page, @Header("Authorization") String authToken);
+    Call<ResponseData> getAdminFeatureData(@Query("page") int page, @Header("Authorization") String authToken);
+
     @GET("admin/data-done")
     Call<ResponseData> getAdminDoneData(@Query("page") int page, @Header("Authorization") String authToken);
 
@@ -102,6 +123,8 @@ public interface ApiService {
                                      @Field("time_periodic") String time_periodic,
                                      @Field("status") String status);
 
+
+    //StaffAct
     @GET("twkstaff/todo")
     Call<ResponseData> getJobs(@Header("Authorization") String staffToken,
                                @Query("page") int page,
@@ -111,7 +134,6 @@ public interface ApiService {
     Call<ResponseData> getStaffDoneData(@Query("page") int page,
                                         @Header("Authorization") String staffToken,
                                         @Query("id_user") String staffId);
-
 
 
 }

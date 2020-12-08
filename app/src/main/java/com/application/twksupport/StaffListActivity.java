@@ -18,6 +18,7 @@ import com.application.twksupport.UIUX.TvShowListener;
 import com.application.twksupport.adapter.RvStaffListAdapter;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.FeatureData;
+import com.application.twksupport.model.NotificationData;
 import com.application.twksupport.model.StaffResponse;
 import com.application.twksupport.model.UserData;
 
@@ -34,6 +35,7 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
     public static final String EXTRA_TICKET_BUG = "extra_ticket_bug";
     public static final String EXTRA_TICKET_FITUR = "extra_ticket_fitur";
     public static final String EXTRA_DATE = "extra_date";
+    public static final String EXTRA_NOTIF = "extra_notif";
     private List<UserData> staffList = new ArrayList<>();
     private RecyclerView rvStaff;
     private Button btn_assignPopUp;
@@ -49,6 +51,7 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
 
         BugsData getTicketBug = getIntent().getParcelableExtra(EXTRA_TICKET_BUG);
         FeatureData getTicketFitur = getIntent().getParcelableExtra(EXTRA_TICKET_FITUR);
+        NotificationData dataNotif = getIntent().getParcelableExtra(EXTRA_NOTIF);
         String getDate = getIntent().getStringExtra(EXTRA_DATE);
         if (getIntent().hasExtra(EXTRA_TICKET_BUG)) {
             String id_ticket = getTicketBug.getId_ticket();
@@ -59,7 +62,11 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
             String id_ticket = getTicketFitur.getId_ticket();
             Log.d("ticketvalues", "" + id_ticket);
             assignAct(id_ticket, getDate);
-
+        }
+        else {
+            String id_ticket = dataNotif.getId_ticket();
+            Log.d("ticketvalues", "" + id_ticket);
+            assignAct(id_ticket, getDate);
         }
 
     }

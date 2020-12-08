@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -70,7 +70,7 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:background="@drawable/bottom_sheet_bg"
             android:padding="30dp">
 
@@ -91,7 +91,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/comfortaa_regular"
-                android:textSize="14sp"
+                android:textSize="12sp"
                 tools:text="Aproval Stat"
                 android:textColor="@color/defaultWhite"
                 android:gravity="center"
@@ -190,6 +190,56 @@
                         android:paddingLeft="16dp"
                         android:paddingRight="8dp"
                         tools:text="I want to add whistlist to my lorem ippsum"
+                        android:textColor="@color/defaultWhite"
+                        android:textSize="13sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tv_time_periodic_container">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/comfortaa_regular"
+                        android:paddingVertical="5dp"
+                        android:text="Time periodic"
+                        android:textColor="@color/defaultWhite"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_time_periodic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:paddingVertical="5dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="8dp"
+                        tools:text="2020-12-11"
+                        android:textColor="@color/defaultWhite"
+                        android:textSize="13sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/tv_price_container">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/comfortaa_regular"
+                        android:paddingVertical="5dp"
+                        android:text="Price"
+                        android:textColor="@color/defaultWhite"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_price"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:paddingVertical="5dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="8dp"
+                        tools:text="Rp 30000000"
                         android:textColor="@color/defaultWhite"
                         android:textSize="13sp" />
                 </TableRow>
@@ -408,4 +458,4 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>
