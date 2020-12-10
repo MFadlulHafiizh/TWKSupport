@@ -99,6 +99,8 @@ public class DetailActivity extends AppCompatActivity {
             case "twk-head":
                 clientAgreeDisagree.setVisibility(View.GONE);
                 if (getIntent().hasExtra(EXTRA_BUG)) {
+                    tv_time_periodic_container.setVisibility(View.GONE);
+                    tv_price_container.setVisibility(View.GONE);
                     container_price.setVisibility(View.GONE);
                     btnAgreement.setVisibility(View.GONE);
                     txtPtname.setVisibility(View.VISIBLE);

@@ -46,9 +46,6 @@ public interface ApiService {
     @PATCH("notification/readat/{id_notif}")
     Call<ResponseBody> markAsRead(@Path("id_notif") String id_notif, @Query("read_at") int read_at);
 
-    @GET("user/get-image")
-    Call<ResponseData> getImageurl(@Query("id") String id_user);
-
     @FormUrlEncoded
     @POST("user/upload-image-base64/{id}")
     Call<ResponseBody> uploadBase64Pict(@Path("id") String id_user, @Field("photo") String imageEncoded);

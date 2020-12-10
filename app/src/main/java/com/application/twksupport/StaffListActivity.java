@@ -58,12 +58,12 @@ public class StaffListActivity extends AppCompatActivity implements TvShowListen
             Log.d("ticketvalues", "" + id_ticket);
             assignAct(id_ticket, getDate);
         }
-        if (getIntent().hasExtra(EXTRA_TICKET_FITUR)) {
+        else if (getIntent().hasExtra(EXTRA_TICKET_FITUR)) {
             String id_ticket = getTicketFitur.getId_ticket();
             Log.d("ticketvalues", "" + id_ticket);
             assignAct(id_ticket, getDate);
         }
-        else {
+        else if(getIntent().hasExtra(EXTRA_NOTIF)){
             String id_ticket = dataNotif.getId_ticket();
             Log.d("ticketvalues", "" + id_ticket);
             assignAct(id_ticket, getDate);
