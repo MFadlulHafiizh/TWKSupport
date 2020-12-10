@@ -150,13 +150,12 @@ public class FeatureFragment extends Fragment {
         filterbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                userInteraction.showPopupFilter(getActivity());
+                userInteraction.showPopupFilter(getActivity(), "extra_feature");
             }
         });
 
         return view;
     }
-
 
     public void addListDataFeatureUser(){
         error_container.setVisibility(View.GONE);

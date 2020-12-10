@@ -152,6 +152,8 @@ public class DetailActivity extends AppCompatActivity {
                 container.setVisibility(View.GONE);
                 rowDeadlineStaff.setVisibility(View.VISIBLE);
                 if (getIntent().hasExtra(EXTRA_JOBS)) {
+                    tv_price_container.setVisibility(View.GONE);
+                    tv_time_periodic_container.setVisibility(View.GONE);
                     btnStaff.setVisibility(View.VISIBLE);
                     txtPtname.setVisibility(View.VISIBLE);
                     if (jobsData.getType().equals("Report")) {
@@ -159,13 +161,53 @@ public class DetailActivity extends AppCompatActivity {
                     } else {
                         txtTitle.setText("Feature Request");
                     }
+                    markAsComplete(getToken, jobsData.getId_ticket());
                     txtDeadlineStaff.setText("Deadline : " + jobsData.getDeadline());
                     txtPtname.setText(jobsData.getNama_perusahaan());
                     txtPriority.setText(jobsData.getPriority());
                     txtAppname.setText(jobsData.getApps_name());
                     txtSubject.setText(jobsData.getSubject());
                     txtDetail.setText(jobsData.getDetail());
-                } else {
+                }
+                else if(getIntent().hasExtra(EXTRA_NOTIF)){
+                    switch (notifData.getType()) {
+                        case "Report":
+                            if (!notifData.getStatus().equals("Done")){
+                                btnStaff.setVisibility(View.VISIBLE);
+                                markAsComplete(getToken, notifData.getId_ticket());
+                            }else {
+                                btnStaff.setVisibility(View.GONE);
+                            }
+                            txtPtname.setVisibility(View.VISIBLE);
+                            txtTitle.setText("Bug Report");
+                            txtDeadlineStaff.setText("Deadline : " + notifData.getDead_line());
+                            txtPtname.setText(notifData.getNama_perusahaan());
+                            txtPriority.setText(notifData.getPriority());
+                            txtAppname.setText(notifData.getApps_name());
+                            txtSubject.setText(notifData.getSubject());
+                            txtDetail.setText(notifData.getDetail());
+                            break;
+
+                        case "Request":
+                            if (!notifData.getStatus().equals("Done")){
+                                btnStaff.setVisibility(View.VISIBLE);
+                                markAsComplete(getToken, notifData.getId_ticket());
+                            }else {
+                                btnStaff.setVisibility(View.GONE);
+                            }
+                            txtTitle.setText("Feature Request");
+                            txtPtname.setVisibility(View.VISIBLE);
+                            txtTitle.setText("Bug Report");
+                            txtDeadlineStaff.setText("Deadline : " + notifData.getDead_line());
+                            txtPtname.setText(notifData.getNama_perusahaan());
+                            txtPriority.setText(notifData.getPriority());
+                            txtAppname.setText(notifData.getApps_name());
+                            txtSubject.setText(notifData.getSubject());
+                            txtDetail.setText(notifData.getDetail());
+                            break;
+                    }
+                }
+                else {
                     txtPtname.setVisibility(View.VISIBLE);
                     if (doneData.getType().equals("Report")) {
                         txtTitle.setText("Bug Report");
@@ -461,6 +503,9 @@ public class DetailActivity extends AppCompatActivity {
                         sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                FeatureFragment.getInstance().setPage(1);
+                                FeatureFragment.getInstance().getListFeature().clear();
+                                FeatureFragment.getInstance().addListDataFeatureUser();
                                 finish();
                             }
                         });
@@ -539,6 +584,9 @@ public class DetailActivity extends AppCompatActivity {
                                                 Intent goBack = new Intent(DetailActivity.this, UserActivity.class);
                                                 goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                 startActivity(goBack);
+                                                FeatureFragment.getInstance().setPage(1);
+                                                FeatureFragment.getInstance().getListFeature().clear();
+                                                FeatureFragment.getInstance().addListAdminFeature();
                                                 finish();
                                             }
                                         });
@@ -562,7 +610,7 @@ public class DetailActivity extends AppCompatActivity {
                 }
             });
         }
-        else if (status.equals("Agreement Accepted") || status.equals("Need Agreement")) {
+        else if (status.equals("Agreement Accepted")) {
             btnAgreement.setVisibility(View.GONE);
             containerAdminAct.setVisibility(View.GONE);
             txtAprovalStat.setText("Accepted");
@@ -582,7 +630,13 @@ public class DetailActivity extends AppCompatActivity {
 
                 }
             });
-        } else {
+        }else if (status.equals("Need Agreement")){
+            final String time_periodic = fiturData.getTime_periodic();
+            String price = fiturData.getPrice();
+            txtTimePeriodic.setText(time_periodic);
+            txtPrice.setText(price);
+            container.setVisibility(View.GONE);
+        }else {
             container.setVisibility(View.INVISIBLE);
 
         }
@@ -705,7 +759,7 @@ public class DetailActivity extends AppCompatActivity {
                         }
                     });
                 }
-                else if (statusFitur.equals("Agreement Accepted") || statusFitur.equals("Need Agreement")) {
+                else if (statusFitur.equals("Agreement Accepted")) {
                     btnAgreement.setVisibility(View.GONE);
                     containerAdminAct.setVisibility(View.GONE);
                     txtAprovalStat.setText("Accepted");
@@ -731,6 +785,55 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    public void markAsComplete(final String token, final String id_ticket){
+        btnStaff.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                final SweetAlertDialog pDialog = new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Please wait...");
+                pDialog.setCancelable(false);
+                pDialog.show();
+                ApiService api = ApiClient.getClient().create(ApiService.class);
+                Call<ResponseBody> markComplete = api.markAsComplete("Bearer "+token, id_ticket);
+                markComplete.enqueue(new Callback<ResponseBody>() {
+                    @Override
+                    public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                        if (response.isSuccessful()){
+                            pDialog.dismiss();
+                            SweetAlertDialog sweet = new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.SUCCESS_TYPE);
+                            sweet.setTitleText("Marked as Complete");
+                            sweet.setCanceledOnTouchOutside(false);
+                            sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                                @Override
+                                public void onClick(SweetAlertDialog sweetAlertDialog) {
+                                    StaffToDoFragment.getInstance().setPage(1);
+                                    StaffToDoFragment.getInstance().getListjobs().clear();
+                                    StaffToDoFragment.getInstance().getJobs();
+                                    finish();
+                                }
+                            });
+                            sweet.show();
+                        }else {
+                            pDialog.dismiss();
+                            Toast.makeText(DetailActivity.this, "Unknown error", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseBody> call, Throwable t) {
+                        pDialog.dismiss();
+                        SweetAlertDialog sweet = new SweetAlertDialog(DetailActivity.this, SweetAlertDialog.CUSTOM_IMAGE_TYPE);
+                        sweet.setCustomImage(R.drawable.ic_sad);
+                        sweet.setTitleText("Oppss");
+                        sweet.setContentText("Please check your internet connection");
+                        sweet.show();
+                    }
+                });
+            }
+        });
     }
 
     private void initialize() {

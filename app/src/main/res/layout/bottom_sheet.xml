@@ -24,7 +24,7 @@
 
     <Spinner
         android:id="@+id/prioritySpinner"
-        android:layout_width="150dp"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:minHeight="40dp"
         android:layout_gravity="left"

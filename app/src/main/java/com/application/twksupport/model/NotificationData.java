@@ -17,6 +17,7 @@ public class NotificationData implements Parcelable {
     private String created_at;
     private int price;
     private String time_periodic;
+    private String dead_line;
     private int read_at;
     private String aproval_stat;
 
@@ -36,6 +37,7 @@ public class NotificationData implements Parcelable {
         aproval_stat = in.readString();
         price = in.readInt();
         time_periodic = in.readString();
+        dead_line = in.readString();
     }
 
     public static final Creator<NotificationData> CREATOR = new Creator<NotificationData>() {
@@ -170,6 +172,14 @@ public class NotificationData implements Parcelable {
         this.time_periodic = time_periodic;
     }
 
+    public String getDead_line() {
+        return dead_line;
+    }
+
+    public void setDead_line(String dead_line) {
+        this.dead_line = dead_line;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -192,5 +202,6 @@ public class NotificationData implements Parcelable {
         dest.writeString(aproval_stat);
         dest.writeInt(price);
         dest.writeString(time_periodic);
+        dest.writeString(dead_line);
     }
 }

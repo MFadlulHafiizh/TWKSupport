@@ -27,6 +27,7 @@ import com.application.twksupport.adapter.RvNotificationAdapter;
 import com.application.twksupport.model.NotificationData;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.UserData;
+import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.ArrayList;
@@ -73,38 +74,76 @@ public class NotificationActivity extends AppCompatActivity {
         swipeRefreshLayout.setRefreshing(true);
 
         SharedPreferences getUserInformation = getSharedPreferences("userInformation", 0);
+        SharedPreferences getSession = getSharedPreferences("JWTTOKEN", 0);
+        final String token = getSession.getString("jwttoken", "");
         String email = getUserInformation.getString("email", "Not Authorized");
         final String id_user = getUserInformation.getString("id", "Not Authorized");
         String name = getUserInformation.getString("name", "Not Authorized");
+        String role = getUserInformation.getString("role", "");
+        String photo_url = getUserInformation.getString("photo","");
+        Glide.with(accountImage.getContext()).load(photo_url).into(accountImage);
         userEmail.setText(email);
         userName.setText(name);
 
-        addListNotification(id_user);
-        rvNotif.addOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                int visibleItemCount = linearLayoutManager.getChildCount();
-                int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
-                int total = mAdapter.getItemCount();
-                if (page < last_page) {
-                    if (visibleItemCount + pastVisibleItem >= total) {
-                        page++;
-                        progressBar.setVisibility(View.VISIBLE);
+        switch (role){
+            case "twk-staff":
+                addListNotifStaff(id_user, token);
+                rvNotif.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        int visibleItemCount = linearLayoutManager.getChildCount();
+                        int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                        int total = mAdapter.getItemCount();
+                        if (page < last_page) {
+                            if (visibleItemCount + pastVisibleItem >= total) {
+                                page++;
+                                progressBar.setVisibility(View.VISIBLE);
+                                addListNotifStaff(id_user, token);
+                            }
+                        }
+                        super.onScrolled(recyclerView, dx, dy);
+                    }
+                });
+
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        page = 1;
+                        listnotif.clear();
+                        addListNotifStaff(id_user, token);
+                    }
+                });
+                break;
+
+            default:
+                addListNotification(id_user);
+                rvNotif.addOnScrollListener(new RecyclerView.OnScrollListener() {
+                    @Override
+                    public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                        int visibleItemCount = linearLayoutManager.getChildCount();
+                        int pastVisibleItem = linearLayoutManager.findFirstVisibleItemPosition();
+                        int total = mAdapter.getItemCount();
+                        if (page < last_page) {
+                            if (visibleItemCount + pastVisibleItem >= total) {
+                                page++;
+                                progressBar.setVisibility(View.VISIBLE);
+                                addListNotification(id_user);
+                            }
+                        }
+                        super.onScrolled(recyclerView, dx, dy);
+                    }
+                });
+
+                swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        page = 1;
+                        listnotif.clear();
                         addListNotification(id_user);
                     }
-                }
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                page = 1;
-                listnotif.clear();
-                addListNotification(id_user);
-            }
-        });
+                });
+                break;
+        }
     }
 
     private void addListNotification(String id_user) {
@@ -165,6 +204,64 @@ public class NotificationActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addListNotifStaff(String id_user, String token){
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseData> getListnotif = api.listNotifStaff("Bearer "+token, id_user, page);
+        getListnotif.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful() && response.body() != null) {
+                    Log.d("RETROnotif", "success: " + response.body().getNotifData());
+                    List<NotificationData> responseBody = response.body().getNotifData();
+                    listnotif.addAll(responseBody);
+                    notifCount = response.body().getNotifCount();
+                    txt_notifCount.setText(String.valueOf(notifCount));
+                    Log.d("counteaw", "" + notifCount);
+                    mAdapter.notifyDataSetChanged();
+                    last_page = response.body().getLast_page_notif();
+                    if (page == last_page) {
+                        progressBar.setVisibility(View.GONE);
+                    } else {
+                        progressBar.setVisibility(View.INVISIBLE);
+                    }
+                    swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.setClick(new RvNotificationAdapter.ItemClick() {
+                        @Override
+                        public void onItemClicked(final NotificationData notifData) {
+                            ApiService api = ApiClient.getClient().create(ApiService.class);
+                            Call<ResponseBody> markAsRead = api.markAsRead(notifData.getId_notif(), 1);
+                            Log.d("clickedNotif", "" + notifData.getId_notif());
+                            markAsRead.enqueue(new Callback<ResponseBody>() {
+                                @Override
+                                public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                                    Intent toDetail = new Intent(NotificationActivity.this, DetailActivity.class);
+                                    toDetail.putExtra(DetailActivity.EXTRA_NOTIF, notifData);
+                                    startActivity(toDetail);
+                                }
+
+                                @Override
+                                public void onFailure(Call<ResponseBody> call, Throwable t) {
+                                    Toast.makeText(NotificationActivity.this, "failed", Toast.LENGTH_SHORT).show();
+                                    mAdapter.notifyDataSetChanged();
+                                }
+                            });
+                        }
+                    });
+                } else {
+                    Log.d("RETRO", "errror: " + response.body());
+                    Toast.makeText(NotificationActivity.this, "Error 401", Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+                Log.d("RETRO", "error" + t.getMessage());
+                Toast.makeText(NotificationActivity.this, "error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     protected void initialize() {

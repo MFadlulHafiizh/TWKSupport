@@ -146,5 +146,11 @@ public interface ApiService {
                                         @Header("Authorization") String staffToken,
                                         @Query("id_user") String staffId);
 
+    @GET("twkstaff/listnotif")
+    Call<ResponseData> listNotifStaff(@Header("Authorization") String token, @Query("id_user") String id_user, @Query("page") int page);
+
+    @PATCH("twkstaff/markAsComplete/{id_ticket}")
+    Call<ResponseBody> markAsComplete(@Header("Authorization") String token,@Path("id_ticket")String id_ticket);
+
 
 }

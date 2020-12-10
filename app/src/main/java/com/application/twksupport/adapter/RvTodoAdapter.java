@@ -55,9 +55,13 @@ public class RvTodoAdapter extends RecyclerView.Adapter<RvTodoAdapter.MyViewHold
         Log.d("adapterjob", ""+td.getApps_name());
         holder.tv_priority.setText(td.getPriority());
         holder.tv_subject.setText(td.getSubject());
-        holder.tv_status.setText(td.getStatus());
+        if (td.getType().equals("Report")){
+            holder.tv_status.setText("Bugs report");
+        }else {
+            holder.tv_status.setText("Feature request");
+        }
+        holder.date.setText(td.getDeadline());
         holder.app_name.setText(td.getApps_name());
-        holder.date.setText(td.getCreated_at());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

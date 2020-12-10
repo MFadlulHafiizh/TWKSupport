@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -55,9 +56,16 @@ public class UserInteraction extends AppCompatActivity {
     Dialog popUpFilter;
     TextView btmSheetTitle;
     private List<AppsUserData> listAppData = new ArrayList<>();
+    public static final String EXTRA_BUG = "extra_bug";
 
-    public void showPopupFilter(Context appContext) {
+    public void showPopupFilter(final Context appContext, final String extra_code) {
+        SharedPreferences getCompanyUser = appContext.getSharedPreferences("userInformation", 0);
+        SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
+        final String getToken = _objpref.getString("jwttoken", "missing");
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
         Spinner spinPriorityFiler, spinAppnameFilter;
+        final UserAppManager userAppManager = new UserAppManager(appContext);
+        final String[] priority = new String[1];
         Button reset, apply;
         ImageButton close;
         popUpFilter = new Dialog(appContext, R.style.AppBottomSheetDialogTheme);
@@ -68,6 +76,27 @@ public class UserInteraction extends AppCompatActivity {
         reset = popUpFilter.findViewById(R.id.btnResetFilter);
         apply = popUpFilter.findViewById(R.id.btnApplyFilter);
         close = popUpFilter.findViewById(R.id.btnCloseFilter);
+        spinnerPriority(appContext, spinPriorityFiler);
+        spinPriorityFiler.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                if (parent.getItemAtPosition(position).equals("Choose Priority")){
+
+                }else{
+                String priorityValue = parent.getItemAtPosition(position).toString();
+                priority[0] = priorityValue;
+                Log.d("value", "" + priority[0]);
+                userAppManager.setPriority(priority[0]);
+                Toast.makeText(appContext, ""+priority[0], Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
+        setFilterSpinnerApps(appContext, spinAppnameFilter);
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,6 +105,69 @@ public class UserInteraction extends AppCompatActivity {
             }
         });
         popUpFilter.show();
+
+        apply.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switch (extra_code){
+                    case "extra_bugs":
+                        Toast.makeText(appContext, "open from bug", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case "extra_feature":
+                        Toast.makeText(appContext, "open from feature", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case "extra_done":
+                        Toast.makeText(appContext, "open from done", Toast.LENGTH_SHORT).show();
+                        break;
+
+                    case "extra_jobs":
+                        Toast.makeText(appContext, "open from todo", Toast.LENGTH_SHORT).show();
+                        break;
+                }
+            }
+        });
+    }
+
+    public void setFilterSpinnerApps(final Context appContext, final Spinner spinAppName){
+        final UserAppManager userAppManager = new UserAppManager(appContext);
+        SharedPreferences getCompanyUser = appContext.getSharedPreferences("userInformation", 0);
+        SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
+        final String getToken = _objpref.getString("jwttoken", "missing");
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseData> getApps = api.getUserApps(idCompany, "Bearer "+getToken);
+        getApps.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()){
+                    listAppData = response.body().getUserApp();
+                    ArrayAdapter<AppsUserData> spinnerAdapter = new ArrayAdapter<AppsUserData>(appContext, R.layout.spinner_style, listAppData);
+                    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    spinAppName.setAdapter(spinnerAdapter);
+                    spinAppName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                            int id_apps = listAppData.get(position).getId_apps();
+                            Log.d("appsselect", "id : " + id_apps);
+                            userAppManager.setIdApps(id_apps);
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> adapterView) {
+
+                        }
+                    });
+                    Log.d("BottomSheet", "" + listAppData);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
+
+            }
+        });
     }
 
     public void setBlurBackground(boolean state, BlurView blurView, View getViewDecor, Context appContext) {
@@ -101,7 +193,7 @@ public class UserInteraction extends AppCompatActivity {
     }
 
     public void spinnerPriority(Context context, Spinner spinner) {
-        String priority[] = {"Low", "Middle", "High"};
+        String priority[] = {"Choose Priority","Low", "Middle", "High"};
         ArrayAdapter<String> spinner1Adapter = new ArrayAdapter<String>(context, R.layout.spinner_style, priority);
         spinner.setAdapter(spinner1Adapter);
     }
@@ -164,10 +256,14 @@ public class UserInteraction extends AppCompatActivity {
                     spinPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            String priorityValue = adapterView.getItemAtPosition(i).toString();
-                            priority[0] = priorityValue;
-                            Log.d("value", "" + priority[0]);
-                            userAppManager.setPriority(priority[0]);
+                            if (adapterView.getItemAtPosition(i).equals("Choose Priority")){
+                                userAppManager.setPriority(null);
+                            }else{
+                                String priorityValue = adapterView.getItemAtPosition(i).toString();
+                                priority[0] = priorityValue;
+                                Log.d("value", "" + priority[0]);
+                                userAppManager.setPriority(priority[0]);
+                            }
                         }
 
                         @Override
@@ -210,9 +306,9 @@ public class UserInteraction extends AppCompatActivity {
         btnReportRequest.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View view) {
-                if (!etSubject.getText().toString().equals("") && !etDetails.getText().toString().equals("")) {
-                    SharedPreferences getPriorityAndId = appContext.getSharedPreferences("UserAppManager", 0);
-                    String prio = getPriorityAndId.getString("priority", "");
+                SharedPreferences getPriorityAndId = appContext.getSharedPreferences("UserAppManager", 0);
+                String prio = getPriorityAndId.getString("priority", "");
+                if (!etSubject.getText().toString().equals("") && !etDetails.getText().toString().equals("") && !prio.equals("")) {
                     int id = getPriorityAndId.getInt("id_apps", 0);
                     Log.d("input", "" + id);
                     Log.d("input", "" + prio);
@@ -350,7 +446,7 @@ public class UserInteraction extends AppCompatActivity {
                     }
                 } else {
                     new SweetAlertDialog(appContext, SweetAlertDialog.ERROR_TYPE)
-                            .setTitleText("Please input data correctly")
+                            .setTitleText("Please input the required form data")
                             .show();
                 }
             }

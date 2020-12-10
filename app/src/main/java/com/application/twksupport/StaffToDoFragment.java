@@ -39,6 +39,7 @@ public class StaffToDoFragment extends Fragment {
     private List<TodoData> listjobs = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
     private TextView filterbutton;
+    private static StaffToDoFragment instance;
     private int page = 1;
     private int last_page = 1;
     private ProgressBar progressBar;
@@ -47,11 +48,23 @@ public class StaffToDoFragment extends Fragment {
     public StaffToDoFragment() {
     }
 
+    public List<TodoData> getListjobs() {
+        return listjobs;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public static StaffToDoFragment getInstance(){
+        return instance;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_staff_to_do, container, false);
-
+        instance = this;
         //initializeComponentView
         rvTodo = view.findViewById(R.id.rv_todo);
         swipeRefreshLayout = view.findViewById(R.id.refresh_todo);
@@ -100,7 +113,7 @@ public class StaffToDoFragment extends Fragment {
         filterbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userInteraction.showPopupFilter(getActivity());
+                userInteraction.showPopupFilter(getActivity(), "extra_jobs");
             }
         });
         return view;

@@ -2,6 +2,7 @@ package com.application.twksupport.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,11 +51,16 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
         else if(dt.getPriority().equals("Low")){
             holder.tv_priority.setTextColor(Color.parseColor("#809CFF"));
         }
+
+        SharedPreferences getRoleUser = activity.getSharedPreferences("userInformation", 0);
+        final String role = getRoleUser.getString("role", "not Authenticated");
         holder.tv_priority.setText(dt.getPriority());
         holder.tv_subject.setText(dt.getSubject());
         holder.tv_status.setText(dt.getStatus());
         holder.app_name.setText(dt.getApps_name());
-        holder.date.setText(dt.getCreated_at());
+        if (role.equals("twk-staff")){
+            holder.date.setText(dt.getDead_line());
+        }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

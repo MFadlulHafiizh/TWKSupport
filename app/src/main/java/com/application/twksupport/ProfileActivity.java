@@ -5,6 +5,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,7 +27,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.adapter.RvAppsCompanyAdapter;
 import com.application.twksupport.auth.MainActivity;
+import com.application.twksupport.model.AppsUserData;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.UserManager;
 import com.bumptech.glide.Glide;
@@ -39,6 +44,8 @@ import org.json.JSONArray;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
@@ -56,6 +63,10 @@ public class ProfileActivity extends AppCompatActivity {
     private ImageButton btnBack;
     private TextView tv_name, tv_email, tv_company;
     private CircleImageView userImage;
+    private List<AppsUserData> listapps = new ArrayList<>();
+    private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+    private RecyclerView rvApss;
+    private RvAppsCompanyAdapter mAdapter;
     private FloatingActionButton chooseImage;
     private UserManager userManager;
     private static final String TAG = ProfileActivity.class.getSimpleName();
@@ -77,7 +88,7 @@ public class ProfileActivity extends AppCompatActivity {
         String email = getUserInfo.getString("email", "");
         String companyName = getUserInfo.getString("company_name", "");
         String photo_user = getUserInfo.getString("photo", "");
-
+        getListAppsCompany();
         Log.d("urlimage", ""+photo_user);
 
         tv_name.setText(name);
@@ -120,8 +131,7 @@ public class ProfileActivity extends AppCompatActivity {
     private void applyPhoto(String url_image){
         RequestOptions options = new RequestOptions()
                 .centerCrop()
-                .placeholder(R.mipmap.ic_avatar)
-                .error(R.mipmap.ic_launcher_round);
+                .placeholder(R.mipmap.blank_user_image);
 
         Glide.with(userImage.getContext()).load(url_image).apply(options).into(userImage);
     }
@@ -136,6 +146,7 @@ public class ProfileActivity extends AppCompatActivity {
         tv_company = findViewById(R.id.tv_company);
         userImage = findViewById(R.id.userImage);
         chooseImage = findViewById(R.id.chooseUserImage);
+        rvApss = findViewById(R.id.rv_company_apps);
     }
 
     private void logout() {
@@ -267,6 +278,32 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
+    }
+
+    private void getListAppsCompany(){
+        final SharedPreferences _objpref = getSharedPreferences("JWTTOKEN", 0);
+        SharedPreferences getCompanyUser = getSharedPreferences("userInformation", 0);
+        String getToken = _objpref.getString("jwttoken", "");
+        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        Call<ResponseData> getApps = api.getUserApps(idCompany,"Bearer "+getToken);
+        getApps.enqueue(new Callback<ResponseData>() {
+            @Override
+            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                if (response.isSuccessful()){
+                    listapps = response.body().getUserApp();
+                    mAdapter = new RvAppsCompanyAdapter(listapps);
+                    rvApss.setLayoutManager(linearLayoutManager);
+                    rvApss.setAdapter(mAdapter);
+                    mAdapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseData> call, Throwable t) {
 
             }
         });

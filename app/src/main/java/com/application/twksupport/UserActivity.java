@@ -30,6 +30,7 @@ import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.UserData;
 import com.application.twksupport.model.UserManager;
+import com.bumptech.glide.Glide;
 import com.getbase.floatingactionbutton.FloatingActionButton;
 import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.appbar.AppBarLayout;
@@ -52,6 +53,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
     private FloatingActionsMenu floatMenu;
     private FloatingActionButton fab_bugs;
     private FloatingActionButton fab_reqFeature;
+    private ImageView userAccountPict;
     private Toolbar tool;
     private AppBarLayout appbar;
     private View decorView;
@@ -81,6 +83,8 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         String email = getUserInformation.getString("email", "Not Authorized");
         String name = getUserInformation.getString("name", "Not Authorized");
         String role = getUserInformation.getString("role", "Not Authorized");
+        String photo_url = getUserInformation.getString("photo","");
+        Glide.with(userAccountPict.getContext()).load(photo_url).into(userAccountPict);
         userEmail.setText(email);
         userName.setText(name);
 
@@ -194,6 +198,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         userName = appbar.findViewById(R.id.userName);
         userEmail = appbar.findViewById(R.id.userEmail);
         decorView = getWindow().getDecorView();
+        userAccountPict = tool.findViewById(R.id.account_pict);
     }
 
     @Override
