@@ -8,6 +8,7 @@ import com.google.gson.JsonObject;
 import java.util.ArrayList;
 import java.util.List;
 
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -15,8 +16,10 @@ import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Headers;
+import retrofit2.http.Multipart;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -42,6 +45,17 @@ public interface ApiService {
 
     @PATCH("notification/readat/{id_notif}")
     Call<ResponseBody> markAsRead(@Path("id_notif") String id_notif, @Query("read_at") int read_at);
+
+    @GET("user/get-image")
+    Call<ResponseData> getImageurl(@Query("id") String id_user);
+
+    @FormUrlEncoded
+    @POST("user/upload-image-base64/{id}")
+    Call<ResponseBody> uploadBase64Pict(@Path("id") String id_user, @Field("photo") String imageEncoded);
+
+    @Multipart
+    @POST("user/upload-image/{id}")
+    Call<ResponseBody> uploadImageUser(@Path("id") String id_user, @Part MultipartBody.Part photo);
 
 
     //ForClientAct

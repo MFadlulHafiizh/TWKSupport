@@ -12,7 +12,7 @@ public class UserData {
     private int id_perusahaan;
 
     @SerializedName("photo")
-    private int photo;
+    private String photo;
 
     @SerializedName("name")
     private String name;
@@ -45,11 +45,11 @@ public class UserData {
         this.id_perusahaan = id_perusahaan;
     }
 
-    public int getPhoto() {
+    public String getPhoto() {
         return photo;
     }
 
-    public void setPhoto(int photo) {
+    public void setPhoto(String photo) {
         this.photo = photo;
     }
 

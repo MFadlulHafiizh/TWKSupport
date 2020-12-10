@@ -59,10 +59,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<String> task) {
                         if (!task.isSuccessful()) {
                             Log.w(TAG, "Fetching FCM registration token failed", task.getException());
-                            SweetAlertDialog sweet = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.WARNING_TYPE);
-                            sweet.setTitleText("Play services not working properly");
-                            sweet.setContentText("Some features or notification service may not work properly on your device, please synchronize or update your google play service");
-                            sweet.show();
                             return;
                         }
                         // Get new FCM registration token

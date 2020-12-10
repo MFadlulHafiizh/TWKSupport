@@ -25,15 +25,20 @@ public class UserManager {
         editor = sharedPreferences.edit();
     }
 
-    public void addUserInformation(String id, int id_perusahaan,int photo, String name, String email, String role, String fcm_token, String companyName){
+    public void addUserInformation(String id, int id_perusahaan,String photo, String name, String email, String role, String fcm_token, String companyName){
         editor.putString(KEY_ID, id);
         editor.putInt(KEY_ID_PERUSAHAAN, id_perusahaan);
-        editor.putInt(KEY_PHOTO, photo);
+        editor.putString(KEY_PHOTO, photo);
         editor.putString(KEY_NAME, name);
         editor.putString(KEY_EMAIL, email);
         editor.putString(KEY_ROLE, role);
         editor.putString(KEY_FCM_TOKEN, fcm_token);
         editor.putString(KEY_NAMA_PERUSAHAAN, companyName);
+        editor.apply();
+    }
+
+    public void addPict(String url_pict){
+        editor.putString(KEY_PHOTO, url_pict);
         editor.apply();
     }
 }

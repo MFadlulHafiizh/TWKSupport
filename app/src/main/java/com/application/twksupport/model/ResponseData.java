@@ -13,6 +13,7 @@ public class ResponseData {
     private int staff_todo_page_total;
     private int last_page_notif;
     private int notifCount;
+    private String image_url;
     private List<BugsData> dataBug;
     private List<FeatureData> featureData;
     private List<DoneData> doneData;
@@ -23,6 +24,14 @@ public class ResponseData {
 
     public int getLast_page_notif() {
         return last_page_notif;
+    }
+
+    public String getImage_url() {
+        return image_url;
+    }
+
+    public void setImage_url(String image_url) {
+        this.image_url = image_url;
     }
 
     public void setLast_page_notif(int last_page_notif) {
