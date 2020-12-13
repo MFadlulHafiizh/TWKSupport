@@ -1,13 +1,16 @@
 package com.application.twksupport.UIUX;
 
 import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +20,8 @@ import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Spinner;
@@ -27,6 +32,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.application.twksupport.BugsFragment;
+import com.application.twksupport.DetailActivity;
+import com.application.twksupport.DoneFragment;
 import com.application.twksupport.FeatureFragment;
 import com.application.twksupport.R;
 import com.application.twksupport.RestApi.ApiClient;
@@ -42,6 +49,7 @@ import com.getbase.floatingactionbutton.FloatingActionsMenu;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
@@ -55,39 +63,58 @@ import retrofit2.Response;
 public class UserInteraction extends AppCompatActivity {
     Dialog popUpFilter;
     TextView btmSheetTitle;
+    String apps_name = null;
+    String assigned = null;
+    DatePickerDialog.OnDateSetListener setListenerFrom;
+    DatePickerDialog.OnDateSetListener setListenerUntil;
     private List<AppsUserData> listAppData = new ArrayList<>();
-    public static final String EXTRA_BUG = "extra_bug";
 
     public void showPopupFilter(final Context appContext, final String extra_code) {
-        SharedPreferences getCompanyUser = appContext.getSharedPreferences("userInformation", 0);
+        //getUsedData
+        SharedPreferences getUserinfo = appContext.getSharedPreferences("userInformation", 0);
         SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
         final String getToken = _objpref.getString("jwttoken", "missing");
-        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
+        final String role = getUserinfo.getString("role", "");
         Spinner spinPriorityFiler, spinAppnameFilter;
         final UserAppManager userAppManager = new UserAppManager(appContext);
         final String[] priority = new String[1];
-        Button reset, apply;
-        ImageButton close;
+
+        //initialize
         popUpFilter = new Dialog(appContext, R.style.AppBottomSheetDialogTheme);
         popUpFilter.setContentView(R.layout.filter_popup);
         popUpFilter.setCanceledOnTouchOutside(false);
+        Button reset, apply;
+        final ImageButton close, dateFrom, dateUntil;
+        final CheckBox ckAssignTicket;
+        final EditText etYearFr, etMonthFr, etDayFr, etYearUn, etMonthUn, etDayUn;
         spinPriorityFiler = popUpFilter.findViewById(R.id.priorityFilter);
         spinAppnameFilter = popUpFilter.findViewById(R.id.appNameFilter);
         reset = popUpFilter.findViewById(R.id.btnResetFilter);
         apply = popUpFilter.findViewById(R.id.btnApplyFilter);
         close = popUpFilter.findViewById(R.id.btnCloseFilter);
+        dateFrom = popUpFilter.findViewById(R.id.btn_openDate_filter_from);
+        dateUntil = popUpFilter.findViewById(R.id.btn_openDate_filter_until);
+        ckAssignTicket = popUpFilter.findViewById(R.id.filter_assigned_ticket);
+        etYearFr = popUpFilter.findViewById(R.id.et_year_filter_from);
+        etMonthFr = popUpFilter.findViewById(R.id.et_month_filter_from);
+        etDayFr = popUpFilter.findViewById(R.id.et_day_filter_from);
+        etYearUn = popUpFilter.findViewById(R.id.et_year_filter_until);
+        etMonthUn = popUpFilter.findViewById(R.id.et_month_filter_until);
+        etDayUn = popUpFilter.findViewById(R.id.et_day_filter_until);
+
+        //spinnerSet
         spinnerPriority(appContext, spinPriorityFiler);
+        setFilterSpinnerApps(appContext, spinAppnameFilter);
         spinPriorityFiler.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (parent.getItemAtPosition(position).equals("Choose Priority")){
-
-                }else{
-                String priorityValue = parent.getItemAtPosition(position).toString();
-                priority[0] = priorityValue;
-                Log.d("value", "" + priority[0]);
-                userAppManager.setPriority(priority[0]);
-                Toast.makeText(appContext, ""+priority[0], Toast.LENGTH_SHORT).show();
+                if (position == 0) {
+                    priority[0] = null;
+                } else {
+                    String priorityValue = parent.getItemAtPosition(position).toString();
+                    priority[0] = priorityValue;
+                    Log.d("value", "" + priority[0]);
+                    userAppManager.setPriority(priority[0]);
                 }
             }
 
@@ -96,30 +123,115 @@ public class UserInteraction extends AppCompatActivity {
 
             }
         });
-        setFilterSpinnerApps(appContext, spinAppnameFilter);
+        final Handler delay = new Handler();
 
-        close.setOnClickListener(new View.OnClickListener() {
+        popUpFilter.show();
+
+        //clickEvent
+
+        Calendar calendar = Calendar.getInstance();
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+        dateFrom.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                popUpFilter.dismiss();
+            public void onClick(View v) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        appContext, android.R.style.Theme_Holo_Light_Dialog_MinWidth
+                        , setListenerFrom, year, month, day);
+                datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                datePickerDialog.show();
             }
         });
-        popUpFilter.show();
+        setListenerFrom = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                String tahun = "" + year;
+                String bulan = "" + month;
+                String hari = "" + dayOfMonth;
+                etYearFr.setText(tahun);
+                etMonthFr.setText(bulan);
+                etDayFr.setText(hari);
+            }
+        };
+
+        datePicker(appContext, etYearUn, etMonthUn, etDayUn, dateUntil);
+
 
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                switch (extra_code){
+                switch (extra_code) {
                     case "extra_bugs":
-                        Toast.makeText(appContext, "open from bug", Toast.LENGTH_SHORT).show();
+                        switch (role) {
+                            case "twk-head":
+                                String dateFromValue = etYearFr.getText().toString() + "-" + etMonthFr.getText().toString() + "-" + etDayFr.getText().toString();
+                                String dateUntilValue = etYearUn.getText().toString() + "-" + etMonthUn.getText().toString() + "-" + etDayUn.getText().toString();
+                                BugsFragment.getInstance().setPage(1);
+                                BugsFragment.getInstance().getListBugs().clear();
+                                BugsFragment.getInstance().setPriority(priority[0]);
+                                BugsFragment.getInstance().setApps_name(apps_name);
+                                BugsFragment.getInstance().setFromDate(dateFromValue);
+                                BugsFragment.getInstance().setUntilDate(dateUntilValue);
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BugsFragment.getInstance().addListAdminBug();
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
+                                break;
+
+                            case "twk-staff":
+
+                                break;
+
+                            default:
+                                BugsFragment.getInstance().setPage(1);
+                                BugsFragment.getInstance().getListBugs().clear();
+                                BugsFragment.getInstance().setPriority(priority[0]);
+                                Log.d("priorityselect", "" + priority[0]);
+                                BugsFragment.getInstance().setApps_name(apps_name);
+                                Log.d("priorityselect", "" + apps_name);
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BugsFragment.getInstance().addListDataBugsUser();
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
+                                break;
+                        }
+
                         break;
 
                     case "extra_feature":
-                        Toast.makeText(appContext, "open from feature", Toast.LENGTH_SHORT).show();
+                        FeatureFragment.getInstance().setPage(1);
+                        FeatureFragment.getInstance().getListFeature().clear();
+                        FeatureFragment.getInstance().setPriority(priority[0]);
+                        FeatureFragment.getInstance().setApps_name(apps_name);
+                        delay.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                FeatureFragment.getInstance().addListDataFeatureUser();
+                            }
+                        }, 20);
+                        popUpFilter.dismiss();
                         break;
 
                     case "extra_done":
-                        Toast.makeText(appContext, "open from done", Toast.LENGTH_SHORT).show();
+                        DoneFragment.getInstance().setPage(1);
+                        DoneFragment.getInstance().getListDone().clear();
+                        DoneFragment.getInstance().setPriority(priority[0]);
+                        DoneFragment.getInstance().setApps_name(apps_name);
+                        delay.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                DoneFragment.getInstance().addListDataDone();
+                            }
+                        }, 20);
+                        popUpFilter.dismiss();
                         break;
 
                     case "extra_jobs":
@@ -128,46 +240,155 @@ public class UserInteraction extends AppCompatActivity {
                 }
             }
         });
-    }
 
-    public void setFilterSpinnerApps(final Context appContext, final Spinner spinAppName){
-        final UserAppManager userAppManager = new UserAppManager(appContext);
-        SharedPreferences getCompanyUser = appContext.getSharedPreferences("userInformation", 0);
-        SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
-        final String getToken = _objpref.getString("jwttoken", "missing");
-        int idCompany = getCompanyUser.getInt("id_perushaan", 0);
-        ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getApps = api.getUserApps(idCompany, "Bearer "+getToken);
-        getApps.enqueue(new Callback<ResponseData>() {
+        close.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
-                    listAppData = response.body().getUserApp();
-                    ArrayAdapter<AppsUserData> spinnerAdapter = new ArrayAdapter<AppsUserData>(appContext, R.layout.spinner_style, listAppData);
-                    spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spinAppName.setAdapter(spinnerAdapter);
-                    spinAppName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                        @Override
-                        public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                            int id_apps = listAppData.get(position).getId_apps();
-                            Log.d("appsselect", "id : " + id_apps);
-                            userAppManager.setIdApps(id_apps);
-                        }
-
-                        @Override
-                        public void onNothingSelected(AdapterView<?> adapterView) {
-
-                        }
-                    });
-                    Log.d("BottomSheet", "" + listAppData);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<ResponseData> call, Throwable t) {
-
+            public void onClick(View view) {
+                popUpFilter.dismiss();
             }
         });
+    }
+
+    private void datePicker(final Context appcontext, final EditText dateYear, final EditText dateMonth, final EditText dateDay, ImageButton btn_open_calendar) {
+        Calendar calendar = Calendar.getInstance();
+        final int year = calendar.get(Calendar.YEAR);
+        final int month = calendar.get(Calendar.MONTH);
+        final int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+        btn_open_calendar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                DatePickerDialog datePickerDialog = new DatePickerDialog(
+                        appcontext, android.R.style.Theme_Holo_Light_Dialog_MinWidth
+                        , setListenerUntil, year, month, day);
+                datePickerDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+                datePickerDialog.show();
+            }
+        });
+
+        setListenerUntil = new DatePickerDialog.OnDateSetListener() {
+            @Override
+            public void onDateSet(DatePicker datePicker, int year, int month, int dayOfMonth) {
+                month = month + 1;
+                String tahun = "" + year;
+                String bulan = "" + month;
+                String hari = "" + dayOfMonth;
+                dateYear.setText(tahun);
+                dateMonth.setText(bulan);
+                dateDay.setText(hari);
+            }
+        };
+
+    }
+
+    public void setFilterSpinnerApps(final Context appContext, final Spinner spinAppName) {
+        SharedPreferences getUserInformation = appContext.getSharedPreferences("userInformation", 0);
+        SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
+        final String getToken = _objpref.getString("jwttoken", "missing");
+        int idCompany = getUserInformation.getInt("id_perushaan", 0);
+        String role = getUserInformation.getString("role", "");
+        ApiService api = ApiClient.getClient().create(ApiService.class);
+        switch (role) {
+            case "twk-head":
+                Call<ResponseData> getTicketApps = api.getAllTicketApps("Bearer " + getToken);
+                getTicketApps.enqueue(new Callback<ResponseData>() {
+                    @Override
+                    public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                        if (response.isSuccessful()) {
+                            listAppData = response.body().getUserApp();
+                            final List<String> listapps = new ArrayList<>();
+                            listapps.add(0, "Choose apps");
+                            for (int i = 0; i < listAppData.size(); i++) {
+                                listapps.add(listAppData.get(i).getApps_name());
+                            }
+                            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(appContext, R.layout.spinner_style, listapps);
+                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinAppName.setAdapter(spinnerAdapter);
+                            spinAppName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                                    //String app = listAppData.get(position).getApps_name();
+                                    if (position == 0) {
+                                        apps_name = null;
+                                    } else {
+                                        String app = listapps.get(position);
+                                        Log.d("appsselect", "id : " + app);
+                                        apps_name = app;
+                                    }
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                }
+                            });
+                            Log.d("BottomSheet", "" + listAppData);
+                        } else {
+
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseData> call, Throwable t) {
+
+                    }
+                });
+                break;
+
+            case "twk-staff":
+
+                break;
+
+            default:
+                Call<ResponseData> getApps = api.getUserApps(idCompany, "Bearer " + getToken);
+                getApps.enqueue(new Callback<ResponseData>() {
+                    @Override
+                    public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                        if (response.isSuccessful()) {
+                            listAppData = response.body().getUserApp();
+                            final List<String> listapps = new ArrayList<>();
+                            listapps.add(0, "Choose apps");
+                            for (int i = 0; i < listAppData.size(); i++) {
+                                listapps.add(listAppData.get(i).getApps_name());
+                            }
+                            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(appContext, R.layout.spinner_style, listapps);
+                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinAppName.setAdapter(spinnerAdapter);
+                            spinAppName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                                    //String app = listAppData.get(position).getApps_name();
+                                    if (position == 0) {
+                                        apps_name = null;
+                                    } else {
+                                        String app = listapps.get(position);
+                                        Log.d("appsselect", "id : " + app);
+                                        apps_name = app;
+                                    }
+                                }
+
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                }
+                            });
+                            Log.d("BottomSheet", "" + listAppData);
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseData> call, Throwable t) {
+
+                    }
+                });
+                break;
+        }
+    }
+
+    public void spinnerPriority(Context context, Spinner spinner) {
+        String priority[] = {"Choose Priority", "Low", "Middle", "High"};
+        ArrayAdapter<String> spinner1Adapter = new ArrayAdapter<String>(context, R.layout.spinner_style, priority);
+        spinner.setAdapter(spinner1Adapter);
     }
 
     public void setBlurBackground(boolean state, BlurView blurView, View getViewDecor, Context appContext) {
@@ -190,12 +411,6 @@ public class UserInteraction extends AppCompatActivity {
         } else {
             blurView.setBlurEnabled(false);
         }
-    }
-
-    public void spinnerPriority(Context context, Spinner spinner) {
-        String priority[] = {"Choose Priority","Low", "Middle", "High"};
-        ArrayAdapter<String> spinner1Adapter = new ArrayAdapter<String>(context, R.layout.spinner_style, priority);
-        spinner.setAdapter(spinner1Adapter);
     }
 
     public void showBottomSheet(final Context appContext, final FloatingActionsMenu fabMenu, final BlurView blurView, LayoutInflater yourLayout, String title, final String type) {
@@ -256,9 +471,9 @@ public class UserInteraction extends AppCompatActivity {
                     spinPriority.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                            if (adapterView.getItemAtPosition(i).equals("Choose Priority")){
+                            if (adapterView.getItemAtPosition(i).equals("Choose Priority")) {
                                 userAppManager.setPriority(null);
-                            }else{
+                            } else {
                                 String priorityValue = adapterView.getItemAtPosition(i).toString();
                                 priority[0] = priorityValue;
                                 Log.d("value", "" + priority[0]);

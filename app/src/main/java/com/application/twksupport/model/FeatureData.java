@@ -13,7 +13,7 @@ public class FeatureData implements Parcelable {
     private String status;
     private String created_at;
     private String time_periodic;
-    private String price;
+    private int price;
     private String aproval_stat;
 
     public FeatureData(){
@@ -92,11 +92,11 @@ public class FeatureData implements Parcelable {
         this.time_periodic = time_periodic;
     }
 
-    public String getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(String price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
@@ -118,7 +118,7 @@ public class FeatureData implements Parcelable {
         status = in.readString();
         created_at = in.readString();
         time_periodic = in.readString();
-        price = in.readString();
+        price = in.readInt();
         aproval_stat = in.readString();
     }
 
@@ -138,7 +138,7 @@ public class FeatureData implements Parcelable {
         parcel.writeString(status);
         parcel.writeString(created_at);
         parcel.writeString(time_periodic);
-        parcel.writeString(price);
+        parcel.writeInt(price);
         parcel.writeString(aproval_stat);
     }
 

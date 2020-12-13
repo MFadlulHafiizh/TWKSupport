@@ -48,16 +48,39 @@ public class DoneFragment extends Fragment {
     private TextView filterbutton, txtErrorMessage;
     private Button tryAgain;
     private LinearLayout error_container;
+    private static DoneFragment instance;
     private int page = 1;
     private int last_page = 1;
+    private String priority = null;
+    private String apps_name = null;
     private ProgressBar progressBar;
     SwipeRefreshLayout swipeRefreshLayout;
+
+    public static DoneFragment getInstance(){
+        return instance;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setApps_name(String apps_name) {
+        this.apps_name = apps_name;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
+    public List<DoneData> getListDone() {
+        return listDone;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.fragment_done, container, false);
-
+        instance = this;
         //initializeComponentView
         error_container = view.findViewById(R.id.error_frame);
         txtErrorMessage = view.findViewById(R.id.error_message);
@@ -160,7 +183,7 @@ public class DoneFragment extends Fragment {
         return view;
     }
 
-    protected void addListDataDone() {
+    public void addListDataDone() {
         error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
@@ -168,11 +191,11 @@ public class DoneFragment extends Fragment {
         String getToken = _objpref.getString("jwttoken", "");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
         Log.d("donefragment", "" + idCompany);
-        Call<ResponseData> getData = api.getUserDoneData(idCompany, page,"Bearer " + getToken);
+        Call<ResponseData> getData = api.getUserDoneData(idCompany, page,"Bearer " + getToken, priority, apps_name);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getDoneData());
                     List<DoneData> responseBody = response.body().getDoneData();
                     listDone.addAll(responseBody);
@@ -194,6 +217,9 @@ public class DoneFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
+                }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
                 } else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
@@ -312,19 +338,28 @@ public class DoneFragment extends Fragment {
                 switch (role) {
                     case "twk-head":
                         listDone.clear();
+                        mAdapter.notifyDataSetChanged();
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         addListDoneAdmin();
                         break;
 
                     case "twk-staff":
                         listDone.clear();
+                        mAdapter.notifyDataSetChanged();
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         addListStaffHasDone();
                         break;
 
                     default:
                         listDone.clear();
+                        mAdapter.notifyDataSetChanged();
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         addListDataDone();
                         break;
                 }
@@ -338,18 +373,24 @@ public class DoneFragment extends Fragment {
                     case "twk-head":
                         listDone.clear();
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         addListDoneAdmin();
                         break;
 
                     case "twk-staff":
                         listDone.clear();
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         addListStaffHasDone();
                         break;
 
                     default:
                         listDone.clear();
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         addListDataDone();
                         break;
                 }

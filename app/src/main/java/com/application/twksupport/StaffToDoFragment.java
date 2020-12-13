@@ -104,6 +104,7 @@ public class StaffToDoFragment extends Fragment {
             public void onRefresh() {
                 page = 1;
                 listjobs.clear();
+                mAdapter.notifyDataSetChanged();
                 getJobs();
             }
         });

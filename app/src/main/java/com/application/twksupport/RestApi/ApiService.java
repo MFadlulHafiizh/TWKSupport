@@ -85,17 +85,23 @@ public interface ApiService {
     @GET("user/data-bug")
     Call<ResponseData> getUserBugData(@Query("id_perusahaan") int idCompany,
                                       @Query("page") int page,
-                                      @Header("Authorization") String authToken);
+                                      @Header("Authorization") String authToken,
+                                      @Query("priority") String priority,
+                                      @Query("apps_name") String apps_name);
 
     @GET("user/data-feature")
     Call<ResponseData> getUserFeatureData(@Query("id_perusahaan") int idCompany,
                                           @Query("page") int page,
-                                          @Header("Authorization") String authToken);
+                                          @Header("Authorization") String authToken,
+                                          @Query("priority") String priority,
+                                          @Query("apps_name") String apps_name);
 
     @GET("user/data-done")
     Call<ResponseData> getUserDoneData(@Query("id_perusahaan") int idCompany,
                                        @Query("page") int page,
-                                       @Header("Authorization") String authToken);
+                                       @Header("Authorization") String authToken,
+                                       @Query("priority") String priority,
+                                       @Query("apps_name") String apps_name);
 
     @PATCH("user/agreement-act/{id_ticket}")
     Call<JsonObject> clientAgreementAct(@Header("Authorization") String token,
@@ -108,13 +114,22 @@ public interface ApiService {
 
     //AdminAct
     @GET("admin/data-bug")
-    Call<ResponseData> getAdminBugData(@Query("page") int page, @Header("Authorization") String authToken);
+    Call<ResponseData> getAdminBugData(@Query("page") int page,
+                                       @Header("Authorization") String authToken,
+                                       @Query("priority") String priority,
+                                       @Query("apps_name") String apps_name,
+                                       @Query("assigned") String assigned,
+                                       @Query("dari") String fromDate,
+                                       @Query("sampai") String untilDate);
 
     @GET("admin/data-feature")
     Call<ResponseData> getAdminFeatureData(@Query("page") int page, @Header("Authorization") String authToken);
 
     @GET("admin/data-done")
     Call<ResponseData> getAdminDoneData(@Query("page") int page, @Header("Authorization") String authToken);
+
+    @GET("admin/getTicketApps")
+    Call<ResponseData> getAllTicketApps(@Header("Authorization") String authToken);
 
     @GET("admin/getStaff")
     Call<StaffResponse> getStaff(@Header("Authorization") String adminToken);
@@ -130,7 +145,7 @@ public interface ApiService {
     @PATCH("admin/make-agreement/{id_ticket}")
     Call<ResponseBody> makeAgreement(@Header("Authorization") String adminToken,
                                      @Path("id_ticket") String id_ticket,
-                                     @Field("price") String price,
+                                     @Field("price") int price,
                                      @Field("time_periodic") String time_periodic,
                                      @Field("status") String status);
 

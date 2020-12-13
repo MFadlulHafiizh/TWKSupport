@@ -84,7 +84,7 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
         String name = getUserInformation.getString("name", "Not Authorized");
         String role = getUserInformation.getString("role", "Not Authorized");
         String photo_url = getUserInformation.getString("photo","");
-        Glide.with(userAccountPict.getContext()).load(photo_url).into(userAccountPict);
+        Glide.with(userAccountPict.getContext()).load(photo_url).placeholder(R.drawable.ic_account_circle_white).into(userAccountPict);
         userEmail.setText(email);
         userName.setText(name);
 

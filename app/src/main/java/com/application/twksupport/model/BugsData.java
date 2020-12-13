@@ -13,6 +13,7 @@ public class BugsData implements Parcelable {
     private String detail;
     private String status;
     private String created_at;
+    private String assign_at;
 
 
     public BugsData(){

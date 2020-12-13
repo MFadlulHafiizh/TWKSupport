@@ -56,6 +56,12 @@ public class BugsFragment extends Fragment {
     private LinearLayout error_container;
     private int page = 1;
     private int last_page = 1;
+    //filterRequest
+    private String priority = null;
+    private String apps_name = null;
+    private String assigned = null;
+    private String fromDate = null;
+    private String untilDate = null;
     SwipeRefreshLayout swipeRefreshLayout;
     ProgressBar progressBar;
 
@@ -70,6 +76,26 @@ public class BugsFragment extends Fragment {
 
     public static BugsFragment getInstance() {
         return instance;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setApps_name(String apps_name) {
+        this.apps_name = apps_name;
+    }
+
+    public void setAssigned(String assigned) {
+        this.assigned = assigned;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setUntilDate(String untilDate) {
+        this.untilDate = untilDate;
     }
 
     @Override
@@ -167,11 +193,13 @@ public class BugsFragment extends Fragment {
         String getToken = _objpref.getString("jwttoken", "");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
         Log.d("BugsFragment", "" + idCompany);
-        Call<ResponseData> getData = api.getUserBugData(idCompany, page, "Bearer " + getToken);
+        Log.d("priorityselectbug", "prio : "+priority);
+        Log.d("priorityselectbug", "prioapps : "+apps_name);
+        Call<ResponseData> getData = api.getUserBugData(idCompany, page, "Bearer " + getToken, priority, apps_name);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getBugData());
                     List<BugsData> responseBody = response.body().getBugData();
                     listBugs.addAll(responseBody);
@@ -191,8 +219,14 @@ public class BugsFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                } else {
+                }
+                else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     swipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    swipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), "Unauthorized", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -206,16 +240,18 @@ public class BugsFragment extends Fragment {
         });
     }
 
-    protected void addListAdminBug() {
+    public void addListAdminBug() {
         error_container.setVisibility(View.GONE);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getData = api.getAdminBugData(page,"Bearer " + getToken);
+        Call<ResponseData> getData = api.getAdminBugData(page,"Bearer " + getToken, priority, apps_name, assigned, fromDate, untilDate);
+        Log.d("priorityselectbug", "prio : "+priority);
+        Log.d("priorityselectbug", "prioapps : "+apps_name);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getBugData());
                     List<BugsData> responseBody = response.body().getBugData();
                     listBugs.addAll(responseBody);
@@ -236,7 +272,11 @@ public class BugsFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                } else {
+                }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    swipeRefreshLayout.setRefreshing(false);
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                else {
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -256,18 +296,39 @@ public class BugsFragment extends Fragment {
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Handler handler = new Handler();
                 swipeRefreshLayout.setRefreshing(true);
                 switch (role) {
                     case "twk-head":
                         listBugs.clear();
                         page = 1;
-                        addListAdminBug();
+                        priority = null;
+                        apps_name = null;
+                        assigned = null;
+                        fromDate = null;
+                        untilDate = null;
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListAdminBug();
+                            }
+                        },20);
                         break;
 
                     default:
                         listBugs.clear();
                         page = 1;
-                        addListDataBugsUser();
+                        priority = null;
+                        apps_name = null;
+                        assigned = null;
+                        fromDate = null;
+                        untilDate = null;
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListDataBugsUser();
+                            }
+                        },20);
                         break;
                 }
             }
@@ -276,21 +337,40 @@ public class BugsFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                Handler delay = new Handler();
                 switch (role) {
                     case "twk-head":
                         page = 1;
-                        if (listBugs!=null){
-                            listBugs.clear();
-                        }
-                        addListAdminBug();
+                        listBugs.clear();
+                        mAdapter.notifyDataSetChanged();
+                        priority = null;
+                        apps_name = null;
+                        assigned = null;
+                        fromDate = null;
+                        untilDate = null;
+                        delay.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListAdminBug();
+                            }
+                        }, 20);
                         break;
 
                     default:
                         page = 1;
-                        if (listBugs != null){
-                            listBugs.clear();
-                        }
-                        addListDataBugsUser();
+                        listBugs.clear();
+                        mAdapter.notifyDataSetChanged();
+                        priority = null;
+                        apps_name = null;
+                        assigned = null;
+                        fromDate = null;
+                        untilDate = null;
+                        delay.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListDataBugsUser();
+                            }
+                        }, 20);
                         break;
                 }
             }

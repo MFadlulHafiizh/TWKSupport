@@ -1,5 +1,7 @@
 package com.application.twksupport.adapter;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +15,12 @@ import com.application.twksupport.model.NotificationData;
 import java.util.List;
 
 public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAdapter.MyViewHolder> {
-
+    private Context context;
     private List<NotificationData> mNotif;
     private ItemClick click;
 
-    public RvNotificationAdapter(List<NotificationData> mNotif) {
+    public RvNotificationAdapter(List<NotificationData> mNotif, Context context) {
+        this.context = context;
         this.mNotif = mNotif;
     }
 
@@ -49,11 +52,28 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
         }else {
             holder.imgNotifIndicator.setVisibility(View.VISIBLE);
         }
-        holder.txtPriority.setText(nd.getPriority());
-        holder.txtSubject.setText(nd.getSubject());
-        holder.txtAppname.setText(nd.getApps_name());
-        holder.txtStatus.setText(nd.getStatus());
 
+        SharedPreferences getRoleUser = context.getSharedPreferences("userInformation", 0);
+        final String role = getRoleUser.getString("role", "not Authenticated");
+        if (role.equals("twk-staff")){
+            holder.txtPriority.setText(nd.getPriority());
+            holder.txtSubject.setText(nd.getSubject());
+            holder.txtAppname.setText(nd.getApps_name());
+            holder.txtDate.setText(nd.getCreated_at());
+            if (nd.getType().equals("Report") && !nd.getStatus().equals("Done")){
+                holder.txtStatus.setText("Bugs report");
+            }else if (nd.getType().equals("Request") && !nd.getStatus().equals("Done")){
+                holder.txtStatus.setText("Feature request");
+            }else {
+                holder.txtStatus.setText(nd.getStatus());
+            }
+        }else {
+            holder.txtPriority.setText(nd.getPriority());
+            holder.txtSubject.setText(nd.getSubject());
+            holder.txtAppname.setText(nd.getApps_name());
+            holder.txtStatus.setText(nd.getStatus());
+            holder.txtDate.setText(nd.getCreated_at());
+        }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -73,7 +93,7 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
     }
 
     public class MyViewHolder extends RecyclerView.ViewHolder {
-        private TextView txtPriority, txtSubject, txtAppname, txtStatus;
+        private TextView txtPriority, txtSubject, txtAppname, txtStatus, txtDate;
         private ImageView imgNotifIndicator;
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -82,6 +102,7 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
             txtAppname = itemView.findViewById(R.id.appname_notif);
             txtStatus = itemView.findViewById(R.id.status_notif);
             imgNotifIndicator = itemView.findViewById(R.id.notif_indicator);
+            txtDate = itemView.findViewById(R.id.notif_date);
         }
     }
 }

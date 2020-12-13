@@ -14,6 +14,7 @@ public class ResponseData {
     private int last_page_notif;
     private int notifCount;
     private String image_url;
+    private String message;
     private List<BugsData> dataBug;
     private List<FeatureData> featureData;
     private List<DoneData> doneData;
@@ -24,6 +25,14 @@ public class ResponseData {
 
     public int getLast_page_notif() {
         return last_page_notif;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public String getImage_url() {

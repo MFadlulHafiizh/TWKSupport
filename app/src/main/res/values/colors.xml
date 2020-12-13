@@ -13,4 +13,5 @@
     <color name="blueFigma">#809CFF</color>
     <color name="redTransparent">#54D91E36</color>
     <color name="textGrey">#777777</color>
+    <color name="onProccess">#FF881F</color>
 </resources>

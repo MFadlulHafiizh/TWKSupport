@@ -43,6 +43,7 @@ public class NotificationActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private RecyclerView rvNotif;
     private RvNotificationAdapter mAdapter;
+    private static NotificationActivity instance;
     private List<NotificationData> listnotif = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     private int page = 1;
@@ -55,11 +56,24 @@ public class NotificationActivity extends AppCompatActivity {
     TextView userName;
     TextView userEmail;
 
+    public static NotificationActivity getInstance(){
+        return instance;
+    }
+
+    public List<NotificationData> getListnotif() {
+        return listnotif;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
         initialize();
+        instance = this;
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle(null);
@@ -67,7 +81,7 @@ public class NotificationActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         appBarLayout.setStateListAnimator(null);
 
-        mAdapter = new RvNotificationAdapter(listnotif);
+        mAdapter = new RvNotificationAdapter(listnotif, getApplicationContext());
         rvNotif.setLayoutManager(linearLayoutManager);
         rvNotif.setAdapter(mAdapter);
 
@@ -81,7 +95,7 @@ public class NotificationActivity extends AppCompatActivity {
         String name = getUserInformation.getString("name", "Not Authorized");
         String role = getUserInformation.getString("role", "");
         String photo_url = getUserInformation.getString("photo","");
-        Glide.with(accountImage.getContext()).load(photo_url).into(accountImage);
+        Glide.with(accountImage.getContext()).load(photo_url).placeholder(R.drawable.ic_account_circle_white).into(accountImage);
         userEmail.setText(email);
         userName.setText(name);
 
@@ -146,7 +160,7 @@ public class NotificationActivity extends AppCompatActivity {
         }
     }
 
-    private void addListNotification(String id_user) {
+    public void addListNotification(String id_user) {
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<ResponseData> getListNotif = api.getListNotification(page, id_user);
         Log.d("notifoeoe", "" + id_user);

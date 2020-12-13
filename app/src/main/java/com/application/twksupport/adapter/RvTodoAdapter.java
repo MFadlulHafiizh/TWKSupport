@@ -60,7 +60,7 @@ public class RvTodoAdapter extends RecyclerView.Adapter<RvTodoAdapter.MyViewHold
         }else {
             holder.tv_status.setText("Feature request");
         }
-        holder.date.setText(td.getDeadline());
+        holder.date.setText(td.getCreated_at());
         holder.app_name.setText(td.getApps_name());
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

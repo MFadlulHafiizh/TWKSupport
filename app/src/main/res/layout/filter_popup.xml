@@ -36,7 +36,8 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignParentRight="true"
-                android:background="@android:color/transparent"
+                android:padding="8dp"
+                android:background="@drawable/button_transparent_clickable"
                 android:src="@drawable/ic_close" />
         </RelativeLayout>
 
@@ -58,6 +59,175 @@
             android:background="@drawable/dash_spinner"
             android:paddingStart="10dp"
             android:paddingEnd="10dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="16dp">
+
+            <CheckBox
+                android:id="@+id/filter_assigned_ticket"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Assigned Ticket"
+                android:fontFamily="@font/comfortaa_light"
+                android:textSize="13sp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/comfortaa_light"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:text="From:"
+                android:layout_marginTop="5dp"/>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp">
+
+                <EditText
+                    android:id="@+id/et_year_filter_from"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="4"
+                    android:layout_gravity="left"
+                    android:maxLength="4"
+                    android:maxLines="1"
+                    android:inputType="date"
+                    android:background="@drawable/dashinputdate"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:gravity="center"
+                    android:hint="yyyy"
+                    android:textSize="13sp"
+                    android:textColor="@color/blackCharcoal" />
+
+                <EditText
+                    android:id="@+id/et_month_filter_from"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="2"
+                    android:layout_gravity="left"
+                    android:maxLength="2"
+                    android:layout_marginLeft="10dp"
+                    android:maxLines="1"
+                    android:inputType="date"
+                    android:background="@drawable/dashinputdate"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:hint="mm"
+                    android:textColor="@color/blackCharcoal" />
+
+                <EditText
+                    android:id="@+id/et_day_filter_from"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="2"
+                    android:layout_gravity="left"
+                    android:maxLines="1"
+                    android:maxLength="2"
+                    android:inputType="date"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="13sp"
+                    android:background="@drawable/dashinputdate"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:gravity="center"
+                    android:hint="dd"
+                    android:textColor="@color/blackCharcoal" />
+
+                <ImageButton
+                    android:id="@+id/btn_openDate_filter_from"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="@drawable/button_transparent_clickable"
+                    android:src="@drawable/ic_baseline_date_range_24" />
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:fontFamily="@font/comfortaa_light"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:layout_marginTop="5dp"
+                android:text="Until:" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:paddingStart="8dp"
+                android:paddingEnd="8dp">
+
+                <EditText
+                    android:id="@+id/et_year_filter_until"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="4"
+                    android:layout_gravity="left"
+                    android:maxLength="4"
+                    android:maxLines="1"
+                    android:inputType="date"
+                    android:background="@drawable/dashinputdate"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:gravity="center"
+                    android:hint="yyyy"
+                    android:textSize="13sp"
+                    android:textColor="@color/blackCharcoal" />
+
+                <EditText
+                    android:id="@+id/et_month_filter_until"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="2"
+                    android:layout_gravity="left"
+                    android:maxLength="2"
+                    android:layout_marginLeft="10dp"
+                    android:maxLines="1"
+                    android:inputType="date"
+                    android:background="@drawable/dashinputdate"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:textSize="13sp"
+                    android:gravity="center"
+                    android:hint="mm"
+                    android:textColor="@color/blackCharcoal" />
+
+                <EditText
+                    android:id="@+id/et_day_filter_until"
+                    android:layout_width="0dp"
+                    android:layout_height="45dp"
+                    android:layout_weight="2"
+                    android:layout_gravity="left"
+                    android:maxLines="1"
+                    android:maxLength="2"
+                    android:inputType="date"
+                    android:layout_marginLeft="10dp"
+                    android:textSize="13sp"
+                    android:background="@drawable/dashinputdate"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:gravity="center"
+                    android:hint="dd"
+                    android:textColor="@color/blackCharcoal" />
+
+                <ImageButton
+                    android:id="@+id/btn_openDate_filter_until"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.2"
+                    android:layout_gravity="center"
+                    android:layout_marginHorizontal="8dp"
+                    android:background="@drawable/button_transparent_clickable"
+                    android:src="@drawable/ic_baseline_date_range_24" />
+            </LinearLayout>
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="wrap_content"

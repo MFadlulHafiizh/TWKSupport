@@ -14,6 +14,7 @@ public class DoneData implements Parcelable {
     private String status;
     private String created_at;
     private String dead_line;
+    private int price;
 
     protected DoneData(Parcel in) {
         nama_perusahaan = in.readString();
@@ -26,6 +27,7 @@ public class DoneData implements Parcelable {
         status = in.readString();
         created_at = in.readString();
         dead_line = in.readString();
+        price = in.readInt();
     }
 
     public static final Creator<DoneData> CREATOR = new Creator<DoneData>() {
@@ -120,6 +122,14 @@ public class DoneData implements Parcelable {
         this.dead_line = dead_line;
     }
 
+    public int getPrice() {
+        return price;
+    }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -137,5 +147,6 @@ public class DoneData implements Parcelable {
         dest.writeString(status);
         dest.writeString(created_at);
         dest.writeString(dead_line);
+        dest.writeInt(price);
     }
 }

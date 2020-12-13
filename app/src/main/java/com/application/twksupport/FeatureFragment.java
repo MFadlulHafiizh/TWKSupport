@@ -52,6 +52,8 @@ public class FeatureFragment extends Fragment {
     SwipeRefreshLayout swipeRefreshLayout;
     private int page = 1;
     private int last_page = 1;
+    private String priority = null;
+    private String apps_name = null;
     private ProgressBar progressBar;
 
     public List<FeatureData> getListFeature() {
@@ -65,6 +67,15 @@ public class FeatureFragment extends Fragment {
     public static FeatureFragment getInstance(){
         return instance;
     }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setApps_name(String apps_name) {
+        this.apps_name = apps_name;
+    }
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -164,11 +175,11 @@ public class FeatureFragment extends Fragment {
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
         int idCompany = getCompanyUser.getInt("id_perushaan", 0);
-        Call<ResponseData> getData = api.getUserFeatureData(idCompany, page,"Bearer "+getToken);
+        Call<ResponseData> getData = api.getUserFeatureData(idCompany, page,"Bearer "+getToken, priority, apps_name);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")){
                     Log.d("RETRO", "RESPONSE : " + response.body().getFeatureData());
                     List<FeatureData> responseBody = response.body().getFeatureData();
                     listFeature.addAll(responseBody);
@@ -189,6 +200,10 @@ public class FeatureFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
+                }
+                else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
@@ -259,18 +274,33 @@ public class FeatureFragment extends Fragment {
         tryAgain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Handler handler = new Handler();
                 swipeRefreshLayout.setRefreshing(true);
                 switch (role) {
                     case "twk-head":
+                        priority = null;
+                        apps_name = null;
                         listFeature.clear();
                         page = 1;
-                        addListAdminFeature();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListAdminFeature();
+                            }
+                        },20);
                         break;
 
                     default:
+                        priority = null;
+                        apps_name = null;
                         listFeature.clear();
                         page = 1;
-                        addListDataFeatureUser();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListDataFeatureUser();
+                            }
+                        },20);
                         break;
                 }
             }
@@ -279,21 +309,38 @@ public class FeatureFragment extends Fragment {
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
+                Handler handler = new Handler();
                 switch (role) {
                     case "twk-head":
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         if (listFeature!=null){
                             listFeature.clear();
+                            mAdapter.notifyDataSetChanged();
                         }
-                        addListAdminFeature();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListAdminFeature();
+                            }
+                        }, 20);
                         break;
 
                     default:
                         page = 1;
+                        priority = null;
+                        apps_name = null;
                         if (listFeature != null){
                             listFeature.clear();
+                            mAdapter.notifyDataSetChanged();
                         }
-                        addListDataFeatureUser();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                addListDataFeatureUser();
+                            }
+                        },20);
                         break;
                 }
             }
