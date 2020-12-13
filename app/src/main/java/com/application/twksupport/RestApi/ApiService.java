@@ -123,10 +123,19 @@ public interface ApiService {
                                        @Query("sampai") String untilDate);
 
     @GET("admin/data-feature")
-    Call<ResponseData> getAdminFeatureData(@Query("page") int page, @Header("Authorization") String authToken);
+    Call<ResponseData> getAdminFeatureData(@Query("page") int page, @Header("Authorization") String authToken,
+                                           @Query("priority") String priority,
+                                           @Query("apps_name") String apps_name,
+                                           @Query("assigned") String assigned,
+                                           @Query("dari") String fromDate,
+                                           @Query("sampai") String untilDate);
 
     @GET("admin/data-done")
-    Call<ResponseData> getAdminDoneData(@Query("page") int page, @Header("Authorization") String authToken);
+    Call<ResponseData> getAdminDoneData(@Query("page") int page, @Header("Authorization") String authToken,
+                                        @Query("priority") String priority,
+                                        @Query("apps_name") String apps_name,
+                                        @Query("dari") String fromDate,
+                                        @Query("sampai") String untilDate);
 
     @GET("admin/getTicketApps")
     Call<ResponseData> getAllTicketApps(@Header("Authorization") String authToken);

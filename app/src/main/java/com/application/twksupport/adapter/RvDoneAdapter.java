@@ -60,6 +60,8 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
         holder.app_name.setText(dt.getApps_name());
         if (role.equals("twk-staff")){
             holder.date.setText(dt.getDead_line());
+        }else {
+            holder.date.setText(dt.getCreated_at());
         }
 
         holder.itemView.setOnClickListener(new View.OnClickListener() {

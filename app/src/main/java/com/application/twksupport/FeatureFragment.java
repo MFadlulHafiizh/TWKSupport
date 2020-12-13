@@ -54,6 +54,9 @@ public class FeatureFragment extends Fragment {
     private int last_page = 1;
     private String priority = null;
     private String apps_name = null;
+    private String assigned = null;
+    private String fromDate = null;
+    private String untilDate = null;
     private ProgressBar progressBar;
 
     public List<FeatureData> getListFeature() {
@@ -74,6 +77,18 @@ public class FeatureFragment extends Fragment {
 
     public void setApps_name(String apps_name) {
         this.apps_name = apps_name;
+    }
+
+    public void setAssigned(String assigned) {
+        this.assigned = assigned;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setUntilDate(String untilDate) {
+        this.untilDate = untilDate;
     }
 
     @Override
@@ -203,10 +218,12 @@ public class FeatureFragment extends Fragment {
                 }
                 else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
 
@@ -222,16 +239,21 @@ public class FeatureFragment extends Fragment {
         });
     }
 
-    protected void addListAdminFeature(){
+    public void addListAdminFeature(){
         error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "");
-        Call<ResponseData> getData = api.getAdminFeatureData(page,"Bearer "+getToken);
+        Call<ResponseData> getData = api.getAdminFeatureData(page,"Bearer "+getToken, priority, apps_name, assigned, fromDate, untilDate);
+        Log.d("ovovavase", "prio : "+priority);
+        Log.d("ovovavase", "prioapp : "+apps_name);
+        Log.d("ovovavase", "prioassign : "+assigned);
+        Log.d("ovovavase", "priofromdate : "+fromDate);
+        Log.d("ovovavase", "priountildate : "+untilDate);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")){
                     Log.d("RETRO", "RESPONSE : " + response.body().getFeatureData());
                     List<FeatureData> responseBody = response.body().getFeatureData();
                     listFeature.addAll(responseBody);
@@ -252,9 +274,14 @@ public class FeatureFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
+                }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Toast.makeText(getActivity(), "Unatourized", Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -280,6 +307,9 @@ public class FeatureFragment extends Fragment {
                     case "twk-head":
                         priority = null;
                         apps_name = null;
+                        assigned = null;
+                        fromDate = null;
+                        untilDate = null;
                         listFeature.clear();
                         page = 1;
                         handler.postDelayed(new Runnable() {
@@ -315,6 +345,9 @@ public class FeatureFragment extends Fragment {
                         page = 1;
                         priority = null;
                         apps_name = null;
+                        assigned = null;
+                        fromDate = null;
+                        untilDate = null;
                         if (listFeature!=null){
                             listFeature.clear();
                             mAdapter.notifyDataSetChanged();

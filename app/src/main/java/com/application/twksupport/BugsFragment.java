@@ -222,10 +222,12 @@ public class BugsFragment extends Fragment {
                 }
                 else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
                     Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
                     Toast.makeText(getActivity(), "Unauthorized", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -246,11 +248,6 @@ public class BugsFragment extends Fragment {
         String getToken = _objpref.getString("jwttoken", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<ResponseData> getData = api.getAdminBugData(page,"Bearer " + getToken, priority, apps_name, assigned, fromDate, untilDate);
-        Log.d("priorityselectbug", "prio : "+priority);
-        Log.d("priorityselectbug", "prioapps : "+apps_name);
-        Log.d("priorityselectbug", "prioassigned : "+assigned);
-        Log.d("priorityselectbug", "priofromdate : "+fromDate);
-        Log.d("priorityselectbug", "priountildate : "+untilDate);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
@@ -277,10 +274,12 @@ public class BugsFragment extends Fragment {
                     });
                 }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
                     Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
                 }
             }
 
@@ -365,9 +364,6 @@ public class BugsFragment extends Fragment {
                         mAdapter.notifyDataSetChanged();
                         priority = null;
                         apps_name = null;
-                        assigned = null;
-                        fromDate = null;
-                        untilDate = null;
                         delay.postDelayed(new Runnable() {
                             @Override
                             public void run() {

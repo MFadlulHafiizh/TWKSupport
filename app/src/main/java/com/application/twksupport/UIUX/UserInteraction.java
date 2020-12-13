@@ -24,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -87,6 +88,7 @@ public class UserInteraction extends AppCompatActivity {
         final ImageButton close, dateFrom, dateUntil;
         final CheckBox ckAssignTicket;
         final EditText etYearFr, etMonthFr, etDayFr, etYearUn, etMonthUn, etDayUn;
+        final LinearLayout containerTwkAct;
         spinPriorityFiler = popUpFilter.findViewById(R.id.priorityFilter);
         spinAppnameFilter = popUpFilter.findViewById(R.id.appNameFilter);
         reset = popUpFilter.findViewById(R.id.btnResetFilter);
@@ -101,6 +103,7 @@ public class UserInteraction extends AppCompatActivity {
         etYearUn = popUpFilter.findViewById(R.id.et_year_filter_until);
         etMonthUn = popUpFilter.findViewById(R.id.et_month_filter_until);
         etDayUn = popUpFilter.findViewById(R.id.et_day_filter_until);
+        containerTwkAct = popUpFilter.findViewById(R.id.container_twkact);
 
         //spinnerSet
         spinnerPriority(appContext, spinPriorityFiler);
@@ -138,6 +141,16 @@ public class UserInteraction extends AppCompatActivity {
                 }
             }
         });
+
+        if (role.equals("twk-head")){
+            if (!extra_code.equals("extra_done")){
+                ckAssignTicket.setVisibility(View.VISIBLE);
+            }
+        }
+        else if(role.equals("client-head") || role.equals("client-staff")){
+            containerTwkAct.setVisibility(View.GONE);
+        }
+
         Calendar calendar = Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);
         final int month = calendar.get(Calendar.MONTH);
@@ -167,16 +180,15 @@ public class UserInteraction extends AppCompatActivity {
 
         datePicker(appContext, etYearUn, etMonthUn, etDayUn, dateUntil);
 
-
         apply.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String dateFromValue = etYearFr.getText().toString() + "-" + etMonthFr.getText().toString() + "-" + etDayFr.getText().toString();
+                String dateUntilValue = etYearUn.getText().toString() + "-" + etMonthUn.getText().toString() + "-" + etDayUn.getText().toString();
                 switch (extra_code) {
                     case "extra_bugs":
                         switch (role) {
                             case "twk-head":
-                                String dateFromValue = etYearFr.getText().toString() + "-" + etMonthFr.getText().toString() + "-" + etDayFr.getText().toString();
-                                String dateUntilValue = etYearUn.getText().toString() + "-" + etMonthUn.getText().toString() + "-" + etDayUn.getText().toString();
                                 BugsFragment.getInstance().setPage(1);
                                 BugsFragment.getInstance().getListBugs().clear();
                                 BugsFragment.getInstance().setPriority(priority[0]);
@@ -192,6 +204,7 @@ public class UserInteraction extends AppCompatActivity {
                                     @Override
                                     public void run() {
                                         BugsFragment.getInstance().addListAdminBug();
+                                        assigned = null;
                                     }
                                 }, 20);
                                 popUpFilter.dismiss();
@@ -221,31 +234,91 @@ public class UserInteraction extends AppCompatActivity {
                         break;
 
                     case "extra_feature":
-                        FeatureFragment.getInstance().setPage(1);
-                        FeatureFragment.getInstance().getListFeature().clear();
-                        FeatureFragment.getInstance().setPriority(priority[0]);
-                        FeatureFragment.getInstance().setApps_name(apps_name);
-                        delay.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                FeatureFragment.getInstance().addListDataFeatureUser();
-                            }
-                        }, 20);
-                        popUpFilter.dismiss();
+                        switch (role){
+                            case "twk-head":
+                                FeatureFragment.getInstance().setPage(1);
+                                FeatureFragment.getInstance().getListFeature().clear();
+                                FeatureFragment.getInstance().setPriority(priority[0]);
+                                FeatureFragment.getInstance().setApps_name(apps_name);
+                                FeatureFragment.getInstance().setAssigned(assigned);
+                                if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
+
+                                }else{
+                                    FeatureFragment.getInstance().setFromDate(dateFromValue);
+                                    FeatureFragment.getInstance().setUntilDate(dateUntilValue);
+                                }
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        FeatureFragment.getInstance().addListAdminFeature();
+                                        assigned = null;
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
+                                break;
+
+                            case "twk-staff":
+
+                                break;
+
+                            default:
+                                FeatureFragment.getInstance().setPage(1);
+                                FeatureFragment.getInstance().getListFeature().clear();
+                                FeatureFragment.getInstance().setPriority(priority[0]);
+                                FeatureFragment.getInstance().setApps_name(apps_name);
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        FeatureFragment.getInstance().addListDataFeatureUser();
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
+                                break;
+                        }
+
                         break;
 
                     case "extra_done":
-                        DoneFragment.getInstance().setPage(1);
-                        DoneFragment.getInstance().getListDone().clear();
-                        DoneFragment.getInstance().setPriority(priority[0]);
-                        DoneFragment.getInstance().setApps_name(apps_name);
-                        delay.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                DoneFragment.getInstance().addListDataDone();
-                            }
-                        }, 20);
-                        popUpFilter.dismiss();
+                        switch (role){
+                            case "twk-head":
+                                DoneFragment.getInstance().setPage(1);
+                                DoneFragment.getInstance().getListDone().clear();
+                                DoneFragment.getInstance().setPriority(priority[0]);
+                                DoneFragment.getInstance().setApps_name(apps_name);
+                                if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
+
+                                }else{
+                                    DoneFragment.getInstance().setFromDate(dateFromValue);
+                                    DoneFragment.getInstance().setUntilDate(dateUntilValue);
+                                }
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DoneFragment.getInstance().addListDoneAdmin();
+                                        assigned = null;
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
+                                break;
+
+                            case "twk-staff":
+
+                                break;
+
+                            default:
+                                DoneFragment.getInstance().setPage(1);
+                                DoneFragment.getInstance().getListDone().clear();
+                                DoneFragment.getInstance().setPriority(priority[0]);
+                                DoneFragment.getInstance().setApps_name(apps_name);
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DoneFragment.getInstance().addListDataDone();
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
+                                break;
+                        }
                         break;
 
                     case "extra_jobs":
@@ -338,13 +411,13 @@ public class UserInteraction extends AppCompatActivity {
                             });
                             Log.d("BottomSheet", "" + listAppData);
                         } else {
-
+                            Toast.makeText(appContext, "error when getting apps", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseData> call, Throwable t) {
-
+                        Toast.makeText(appContext, "error when getting apps, please check your internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
                 break;
@@ -387,12 +460,14 @@ public class UserInteraction extends AppCompatActivity {
                                 }
                             });
                             Log.d("BottomSheet", "" + listAppData);
+                        }else {
+                            Toast.makeText(appContext, "error when getting apps", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onFailure(Call<ResponseData> call, Throwable t) {
-
+                        Toast.makeText(appContext, "error when getting apps, please check your internet connection", Toast.LENGTH_SHORT).show();
                     }
                 });
                 break;

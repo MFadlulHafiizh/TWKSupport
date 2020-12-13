@@ -3,6 +3,8 @@ package com.application.twksupport.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class DoneData implements Parcelable {
     private String nama_perusahaan;
     private String id_ticket;
@@ -12,6 +14,7 @@ public class DoneData implements Parcelable {
     private String subject;
     private String detail;
     private String status;
+    @SerializedName("updated_at")
     private String created_at;
     private String dead_line;
     private int price;

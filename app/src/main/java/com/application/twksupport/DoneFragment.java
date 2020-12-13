@@ -53,6 +53,8 @@ public class DoneFragment extends Fragment {
     private int last_page = 1;
     private String priority = null;
     private String apps_name = null;
+    private String fromDate = null;
+    private String untilDate = null;
     private ProgressBar progressBar;
     SwipeRefreshLayout swipeRefreshLayout;
 
@@ -74,6 +76,14 @@ public class DoneFragment extends Fragment {
 
     public List<DoneData> getListDone() {
         return listDone;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setUntilDate(String untilDate) {
+        this.untilDate = untilDate;
     }
 
     @Override
@@ -219,8 +229,10 @@ public class DoneFragment extends Fragment {
                     });
                 }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 } else {
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -235,16 +247,16 @@ public class DoneFragment extends Fragment {
         });
     }
 
-    protected void addListDoneAdmin() {
+    public void addListDoneAdmin() {
         error_container.setVisibility(View.GONE);
         SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         String getToken = _objpref.getString("jwttoken", "missing");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getData = api.getAdminDoneData(page,"Bearer " + getToken);
+        Call<ResponseData> getData = api.getAdminDoneData(page,"Bearer " + getToken, priority, apps_name, fromDate, untilDate);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")) {
                     Log.d("RETRO", "RESPONSE : " + response.body().getDoneData());
                     List<DoneData> responseBody = response.body().getDoneData();
                     listDone.addAll(responseBody);
@@ -265,8 +277,14 @@ public class DoneFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                } else {
+                }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
+                }
+                else {
+                    swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
                 }
 
             }
@@ -316,6 +334,7 @@ public class DoneFragment extends Fragment {
 
                 }else{
                     Log.d("RETRO", "resultFail : "+response.body());
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -342,6 +361,8 @@ public class DoneFragment extends Fragment {
                         page = 1;
                         priority = null;
                         apps_name = null;
+                        fromDate = null;
+                        untilDate = null;
                         addListDoneAdmin();
                         break;
 
@@ -351,6 +372,8 @@ public class DoneFragment extends Fragment {
                         page = 1;
                         priority = null;
                         apps_name = null;
+                        fromDate = null;
+                        untilDate = null;
                         addListStaffHasDone();
                         break;
 
@@ -375,6 +398,8 @@ public class DoneFragment extends Fragment {
                         page = 1;
                         priority = null;
                         apps_name = null;
+                        fromDate = null;
+                        untilDate = null;
                         addListDoneAdmin();
                         break;
 
@@ -383,6 +408,8 @@ public class DoneFragment extends Fragment {
                         page = 1;
                         priority = null;
                         apps_name = null;
+                        fromDate = null;
+                        untilDate = null;
                         addListStaffHasDone();
                         break;
 
