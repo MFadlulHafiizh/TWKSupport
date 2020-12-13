@@ -248,6 +248,9 @@ public class BugsFragment extends Fragment {
         Call<ResponseData> getData = api.getAdminBugData(page,"Bearer " + getToken, priority, apps_name, assigned, fromDate, untilDate);
         Log.d("priorityselectbug", "prio : "+priority);
         Log.d("priorityselectbug", "prioapps : "+apps_name);
+        Log.d("priorityselectbug", "prioassigned : "+assigned);
+        Log.d("priorityselectbug", "priofromdate : "+fromDate);
+        Log.d("priorityselectbug", "priountildate : "+untilDate);
         getData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {

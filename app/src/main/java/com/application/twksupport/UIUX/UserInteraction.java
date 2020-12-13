@@ -128,7 +128,16 @@ public class UserInteraction extends AppCompatActivity {
         popUpFilter.show();
 
         //clickEvent
-
+        ckAssignTicket.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (ckAssignTicket.isChecked()){
+                    assigned = "On Proccess";
+                }else{
+                    assigned = null;
+                }
+            }
+        });
         Calendar calendar = Calendar.getInstance();
         final int year = calendar.get(Calendar.YEAR);
         final int month = calendar.get(Calendar.MONTH);
@@ -172,8 +181,13 @@ public class UserInteraction extends AppCompatActivity {
                                 BugsFragment.getInstance().getListBugs().clear();
                                 BugsFragment.getInstance().setPriority(priority[0]);
                                 BugsFragment.getInstance().setApps_name(apps_name);
-                                BugsFragment.getInstance().setFromDate(dateFromValue);
-                                BugsFragment.getInstance().setUntilDate(dateUntilValue);
+                                BugsFragment.getInstance().setAssigned(assigned);
+                                if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
+
+                                }else{
+                                    BugsFragment.getInstance().setFromDate(dateFromValue);
+                                    BugsFragment.getInstance().setUntilDate(dateUntilValue);
+                                }
                                 delay.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
