@@ -3,6 +3,8 @@ package com.application.twksupport.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class NotificationData implements Parcelable {
     private String id_notif;
     private String nama_perusahaan;
@@ -14,6 +16,7 @@ public class NotificationData implements Parcelable {
     private String subject;
     private String detail;
     private String status;
+    @SerializedName("updated_at")
     private String created_at;
     private int price;
     private String time_periodic;

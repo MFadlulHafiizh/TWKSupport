@@ -52,18 +52,11 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
             holder.tv_priority.setTextColor(Color.parseColor("#809CFF"));
         }
 
-        SharedPreferences getRoleUser = activity.getSharedPreferences("userInformation", 0);
-        final String role = getRoleUser.getString("role", "not Authenticated");
         holder.tv_priority.setText(dt.getPriority());
         holder.tv_subject.setText(dt.getSubject());
         holder.tv_status.setText(dt.getStatus());
         holder.app_name.setText(dt.getApps_name());
-        if (role.equals("twk-staff")){
-            holder.date.setText(dt.getDead_line());
-        }else {
-            holder.date.setText(dt.getCreated_at());
-        }
-
+        holder.date.setText(dt.getCreated_at());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

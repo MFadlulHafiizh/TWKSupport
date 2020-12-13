@@ -41,7 +41,11 @@ public interface ApiService {
                                   @Query("token") String logoutToken);
 
     @GET("notification")
-    Call<ResponseData> getListNotification(@Query("page") int page, @Query("id_user") String id_user);
+    Call<ResponseData> getListNotification(@Query("page") int page, @Query("id_user") String id_user,
+                                           @Query("priority") String priority,
+                                           @Query("apps_name") String apps_name,
+                                           @Query("dari") String fromDate,
+                                           @Query("sampai") String untilDate);
 
     @PATCH("notification/readat/{id_notif}")
     Call<ResponseBody> markAsRead(@Path("id_notif") String id_notif, @Query("read_at") int read_at);
@@ -163,18 +167,29 @@ public interface ApiService {
     @GET("twkstaff/todo")
     Call<ResponseData> getJobs(@Header("Authorization") String staffToken,
                                @Query("page") int page,
-                               @Query("id_user") String staffId);
+                               @Query("id_user") String staffId,
+                               @Query("priority") String priority,
+                               @Query("apps_name") String apps_name,
+                               @Query("dari") String fromDate,
+                               @Query("sampai") String untilDate);
 
     @GET("twkstaff/hasdone")
     Call<ResponseData> getStaffDoneData(@Query("page") int page,
                                         @Header("Authorization") String staffToken,
-                                        @Query("id_user") String staffId);
+                                        @Query("id_user") String staffId,
+                                        @Query("priority") String priority,
+                                        @Query("apps_name") String apps_name,
+                                        @Query("dari") String fromDate,
+                                        @Query("sampai") String untilDate);
 
     @GET("twkstaff/listnotif")
     Call<ResponseData> listNotifStaff(@Header("Authorization") String token, @Query("id_user") String id_user, @Query("page") int page);
 
     @PATCH("twkstaff/markAsComplete/{id_ticket}")
     Call<ResponseBody> markAsComplete(@Header("Authorization") String token,@Path("id_ticket")String id_ticket);
+
+    @GET("twkstaff/getapp")
+    Call<ResponseData> getAssignedApps(@Header("Authorization") String token, @Query("id_user") String id_user);
 
 
 }

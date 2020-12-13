@@ -299,18 +299,18 @@ public class DoneFragment extends Fragment {
         });
     }
 
-    protected void addListStaffHasDone(){
+    public void addListStaffHasDone(){
         error_container.setVisibility(View.GONE);
         final SharedPreferences _objpref = getActivity().getSharedPreferences("JWTTOKEN", 0);
         SharedPreferences getCompanyUser = getActivity().getSharedPreferences("userInformation", 0);
         String getToken = _objpref.getString("jwttoken", "");
         String idStaff = getCompanyUser.getString("id", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> staffDone = api.getStaffDoneData(page, "Bearer "+getToken, idStaff);
+        Call<ResponseData> staffDone = api.getStaffDoneData(page, "Bearer "+getToken, idStaff, priority, apps_name, fromDate, untilDate);
         staffDone.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")){
                     Log.d("RETRO", "RESPONSE : " + response.body().getHasDone());
                     List<DoneData> responseBody = response.body().getHasDone();
                     listDone.addAll(responseBody);
@@ -332,7 +332,13 @@ public class DoneFragment extends Fragment {
                         }
                     });
 
-                }else{
+                }
+                else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    mAdapter.notifyDataSetChanged();
+                    swipeRefreshLayout.setRefreshing(false);
+                }
+                else{
                     Log.d("RETRO", "resultFail : "+response.body());
                     mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
@@ -343,6 +349,7 @@ public class DoneFragment extends Fragment {
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 Log.d("RETRO", "FAILED : respon gagal"+t.getMessage());
                 error_container.setVisibility(View.VISIBLE);
+                mAdapter.notifyDataSetChanged();
                 txtErrorMessage.setText("Can't connect to server, please check your internet connection");
                 swipeRefreshLayout.setRefreshing(false);
             }

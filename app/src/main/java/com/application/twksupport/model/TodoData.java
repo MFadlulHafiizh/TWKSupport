@@ -3,6 +3,8 @@ package com.application.twksupport.model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.SerializedName;
+
 public class TodoData implements Parcelable {
     private String nama_perusahaan;
     private String id_assignment;
@@ -14,6 +16,7 @@ public class TodoData implements Parcelable {
     private String subject;
     private String detail;
     private String status;
+    @SerializedName("assign_at")
     private String created_at;
 
     protected TodoData(Parcel in) {

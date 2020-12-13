@@ -11,7 +11,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,10 +22,10 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
+import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.RvNotificationAdapter;
 import com.application.twksupport.model.NotificationData;
 import com.application.twksupport.model.ResponseData;
-import com.application.twksupport.model.UserData;
 import com.bumptech.glide.Glide;
 import com.google.android.material.appbar.AppBarLayout;
 
@@ -48,6 +47,10 @@ public class NotificationActivity extends AppCompatActivity {
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     private int page = 1;
     private int last_page = 1;
+    private String apps_name = null;
+    private String priority = null;
+    private String fromDate = null;
+    private String untilDate = null;
     private int notifCount;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -66,6 +69,22 @@ public class NotificationActivity extends AppCompatActivity {
 
     public void setPage(int page) {
         this.page = page;
+    }
+
+    public void setApps_name(String apps_name) {
+        this.apps_name = apps_name;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setUntilDate(String untilDate) {
+        this.untilDate = untilDate;
     }
 
     @Override
@@ -153,6 +172,10 @@ public class NotificationActivity extends AppCompatActivity {
                     public void onRefresh() {
                         page = 1;
                         listnotif.clear();
+                        priority = null;
+                        apps_name = null;
+                        fromDate = null;
+                        untilDate = null;
                         addListNotification(id_user);
                     }
                 });
@@ -162,7 +185,7 @@ public class NotificationActivity extends AppCompatActivity {
 
     public void addListNotification(String id_user) {
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> getListNotif = api.getListNotification(page, id_user);
+        Call<ResponseData> getListNotif = api.getListNotification(page, id_user, priority, apps_name, fromDate, untilDate);
         Log.d("notifoeoe", "" + id_user);
         getListNotif.enqueue(new Callback<ResponseData>() {
             @Override
@@ -226,7 +249,7 @@ public class NotificationActivity extends AppCompatActivity {
         getListnotif.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")) {
                     Log.d("RETROnotif", "success: " + response.body().getNotifData());
                     List<NotificationData> responseBody = response.body().getNotifData();
                     listnotif.addAll(responseBody);
@@ -263,7 +286,13 @@ public class NotificationActivity extends AppCompatActivity {
                             });
                         }
                     });
-                } else {
+                }
+                else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(NotificationActivity.this, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                else {
                     Log.d("RETRO", "errror: " + response.body());
                     Toast.makeText(NotificationActivity.this, "Error 401", Toast.LENGTH_SHORT).show();
                     mAdapter.notifyDataSetChanged();
@@ -308,7 +337,8 @@ public class NotificationActivity extends AppCompatActivity {
                 break;
 
             case R.id.filter_menu:
-
+                UserInteraction userInteraction = new UserInteraction();
+                userInteraction.showPopupFilter(NotificationActivity.this,"extra_notif");
                 break;
         }
         return true;

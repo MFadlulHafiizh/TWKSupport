@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
@@ -42,6 +43,10 @@ public class StaffToDoFragment extends Fragment {
     private static StaffToDoFragment instance;
     private int page = 1;
     private int last_page = 1;
+    private String priority = null;
+    private String apps_name = null;
+    private String fromDate = null;
+    private String untilDate = null;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
 
@@ -58,6 +63,22 @@ public class StaffToDoFragment extends Fragment {
 
     public static StaffToDoFragment getInstance(){
         return instance;
+    }
+
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+
+    public void setApps_name(String apps_name) {
+        this.apps_name = apps_name;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public void setUntilDate(String untilDate) {
+        this.untilDate = untilDate;
     }
 
     @Override
@@ -103,6 +124,10 @@ public class StaffToDoFragment extends Fragment {
             @Override
             public void onRefresh() {
                 page = 1;
+                priority = null;
+                apps_name = null;
+                fromDate = null;
+                untilDate = null;
                 listjobs.clear();
                 mAdapter.notifyDataSetChanged();
                 getJobs();
@@ -126,11 +151,11 @@ public class StaffToDoFragment extends Fragment {
         String tokenStaff = _objresp.getString("jwttoken", "");
         String idStaff = getIdStaff.getString("id", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
-        Call<ResponseData> jobsData = api.getJobs("Bearer "+tokenStaff, page, idStaff);
+        Call<ResponseData> jobsData = api.getJobs("Bearer "+tokenStaff, page, idStaff, priority, apps_name, fromDate, untilDate);
         jobsData.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")){
                     List<TodoData> responseBody = response.body().getTodoData();
                     listjobs.addAll(responseBody);
                     mAdapter.notifyDataSetChanged();
@@ -149,8 +174,15 @@ public class StaffToDoFragment extends Fragment {
                             startActivity(toDetail);
                         }
                     });
-                }else{
+                }
+                else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    swipeRefreshLayout.setRefreshing(false);
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                else{
                     Log.d("staffjob", ""+response.body());
+                    mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
                 }
             }
@@ -158,6 +190,7 @@ public class StaffToDoFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
+                mAdapter.notifyDataSetChanged();
                 Log.d("Staffjob", ""+t.getMessage());
             }
         });

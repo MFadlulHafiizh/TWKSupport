@@ -36,10 +36,12 @@ import com.application.twksupport.BugsFragment;
 import com.application.twksupport.DetailActivity;
 import com.application.twksupport.DoneFragment;
 import com.application.twksupport.FeatureFragment;
+import com.application.twksupport.NotificationActivity;
 import com.application.twksupport.R;
 import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.StaffListActivity;
+import com.application.twksupport.StaffToDoFragment;
 import com.application.twksupport.UserActivity;
 import com.application.twksupport.auth.MainActivity;
 import com.application.twksupport.model.AppsUserData;
@@ -75,6 +77,7 @@ public class UserInteraction extends AppCompatActivity {
         SharedPreferences getUserinfo = appContext.getSharedPreferences("userInformation", 0);
         SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
         final String getToken = _objpref.getString("jwttoken", "missing");
+        final String id_user = getUserinfo.getString("id", "");
         final String role = getUserinfo.getString("role", "");
         Spinner spinPriorityFiler, spinAppnameFilter;
         final UserAppManager userAppManager = new UserAppManager(appContext);
@@ -147,7 +150,7 @@ public class UserInteraction extends AppCompatActivity {
                 ckAssignTicket.setVisibility(View.VISIBLE);
             }
         }
-        else if(role.equals("client-head") || role.equals("client-staff")){
+        else if(!extra_code.equals("extra_notif") && role.equals("client-head") || role.equals("client-staff")){
             containerTwkAct.setVisibility(View.GONE);
         }
 
@@ -210,10 +213,6 @@ public class UserInteraction extends AppCompatActivity {
                                 popUpFilter.dismiss();
                                 break;
 
-                            case "twk-staff":
-
-                                break;
-
                             default:
                                 BugsFragment.getInstance().setPage(1);
                                 BugsFragment.getInstance().getListBugs().clear();
@@ -257,10 +256,6 @@ public class UserInteraction extends AppCompatActivity {
                                 popUpFilter.dismiss();
                                 break;
 
-                            case "twk-staff":
-
-                                break;
-
                             default:
                                 FeatureFragment.getInstance().setPage(1);
                                 FeatureFragment.getInstance().getListFeature().clear();
@@ -302,7 +297,23 @@ public class UserInteraction extends AppCompatActivity {
                                 break;
 
                             case "twk-staff":
+                                DoneFragment.getInstance().setPage(1);
+                                DoneFragment.getInstance().getListDone().clear();
+                                DoneFragment.getInstance().setPriority(priority[0]);
+                                DoneFragment.getInstance().setApps_name(apps_name);
+                                if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
+                                }else{
+                                    DoneFragment.getInstance().setFromDate(dateFromValue);
+                                    DoneFragment.getInstance().setUntilDate(dateUntilValue);
+                                }
+                                delay.postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        DoneFragment.getInstance().addListStaffHasDone();
+                                    }
+                                }, 20);
+                                popUpFilter.dismiss();
                                 break;
 
                             default:
@@ -322,7 +333,43 @@ public class UserInteraction extends AppCompatActivity {
                         break;
 
                     case "extra_jobs":
-                        Toast.makeText(appContext, "open from todo", Toast.LENGTH_SHORT).show();
+                        StaffToDoFragment.getInstance().setPage(1);
+                        StaffToDoFragment.getInstance().getListjobs().clear();
+                        StaffToDoFragment.getInstance().setPriority(priority[0]);
+                        StaffToDoFragment.getInstance().setApps_name(apps_name);
+                        if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
+
+                        }else{
+                            StaffToDoFragment.getInstance().setFromDate(dateFromValue);
+                            StaffToDoFragment.getInstance().setUntilDate(dateUntilValue);
+                        }
+                        delay.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                StaffToDoFragment.getInstance().getJobs();
+                            }
+                        }, 20);
+                        popUpFilter.dismiss();
+                        break;
+
+                    case "extra_notif":
+                        NotificationActivity.getInstance().setPage(1);
+                        NotificationActivity.getInstance().getListnotif().clear();
+                        NotificationActivity.getInstance().setPriority(priority[0]);
+                        NotificationActivity.getInstance().setApps_name(apps_name);
+                        if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
+
+                        }else{
+                            NotificationActivity.getInstance().setFromDate(dateFromValue);
+                            NotificationActivity.getInstance().setUntilDate(dateUntilValue);
+                        }
+                        delay.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                NotificationActivity.getInstance().addListNotification(id_user);
+                            }
+                        }, 20);
+                        popUpFilter.dismiss();
                         break;
                 }
             }
@@ -373,6 +420,7 @@ public class UserInteraction extends AppCompatActivity {
         SharedPreferences _objpref = appContext.getSharedPreferences("JWTTOKEN", 0);
         final String getToken = _objpref.getString("jwttoken", "missing");
         int idCompany = getUserInformation.getInt("id_perushaan", 0);
+        String id_user = getUserInformation.getString("id", "");
         String role = getUserInformation.getString("role", "");
         ApiService api = ApiClient.getClient().create(ApiService.class);
         switch (role) {
@@ -423,7 +471,49 @@ public class UserInteraction extends AppCompatActivity {
                 break;
 
             case "twk-staff":
+                Call<ResponseData> getAssignedApps = api.getAssignedApps("Bearer "+getToken, id_user);
+                getAssignedApps.enqueue(new Callback<ResponseData>() {
+                    @Override
+                    public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
+                        if (response.isSuccessful()){
+                            listAppData = response.body().getUserApp();
+                            final List<String> listapps = new ArrayList<>();
+                            listapps.add(0, "Choose apps");
+                            for (int i = 0; i < listAppData.size(); i++) {
+                                listapps.add(listAppData.get(i).getApps_name());
+                            }
+                            ArrayAdapter<String> spinnerAdapter = new ArrayAdapter<String>(appContext, R.layout.spinner_style, listapps);
+                            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                            spinAppName.setAdapter(spinnerAdapter);
+                            spinAppName.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                                @Override
+                                public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                                    //String app = listAppData.get(position).getApps_name();
+                                    if (position == 0) {
+                                        apps_name = null;
+                                    } else {
+                                        String app = listapps.get(position);
+                                        Log.d("appsselect", "id : " + app);
+                                        apps_name = app;
+                                    }
+                                }
 
+                                @Override
+                                public void onNothingSelected(AdapterView<?> adapterView) {
+
+                                }
+                            });
+                            Log.d("BottomSheet", "" + listAppData);
+                        } else {
+                            Toast.makeText(appContext, "error when getting apps", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(Call<ResponseData> call, Throwable t) {
+                        Toast.makeText(appContext, "error when getting apps, please check your internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                });
                 break;
 
             default:
