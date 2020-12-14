@@ -269,6 +269,7 @@ public class NotificationActivity extends AppCompatActivity {
                 }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     mAdapter.notifyDataSetChanged();
                     Toast.makeText(NotificationActivity.this, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     Log.d("RETRO", "errror: " + response.body());
@@ -336,6 +337,7 @@ public class NotificationActivity extends AppCompatActivity {
                 else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
                     mAdapter.notifyDataSetChanged();
                     Toast.makeText(NotificationActivity.this, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
                 }
                 else {
                     Log.d("RETRO", "errror: " + response.body());

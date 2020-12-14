@@ -83,8 +83,8 @@
 
         <com.getbase.floatingactionbutton.FloatingActionsMenu
             android:id="@+id/fab_menu"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             app:fab_addButtonColorNormal="@color/RedDefault"
             app:fab_addButtonColorPressed="@android:color/holo_red_light"
             app:fab_labelStyle="@style/customFab"
