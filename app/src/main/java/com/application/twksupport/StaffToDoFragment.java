@@ -25,12 +25,14 @@ import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.RvStaffListAdapter;
 import com.application.twksupport.adapter.RvTodoAdapter;
+import com.application.twksupport.auth.MainActivity;
 import com.application.twksupport.model.ResponseData;
 import com.application.twksupport.model.TodoData;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -206,9 +208,23 @@ public class StaffToDoFragment extends Fragment {
                     Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 else{
-                    Log.d("staffjob", ""+response.body());
+                    SweetAlertDialog sweet = new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE);
+                    sweet.setTitleText("Your session has expired");
+                    sweet.setContentText("Please login again");
+                    sweet.setCanceledOnTouchOutside(false);
+                    sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            Intent login = new Intent(getActivity(), MainActivity.class);
+
+                            login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(login);
+                            getActivity().finish();
+                        }
+                    });
                     mAdapter.notifyDataSetChanged();
                     swipeRefreshLayout.setRefreshing(false);
+                    sweet.show();
                 }
             }
 

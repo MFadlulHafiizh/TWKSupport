@@ -9,12 +9,14 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
+import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -23,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.application.twksupport.RestApi.ApiClient;
@@ -47,6 +50,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.pedant.SweetAlert.SweetAlertDialog;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
@@ -61,25 +65,32 @@ public class ProfileActivity extends AppCompatActivity {
     private RoundedImageView profilbg;
     private AppBarLayout appbar;
     private ImageButton btnBack;
-    private TextView tv_name, tv_email, tv_company;
+    private TextView tv_name, tv_email, tv_company, tv_apps_title;
     private CircleImageView userImage;
     private List<AppsUserData> listapps = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
     private RecyclerView rvApss;
+    private static ProfileActivity instance;
     private RvAppsCompanyAdapter mAdapter;
     private FloatingActionButton chooseImage;
     private UserManager userManager;
     private static final String TAG = ProfileActivity.class.getSimpleName();
     private static final int MY_PERMISSIONS_REQUEST_LOCATION = 99 ;
-    private static final int CAPTURE_REQUEST_CODE = 0;
     public static final int REQUEST_GALLERY = 9544;
+    public static final int CAPTURE_REQUEST_CODE = 700;
     private Bitmap bitmap;
+    private ProgressBar load_company_apps;
     String part_image = "";
+
+    public static ProfileActivity getInstance() {
+        return instance;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        instance = this;
         initialize();
         CheckPermission();
         userManager = new UserManager(getApplicationContext());
@@ -87,10 +98,18 @@ public class ProfileActivity extends AppCompatActivity {
         String name = getUserInfo.getString("name", "");
         String email = getUserInfo.getString("email", "");
         String companyName = getUserInfo.getString("company_name", "");
+        String role = getUserInfo.getString("role", "");
         String photo_user = getUserInfo.getString("photo", "");
-        getListAppsCompany();
+        if (role.equals("client-head")||role.equals("client-staff")){
+            getListAppsCompany();
+        }
         Log.d("urlimage", ""+photo_user);
 
+        if (role.equals("twk-head") || role.equals("twk-staff")){
+            rvApss.setVisibility(View.GONE);
+            tv_apps_title.setVisibility(View.GONE);
+            load_company_apps.setVisibility(View.GONE);
+        }
         tv_name.setText(name);
         tv_email.setText(email);
         tv_company.setText(companyName);
@@ -102,7 +121,12 @@ public class ProfileActivity extends AppCompatActivity {
         btnLogout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                logout();
+                final SweetAlertDialog pDialog = new SweetAlertDialog(ProfileActivity.this, SweetAlertDialog.PROGRESS_TYPE);
+                pDialog.getProgressHelper().setBarColor(Color.parseColor("#A5DC86"));
+                pDialog.setTitleText("Loading");
+                pDialog.setCancelable(false);
+                pDialog.show();
+                logout(pDialog);
             }
         });
         btnBack.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +139,7 @@ public class ProfileActivity extends AppCompatActivity {
         chooseImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                selectImage();
+                popUpdialogForPicture();
             }
         });
     }
@@ -147,9 +171,11 @@ public class ProfileActivity extends AppCompatActivity {
         userImage = findViewById(R.id.userImage);
         chooseImage = findViewById(R.id.chooseUserImage);
         rvApss = findViewById(R.id.rv_company_apps);
+        load_company_apps = findViewById(R.id.load_company_apps);
+        tv_apps_title = findViewById(R.id.appstitle);
     }
 
-    private void logout() {
+    public void logout(final SweetAlertDialog dialog) {
         final SharedPreferences logoutPreferences = getSharedPreferences("JWTTOKEN", 0);
         final SharedPreferences logoutPrefer = getSharedPreferences("userInformation", 0);
         String logoutToken = logoutPreferences.getString("jwttoken", "");
@@ -162,6 +188,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 if (response.isSuccessful()) {
+                    dialog.dismiss();
                     try {
                         String JSONRes = response.body().string();
                         Log.d(TAG, "Response : " + JSONRes);
@@ -174,6 +201,7 @@ public class ProfileActivity extends AppCompatActivity {
                         e.printStackTrace();
                     }
                 } else {
+                    dialog.dismiss();
                     Toast.makeText(ProfileActivity.this, "Unkonwn Error, please try again", Toast.LENGTH_SHORT).show();
                     logoutPreferences.edit().remove("jwttoken").commit();
                     Intent login = new Intent(getApplicationContext(), MainActivity.class);
@@ -185,6 +213,7 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
+                dialog.dismiss();
                 Toast.makeText(ProfileActivity.this, "Error, check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
@@ -198,26 +227,65 @@ public class ProfileActivity extends AppCompatActivity {
         }
     }
 
+    private void popUpdialogForPicture(){
+        final Dialog popUpdialog = new Dialog(ProfileActivity.this, R.style.AppBottomSheetDialogTheme);
+        popUpdialog.setContentView(R.layout.dialog_select_picture);
+        Button btnOpenCamera = popUpdialog.findViewById(R.id.btn_opencamera);
+        Button btnOpenGallery = popUpdialog.findViewById(R.id.btn_open_gallery);
+        btnOpenCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent capture = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(capture, CAPTURE_REQUEST_CODE);
+                popUpdialog.dismiss();
+            }
+        });
+
+        btnOpenGallery.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent galleryIntent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(galleryIntent, REQUEST_GALLERY);
+                popUpdialog.dismiss();
+            }
+        });
+
+        popUpdialog.show();
+
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK && data != null) {
-            Uri selectedImage = data.getData();
-            String[] imageprojection = {MediaStore.Images.Media.DATA};
-            Cursor cursor = getContentResolver().query(selectedImage, imageprojection, null, null, null);
-            if (cursor != null){
-                cursor.moveToFirst();
-                int indexImage = cursor.getColumnIndex(imageprojection[0]);
-                part_image = cursor.getString(indexImage);
-                if (part_image != null){
-                    try {
-                        bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
-                        imageDecodedUpload(bitmap);
-                    } catch (IOException e) {
-                        e.printStackTrace();
+        switch (requestCode){
+            case CAPTURE_REQUEST_CODE: {
+                if (resultCode == RESULT_OK && data != null){
+                    bitmap = (Bitmap) data.getExtras().get("data");
+                    imageDecodedUpload(bitmap);
+                }
+            }
+            break;
+            case REQUEST_GALLERY:{
+                if (requestCode == REQUEST_GALLERY && resultCode == RESULT_OK && data != null) {
+                    Uri selectedImage = data.getData();
+                    String[] imageprojection = {MediaStore.Images.Media.DATA};
+                    Cursor cursor = getContentResolver().query(selectedImage, imageprojection, null, null, null);
+                    if (cursor != null){
+                        cursor.moveToFirst();
+                        int indexImage = cursor.getColumnIndex(imageprojection[0]);
+                        part_image = cursor.getString(indexImage);
+                        if (part_image != null){
+                            try {
+                                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), selectedImage);
+                                imageDecodedUpload(bitmap);
+                            } catch (IOException e) {
+                                e.printStackTrace();
+                            }
+                        }
                     }
                 }
             }
+            break;
         }
     }
 
@@ -294,6 +362,7 @@ public class ProfileActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
                 if (response.isSuccessful()){
+                    load_company_apps.setVisibility(View.GONE);
                     listapps = response.body().getUserApp();
                     mAdapter = new RvAppsCompanyAdapter(listapps);
                     rvApss.setLayoutManager(linearLayoutManager);
@@ -304,7 +373,8 @@ public class ProfileActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
-
+                load_company_apps.setVisibility(View.GONE);
+                Toast.makeText(ProfileActivity.this, "Error when getting your company apps data, please check your internet connection", Toast.LENGTH_SHORT).show();
             }
         });
     }

@@ -61,7 +61,7 @@ import static com.application.twksupport.R.id.client_ageedisaree;
 import static com.application.twksupport.R.id.container_reported_request_at;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, txtPtname, txtDeadlineStaff, txtTimePeriodic, txtPrice, txt_assignDate, txt_report_request_date, txt_completed_date, tv_report_request;
+    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, txtPtname, txtDeadlineStaff, txtTimePeriodic, txtPrice, txt_assignDate, txt_report_request_date, txt_completed_date, tv_report_request, txt_clientstaff_remember;
     private TableRow rowDeadlineStaff, tv_time_periodic_container, tv_price_container, tv_container_assignDate, tv_container_report_requestDate, tv_container_completed_at;
     private Button btnAssign, btnAgreement, btnStaff, btnClientAgree, btnClientIgnore;
     private CurrencyEditText etPrice;
@@ -319,6 +319,13 @@ public class DetailActivity extends AppCompatActivity {
                         txtTimePeriodic.setText(fiturData.getTime_periodic());
                         txtPrice.setText(toRupiah(String.valueOf(fiturData.getPrice())));
                         containerAdminAct.setVisibility(View.GONE);
+                        if (getRole.equals("client-staff")){
+                            btnClientAgree.setEnabled(false);
+                            btnClientIgnore.setEnabled(false);
+                            btnClientAgree.setBackgroundColor(Color.parseColor("#777777"));
+                            btnClientIgnore.setBackgroundColor(Color.parseColor("#777777"));
+                            txt_clientstaff_remember.setVisibility(View.VISIBLE);
+                        }
                         btnClientAgree.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
@@ -1057,6 +1064,7 @@ public class DetailActivity extends AppCompatActivity {
         tv_container_completed_at = findViewById(R.id.container_completed_at);
         txt_completed_date = findViewById(R.id.tv_completed_date);
         tv_report_request = findViewById(R.id.tv_report_request);
+        txt_clientstaff_remember = findViewById(R.id.client_staff_disable_act);
     }
 
     private String toRupiah(String nominal){

@@ -136,6 +136,14 @@ public class UserActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SharedPreferences getUserInformation= getSharedPreferences("userInformation", 0);
+        String photo_url = getUserInformation.getString("photo","");
+        Glide.with(userAccountPict.getContext()).load(photo_url).placeholder(R.drawable.ic_account_circle_white).into(userAccountPict);
+    }
+
     private void pushNotificationRegister(){
 
     }

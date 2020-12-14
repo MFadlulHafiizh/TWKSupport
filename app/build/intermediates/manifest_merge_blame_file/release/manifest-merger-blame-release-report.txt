@@ -1,0 +1,224 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.application.twksupport"
+4    android:versionCode="1"
+5    android:versionName="1.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+8-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml
+9        android:targetSdkVersion="30" />
+9-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml
+10
+11    <uses-permission android:name="android.permission.INTERNET" />
+11-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:5:5-67
+11-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:5:22-64
+12    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+12-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:6:5-79
+12-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:6:22-76
+13    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+13-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:7:5-76
+13-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:7:22-73
+14    <uses-permission android:name="android.permission.WAKE_LOCK" /> <!-- Required by older versions of Google Play services to create IID tokens -->
+14-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:24:5-68
+14-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:24:22-65
+15    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+15-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:26:5-82
+15-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:26:22-79
+16
+17    <permission
+17-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:28:5-30:47
+18        android:name="com.application.twksupport.permission.C2D_MESSAGE"
+18-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:29:9-63
+19        android:protectionLevel="signature" />
+19-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:30:9-44
+20
+21    <uses-permission android:name="com.application.twksupport.permission.C2D_MESSAGE" />
+21-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:32:5-79
+21-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:32:22-76
+22
+23    <application
+23-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:9:5-52:19
+24        android:allowBackup="true"
+24-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:10:9-35
+25        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+25-->[androidx.core:core:1.3.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\33718701d713ca3e83325f7dda0e045d\core-1.3.1\AndroidManifest.xml:24:18-86
+26        android:icon="@mipmap/ic_launcher_twk"
+26-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:11:9-47
+27        android:label="@string/app_name"
+27-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:12:9-41
+28        android:roundIcon="@mipmap/ic_launcher_twk"
+28-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:13:9-52
+29        android:supportsRtl="true"
+29-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:14:9-35
+30        android:testOnly="true"
+31        android:theme="@style/AppTheme"
+31-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:15:9-40
+32        android:usesCleartextTraffic="true" >
+32-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:16:9-44
+33        <activity android:name="com.application.twksupport.TwkStaffActivity" />
+33-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:17:9-63
+33-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:17:19-51
+34        <activity android:name="com.application.twksupport.StaffListActivity" />
+34-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:18:9-55
+34-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:18:19-52
+35
+36        <service android:name="com.application.twksupport.notification.NotifFirebase" >
+36-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:20:9-24:19
+36-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:20:18-60
+37            <intent-filter>
+37-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:21:13-23:29
+38                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+38-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:22:17-80
+38-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:22:25-77
+39            </intent-filter>
+40        </service>
+41        <service
+41-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:25:9-32:19
+42            android:name="com.application.twksupport.notification.NotificationServices"
+42-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:26:13-62
+43            android:enabled="true"
+43-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:27:13-35
+44            android:exported="true" >
+44-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:28:13-36
+45            <intent-filter>
+45-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:29:13-31:29
+46                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+46-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:30:17-78
+46-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:30:25-75
+47            </intent-filter>
+48        </service>
+49
+50        <activity android:name="com.application.twksupport.DetailActivity" />
+50-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:34:9-52
+50-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:34:19-49
+51        <activity android:name="com.application.twksupport.ProfileActivity" />
+51-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:35:9-53
+51-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:35:19-50
+52        <activity android:name="com.application.twksupport.NotificationActivity" />
+52-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:36:9-58
+52-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:36:19-55
+53        <activity
+53-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:37:9-40:69
+54            android:name="com.application.twksupport.auth.MainActivity"
+54-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:38:13-46
+55            android:screenOrientation="portrait"
+55-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:39:13-49
+56            android:theme="@style/Theme.Design.Light.NoActionBar" />
+56-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:40:13-66
+57        <activity android:name="com.application.twksupport.UserActivity" />
+57-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:41:9-50
+57-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:41:19-47
+58        <activity
+58-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:42:9-51:20
+59            android:name="com.application.twksupport.auth.SplashActivity"
+59-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:43:13-48
+60            android:screenOrientation="portrait"
+60-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:44:13-49
+61            android:theme="@style/Theme.Design.Light.NoActionBar" >
+61-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:45:13-66
+62            <intent-filter>
+62-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:46:13-50:29
+63                <action android:name="android.intent.action.MAIN" />
+63-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:47:17-69
+63-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:47:25-66
+64
+65                <category android:name="android.intent.category.LAUNCHER" />
+65-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:49:17-77
+65-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:49:27-74
+66            </intent-filter>
+67        </activity>
+68        <!--
+69             FirebaseMessagingService performs security checks at runtime,
+70             no need for explicit permissions despite exported="true"
+71        -->
+72        <service
+72-->[com.google.firebase:firebase-messaging:17.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\fadce394011d371254c003d2fe8d2da7\jetified-firebase-messaging-17.0.0\AndroidManifest.xml:28:9-34:19
+73            android:name="com.google.firebase.messaging.FirebaseMessagingService"
+73-->[com.google.firebase:firebase-messaging:17.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\fadce394011d371254c003d2fe8d2da7\jetified-firebase-messaging-17.0.0\AndroidManifest.xml:29:13-82
+74            android:exported="true" >
+74-->[com.google.firebase:firebase-messaging:17.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\fadce394011d371254c003d2fe8d2da7\jetified-firebase-messaging-17.0.0\AndroidManifest.xml:30:13-36
+75            <intent-filter android:priority="-500" >
+75-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:29:13-31:29
+76                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+76-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:30:17-78
+76-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:30:25-75
+77            </intent-filter>
+78        </service>
+79        <service android:name="com.google.firebase.components.ComponentDiscoveryService" >
+79-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:35:9-39:19
+79-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:35:18-89
+80            <meta-data
+80-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:36:13-38:85
+81                android:name="com.google.firebase.components:com.google.firebase.iid.Registrar"
+81-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:37:17-96
+82                android:value="com.google.firebase.components.ComponentRegistrar" />
+82-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:38:17-82
+83        </service>
+84
+85        <receiver
+85-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:41:9-50:20
+86            android:name="com.google.firebase.iid.FirebaseInstanceIdReceiver"
+86-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:42:13-78
+87            android:exported="true"
+87-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:43:13-36
+88            android:permission="com.google.android.c2dm.permission.SEND" >
+88-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:44:13-73
+89            <intent-filter>
+89-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:45:13-49:29
+90                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+90-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:46:17-81
+90-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:46:25-78
+91
+92                <category android:name="com.application.twksupport" />
+92-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:48:17-61
+92-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:48:27-58
+93            </intent-filter>
+94        </receiver>
+95        <!--
+96             FirebaseInstanceIdService performs security checks at runtime,
+97             no need for explicit permissions despite exported="true"
+98        -->
+99        <service
+99-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:56:9-62:19
+100            android:name="com.google.firebase.iid.FirebaseInstanceIdService"
+100-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:57:13-77
+101            android:exported="true" >
+101-->[com.google.firebase:firebase-iid:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\1097eb1b9408d49a14a74ceaa830da15\jetified-firebase-iid-16.0.0\AndroidManifest.xml:58:13-36
+102            <intent-filter android:priority="-500" >
+102-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:21:13-23:29
+103                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+103-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:22:17-80
+103-->D:\01. TKR\TWKSupport\app\src\main\AndroidManifest.xml:22:25-77
+104            </intent-filter>
+105        </service>
+106
+107        <provider
+107-->[com.google.firebase:firebase-common:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\c57ef326e97fea8b855d8b7bfd09ee74\jetified-firebase-common-16.0.0\AndroidManifest.xml:9:9-13:39
+108            android:name="com.google.firebase.provider.FirebaseInitProvider"
+108-->[com.google.firebase:firebase-common:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\c57ef326e97fea8b855d8b7bfd09ee74\jetified-firebase-common-16.0.0\AndroidManifest.xml:10:13-77
+109            android:authorities="com.application.twksupport.firebaseinitprovider"
+109-->[com.google.firebase:firebase-common:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\c57ef326e97fea8b855d8b7bfd09ee74\jetified-firebase-common-16.0.0\AndroidManifest.xml:11:13-72
+110            android:exported="false"
+110-->[com.google.firebase:firebase-common:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\c57ef326e97fea8b855d8b7bfd09ee74\jetified-firebase-common-16.0.0\AndroidManifest.xml:12:13-37
+111            android:initOrder="100" />
+111-->[com.google.firebase:firebase-common:16.0.0] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\c57ef326e97fea8b855d8b7bfd09ee74\jetified-firebase-common-16.0.0\AndroidManifest.xml:13:13-36
+112
+113        <activity
+113-->[com.google.android.gms:play-services-base:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\4d783be694ccded8a70e68573ebbf62d\jetified-play-services-base-15.0.1\AndroidManifest.xml:23:9-26:75
+114            android:name="com.google.android.gms.common.api.GoogleApiActivity"
+114-->[com.google.android.gms:play-services-base:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\4d783be694ccded8a70e68573ebbf62d\jetified-play-services-base-15.0.1\AndroidManifest.xml:24:13-79
+115            android:exported="false"
+115-->[com.google.android.gms:play-services-base:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\4d783be694ccded8a70e68573ebbf62d\jetified-play-services-base-15.0.1\AndroidManifest.xml:25:13-37
+116            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+116-->[com.google.android.gms:play-services-base:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\4d783be694ccded8a70e68573ebbf62d\jetified-play-services-base-15.0.1\AndroidManifest.xml:26:13-72
+117
+118        <meta-data
+118-->[com.google.android.gms:play-services-basement:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\93c00c8bc6292a02a53589900d8a63c2\jetified-play-services-basement-15.0.1\AndroidManifest.xml:23:9-25:69
+119            android:name="com.google.android.gms.version"
+119-->[com.google.android.gms:play-services-basement:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\93c00c8bc6292a02a53589900d8a63c2\jetified-play-services-basement-15.0.1\AndroidManifest.xml:24:13-58
+120            android:value="@integer/google_play_services_version" />
+120-->[com.google.android.gms:play-services-basement:15.0.1] C:\Users\HAFIIZH\.gradle\caches\transforms-2\files-2.1\93c00c8bc6292a02a53589900d8a63c2\jetified-play-services-basement-15.0.1\AndroidManifest.xml:25:13-66
+121    </application>
+122
+123</manifest>

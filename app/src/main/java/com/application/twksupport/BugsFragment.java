@@ -28,6 +28,7 @@ import com.application.twksupport.RestApi.ApiClient;
 import com.application.twksupport.RestApi.ApiService;
 import com.application.twksupport.UIUX.UserInteraction;
 import com.application.twksupport.adapter.RvBugsAdapter;
+import com.application.twksupport.auth.MainActivity;
 import com.application.twksupport.model.BugsData;
 import com.application.twksupport.model.ResponseData;
 
@@ -286,8 +287,22 @@ public class BugsFragment extends Fragment {
                     Toast.makeText(getActivity(), ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 else {
+                    SweetAlertDialog sweet = new SweetAlertDialog(getActivity(), SweetAlertDialog.WARNING_TYPE);
+                    sweet.setTitleText("Your session has expired");
+                    sweet.setContentText("Please login again");
+                    sweet.setCanceledOnTouchOutside(false);
+                    sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                        @Override
+                        public void onClick(SweetAlertDialog sweetAlertDialog) {
+                            Intent login = new Intent(getActivity(), MainActivity.class);
+                            login.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                            startActivity(login);
+                            getActivity().finish();
+                        }
+                    });
                     swipeRefreshLayout.setRefreshing(false);
                     mAdapter.notifyDataSetChanged();
+                    sweet.show();
                 }
             }
 

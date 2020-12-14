@@ -503,6 +503,17 @@
                     android:textAllCaps="false"
                     android:textColor="@color/defaultWhite" />
 
+                <TextView
+                    android:id="@+id/client_staff_disable_act"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/comfortaa_regular"
+                    android:text="Only your company head can perform this action"
+                    android:textColor="@color/DofWhite"
+                    android:textSize="12sp"
+                    android:padding="16dp"
+                    android:visibility="gone"/>
+
                 <LinearLayout
                     android:id="@+id/client_ageedisaree"
                     android:layout_width="match_parent"

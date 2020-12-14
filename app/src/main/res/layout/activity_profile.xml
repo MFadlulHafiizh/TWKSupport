@@ -155,6 +155,16 @@
             app:layout_constraintRight_toRightOf="@id/appstitle"
             tools:listitem="@layout/item_row_apps_company"/>
 
+        <ProgressBar
+            android:id="@+id/load_company_apps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:indeterminateTint="@color/RedDefault"/>
+
         <Button
             android:id="@+id/btn_logout"
             android:layout_width="match_parent"

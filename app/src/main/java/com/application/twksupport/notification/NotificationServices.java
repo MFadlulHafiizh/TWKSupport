@@ -6,6 +6,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.IBinder;
 import android.util.Log;
@@ -46,6 +48,7 @@ public class NotificationServices extends FirebaseMessagingService {
 
     private String channelId = "Default";
     private void showNotification(RemoteMessage remoteMessage) {
+        Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         Intent toNotif = new Intent(this, NotificationActivity.class);
         toNotif.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, toNotif, PendingIntent.FLAG_ONE_SHOT);
@@ -55,11 +58,15 @@ public class NotificationServices extends FirebaseMessagingService {
                 .setContentText(remoteMessage.getNotification().getBody())
                 .setAutoCancel(true)
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+                .setVibrate(new long[]{1000, 1000, 1000, 1000, 1000})
+                .setSound(alarmSound)
                 .setContentIntent(pendingIntent);
 
         NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
             NotificationChannel channel =new NotificationChannel(channelId, "Default Channel", NotificationManager.IMPORTANCE_DEFAULT);
+            channel.enableVibration(true);
+            channel.setVibrationPattern(new long[]{1000, 1000, 1000, 1000, 1000});
             manager.createNotificationChannel(channel);
         }
         manager.notify(0, builder.build());
