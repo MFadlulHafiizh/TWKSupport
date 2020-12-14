@@ -326,7 +326,7 @@ public class NotificationActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onFailure(Call<ResponseBody> call, Throwable t) {
-                                    Toast.makeText(NotificationActivity.this, "failed", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(NotificationActivity.this, "Error please check your internet connection", Toast.LENGTH_SHORT).show();
                                     mAdapter.notifyDataSetChanged();
                                 }
                             });

@@ -67,7 +67,8 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
             }else {
                 holder.txtStatus.setText(nd.getStatus());
             }
-        }else {
+        }
+        else {
             holder.txtPriority.setText(nd.getPriority());
             holder.txtSubject.setText(nd.getSubject());
             holder.txtAppname.setText(nd.getApps_name());

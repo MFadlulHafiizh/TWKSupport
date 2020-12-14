@@ -189,7 +189,7 @@ public class DetailActivity extends AppCompatActivity {
                     } else {
                         txtTitle.setText("Feature Request");
                     }
-                    markAsComplete(getToken, jobsData.getId_ticket(), id_user);
+                    markAsComplete(getToken, jobsData.getId_ticket(), id_user, "from_todo");
                     txtDeadlineStaff.setText("Deadline : " + jobsData.getDeadline());
                     txtPtname.setText(jobsData.getNama_perusahaan());
                     txtPriority.setText(jobsData.getPriority());
@@ -202,7 +202,7 @@ public class DetailActivity extends AppCompatActivity {
                         case "Report":
                             if (!notifData.getStatus().equals("Done")){
                                 btnStaff.setVisibility(View.VISIBLE);
-                                markAsComplete(getToken, notifData.getId_ticket(), id_user);
+                                markAsComplete(getToken, notifData.getId_ticket(), id_user, "from_notif");
                             }else {
                                 btnStaff.setVisibility(View.GONE);
                             }
@@ -220,7 +220,7 @@ public class DetailActivity extends AppCompatActivity {
                         case "Request":
                             if (!notifData.getStatus().equals("Done")){
                                 btnStaff.setVisibility(View.VISIBLE);
-                                markAsComplete(getToken, notifData.getId_ticket(), id_user);
+                                markAsComplete(getToken, notifData.getId_ticket(), id_user, "from_notif");
                             }else {
                                 btnStaff.setVisibility(View.GONE);
                             }
@@ -971,7 +971,7 @@ public class DetailActivity extends AppCompatActivity {
         }
     }
 
-    public void markAsComplete(final String token, final String id_ticket, final String id_user){
+    public void markAsComplete(final String token, final String id_ticket, final String id_user, final String extra_condition){
         btnStaff.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -993,17 +993,10 @@ public class DetailActivity extends AppCompatActivity {
                             sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                                 @Override
                                 public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                    if (getIntent().hasExtra(EXTRA_JOBS)){
-                                        StaffToDoFragment.getInstance().setPage(1);
-                                        StaffToDoFragment.getInstance().getListjobs().clear();
-                                        StaffToDoFragment.getInstance().getJobs();
-                                        finish();
-                                    }else{
-                                        NotificationActivity.getInstance().setPage(1);
-                                        NotificationActivity.getInstance().getListnotif().clear();
-                                        NotificationActivity.getInstance().addListNotification(id_user);
-                                        finish();
-                                    }
+                                    Intent goBack = new Intent(DetailActivity.this, TwkStaffActivity.class);
+                                    goBack.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                    startActivity(goBack);
+                                    finish();
                                 }
                             });
                             sweet.show();
