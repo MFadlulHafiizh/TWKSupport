@@ -47,7 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/logo_failure"
-            android:background="@android:color/transparent"
+            android:background="@drawable/button_transparent_clickable"
             android:fontFamily="@font/comfortaa_regular"
             android:gravity="center"
             android:text="Try Again"

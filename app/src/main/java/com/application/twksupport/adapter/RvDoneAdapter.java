@@ -56,7 +56,7 @@ public class RvDoneAdapter extends RecyclerView.Adapter<RvDoneAdapter.MyViewHold
         holder.tv_subject.setText(dt.getSubject());
         holder.tv_status.setText(dt.getStatus());
         holder.app_name.setText(dt.getApps_name());
-        holder.date.setText(dt.getCreated_at());
+        holder.date.setText(dt.getUpdated_at());
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

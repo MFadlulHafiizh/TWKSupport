@@ -197,6 +197,8 @@ public class UserInteraction extends AppCompatActivity {
                                 BugsFragment.getInstance().setPriority(priority[0]);
                                 BugsFragment.getInstance().setApps_name(apps_name);
                                 BugsFragment.getInstance().setAssigned(assigned);
+                                BugsFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                                BugsFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                                 if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
                                 }else{
@@ -217,9 +219,9 @@ public class UserInteraction extends AppCompatActivity {
                                 BugsFragment.getInstance().setPage(1);
                                 BugsFragment.getInstance().getListBugs().clear();
                                 BugsFragment.getInstance().setPriority(priority[0]);
-                                Log.d("priorityselect", "" + priority[0]);
+                                BugsFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                                BugsFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                                 BugsFragment.getInstance().setApps_name(apps_name);
-                                Log.d("priorityselect", "" + apps_name);
                                 delay.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -240,6 +242,8 @@ public class UserInteraction extends AppCompatActivity {
                                 FeatureFragment.getInstance().setPriority(priority[0]);
                                 FeatureFragment.getInstance().setApps_name(apps_name);
                                 FeatureFragment.getInstance().setAssigned(assigned);
+                                FeatureFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                                FeatureFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                                 if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
                                 }else{
@@ -261,6 +265,8 @@ public class UserInteraction extends AppCompatActivity {
                                 FeatureFragment.getInstance().getListFeature().clear();
                                 FeatureFragment.getInstance().setPriority(priority[0]);
                                 FeatureFragment.getInstance().setApps_name(apps_name);
+                                FeatureFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                                FeatureFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                                 delay.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -280,6 +286,8 @@ public class UserInteraction extends AppCompatActivity {
                                 DoneFragment.getInstance().getListDone().clear();
                                 DoneFragment.getInstance().setPriority(priority[0]);
                                 DoneFragment.getInstance().setApps_name(apps_name);
+                                DoneFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                                DoneFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                                 if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
                                 }else{
@@ -301,6 +309,8 @@ public class UserInteraction extends AppCompatActivity {
                                 DoneFragment.getInstance().getListDone().clear();
                                 DoneFragment.getInstance().setPriority(priority[0]);
                                 DoneFragment.getInstance().setApps_name(apps_name);
+                                DoneFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                                DoneFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                                 if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
                                 }else{
@@ -321,6 +331,8 @@ public class UserInteraction extends AppCompatActivity {
                                 DoneFragment.getInstance().getListDone().clear();
                                 DoneFragment.getInstance().setPriority(priority[0]);
                                 DoneFragment.getInstance().setApps_name(apps_name);
+                                DoneFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
+                                DoneFragment.getInstance().getmAdapter().notifyDataSetChanged();
                                 delay.postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -337,6 +349,8 @@ public class UserInteraction extends AppCompatActivity {
                         StaffToDoFragment.getInstance().getListjobs().clear();
                         StaffToDoFragment.getInstance().setPriority(priority[0]);
                         StaffToDoFragment.getInstance().setApps_name(apps_name);
+                        StaffToDoFragment.getInstance().getmAdapter().notifyDataSetChanged();
+                        StaffToDoFragment.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                         if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
                         }else{
@@ -357,6 +371,8 @@ public class UserInteraction extends AppCompatActivity {
                         NotificationActivity.getInstance().getListnotif().clear();
                         NotificationActivity.getInstance().setPriority(priority[0]);
                         NotificationActivity.getInstance().setApps_name(apps_name);
+                        NotificationActivity.getInstance().getmAdapter().notifyDataSetChanged();
+                        NotificationActivity.getInstance().getSwipeRefreshLayout().setRefreshing(true);
                         if (dateFromValue.equals("--") && dateUntilValue.equals("--")){
 
                         }else{

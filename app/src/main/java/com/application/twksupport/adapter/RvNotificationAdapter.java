@@ -59,7 +59,7 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
             holder.txtPriority.setText(nd.getPriority());
             holder.txtSubject.setText(nd.getSubject());
             holder.txtAppname.setText(nd.getApps_name());
-            holder.txtDate.setText(nd.getCreated_at());
+            holder.txtDate.setText(nd.getUpdated_at());
             if (nd.getType().equals("Report") && !nd.getStatus().equals("Done")){
                 holder.txtStatus.setText("Bugs report");
             }else if (nd.getType().equals("Request") && !nd.getStatus().equals("Done")){
@@ -72,7 +72,7 @@ public class RvNotificationAdapter extends RecyclerView.Adapter<RvNotificationAd
             holder.txtSubject.setText(nd.getSubject());
             holder.txtAppname.setText(nd.getApps_name());
             holder.txtStatus.setText(nd.getStatus());
-            holder.txtDate.setText(nd.getCreated_at());
+            holder.txtDate.setText(nd.getUpdated_at());
         }
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -56,7 +56,7 @@ public class DoneFragment extends Fragment {
     private String fromDate = null;
     private String untilDate = null;
     private ProgressBar progressBar;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     public static DoneFragment getInstance(){
         return instance;
@@ -84,6 +84,14 @@ public class DoneFragment extends Fragment {
 
     public void setUntilDate(String untilDate) {
         this.untilDate = untilDate;
+    }
+
+    public RvDoneAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
     }
 
     @Override
@@ -403,28 +411,18 @@ public class DoneFragment extends Fragment {
                     case "twk-head":
                         listDone.clear();
                         page = 1;
-                        priority = null;
-                        apps_name = null;
-                        fromDate = null;
-                        untilDate = null;
                         addListDoneAdmin();
                         break;
 
                     case "twk-staff":
                         listDone.clear();
                         page = 1;
-                        priority = null;
-                        apps_name = null;
-                        fromDate = null;
-                        untilDate = null;
                         addListStaffHasDone();
                         break;
 
                     default:
                         listDone.clear();
                         page = 1;
-                        priority = null;
-                        apps_name = null;
                         addListDataDone();
                         break;
                 }

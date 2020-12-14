@@ -10,7 +10,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,6 +44,7 @@ public class NotificationActivity extends AppCompatActivity {
     private AppBarLayout appBarLayout;
     private RecyclerView rvNotif;
     private RvNotificationAdapter mAdapter;
+    private LinearLayout error_container;
     private static NotificationActivity instance;
     private List<NotificationData> listnotif = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
@@ -54,8 +57,9 @@ public class NotificationActivity extends AppCompatActivity {
     private int notifCount;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
-    private TextView txt_notifCount;
+    private TextView txt_notifCount, txtErrorMessage;
     ImageView accountImage;
+    Button btnTryAgain;
     TextView userName;
     TextView userEmail;
 
@@ -85,6 +89,14 @@ public class NotificationActivity extends AppCompatActivity {
 
     public void setUntilDate(String untilDate) {
         this.untilDate = untilDate;
+    }
+
+    public RvNotificationAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
     }
 
     @Override
@@ -143,6 +155,21 @@ public class NotificationActivity extends AppCompatActivity {
                     public void onRefresh() {
                         page = 1;
                         listnotif.clear();
+                        priority = null;
+                        apps_name = null;
+                        fromDate = null;
+                        untilDate = null;
+                        mAdapter.notifyDataSetChanged();
+                        addListNotifStaff(id_user, token);
+                    }
+                });
+
+                btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        page = 1;
+                        listnotif.clear();
+                        mAdapter.notifyDataSetChanged();
                         addListNotifStaff(id_user, token);
                     }
                 });
@@ -172,10 +199,21 @@ public class NotificationActivity extends AppCompatActivity {
                     public void onRefresh() {
                         page = 1;
                         listnotif.clear();
+                        mAdapter.notifyDataSetChanged();
                         priority = null;
                         apps_name = null;
                         fromDate = null;
                         untilDate = null;
+                        addListNotification(id_user);
+                    }
+                });
+
+                btnTryAgain.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        page = 1;
+                        listnotif.clear();
+                        mAdapter.notifyDataSetChanged();
                         addListNotification(id_user);
                     }
                 });
@@ -184,13 +222,14 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     public void addListNotification(String id_user) {
+        error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<ResponseData> getListNotif = api.getListNotification(page, id_user, priority, apps_name, fromDate, untilDate);
         Log.d("notifoeoe", "" + id_user);
         getListNotif.enqueue(new Callback<ResponseData>() {
             @Override
             public void onResponse(Call<ResponseData> call, Response<ResponseData> response) {
-                if (response.isSuccessful() && response.body() != null) {
+                if (response.isSuccessful() && response.body() != null && response.body().getMessage().equals("success")) {
                     Log.d("RETROnotif", "success: " + response.body().getNotifData());
                     List<NotificationData> responseBody = response.body().getNotifData();
                     listnotif.addAll(responseBody);
@@ -227,8 +266,13 @@ public class NotificationActivity extends AppCompatActivity {
                             });
                         }
                     });
-                } else {
+                }else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
+                    mAdapter.notifyDataSetChanged();
+                    Toast.makeText(NotificationActivity.this, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+                else {
                     Log.d("RETRO", "errror: " + response.body());
+                    swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(NotificationActivity.this, "Error 401", Toast.LENGTH_SHORT).show();
                     mAdapter.notifyDataSetChanged();
                 }
@@ -237,13 +281,15 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 Log.d("RETRO", "error" + t.getMessage());
-                Toast.makeText(NotificationActivity.this, "error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
             }
         });
 
     }
 
     private void addListNotifStaff(String id_user, String token){
+        error_container.setVisibility(View.GONE);
         ApiService api = ApiClient.getClient().create(ApiService.class);
         Call<ResponseData> getListnotif = api.listNotifStaff("Bearer "+token, id_user, page);
         getListnotif.enqueue(new Callback<ResponseData>() {
@@ -288,13 +334,12 @@ public class NotificationActivity extends AppCompatActivity {
                     });
                 }
                 else if(response.isSuccessful() && response.body() != null && response.body().getMessage().equals("No Data Available")){
-                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.notifyDataSetChanged();
                     Toast.makeText(NotificationActivity.this, ""+response.body().getMessage(), Toast.LENGTH_SHORT).show();
                 }
                 else {
                     Log.d("RETRO", "errror: " + response.body());
-                    Toast.makeText(NotificationActivity.this, "Error 401", Toast.LENGTH_SHORT).show();
+                    swipeRefreshLayout.setRefreshing(false);
                     mAdapter.notifyDataSetChanged();
                 }
             }
@@ -302,7 +347,8 @@ public class NotificationActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 Log.d("RETRO", "error" + t.getMessage());
-                Toast.makeText(NotificationActivity.this, "error: " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                error_container.setVisibility(View.VISIBLE);
+                txtErrorMessage.setText("Can't connect to server, please check your internet connection");
             }
         });
     }
@@ -317,6 +363,9 @@ public class NotificationActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.progresbar_notif);
         swipeRefreshLayout = findViewById(R.id.refresh_notif);
         txt_notifCount = findViewById(R.id.notif_count);
+        error_container = findViewById(R.id.error_frame_notif);
+        txtErrorMessage = findViewById(R.id.error_message_notif);
+        btnTryAgain = findViewById(R.id.btn_tryAgain_notif);
     }
 
     @Override

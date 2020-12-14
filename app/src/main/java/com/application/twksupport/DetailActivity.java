@@ -56,11 +56,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 import static android.graphics.text.LineBreaker.JUSTIFICATION_MODE_INTER_WORD;
+import static com.application.twksupport.R.id.aprovalStat;
 import static com.application.twksupport.R.id.client_ageedisaree;
+import static com.application.twksupport.R.id.container_reported_request_at;
 
 public class DetailActivity extends AppCompatActivity {
-    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, txtPtname, txtDeadlineStaff, txtTimePeriodic, txtPrice;
-    private TableRow rowDeadlineStaff, tv_time_periodic_container, tv_price_container;
+    private TextView txtPriority, txtAppname, txtSubject, txtDetail, txtTitle, txtDeadlineOrTimePeriodic, txtAprovalStat, txtPtname, txtDeadlineStaff, txtTimePeriodic, txtPrice, txt_assignDate, txt_report_request_date, txt_completed_date, tv_report_request;
+    private TableRow rowDeadlineStaff, tv_time_periodic_container, tv_price_container, tv_container_assignDate, tv_container_report_requestDate, tv_container_completed_at;
     private Button btnAssign, btnAgreement, btnStaff, btnClientAgree, btnClientIgnore;
     private CurrencyEditText etPrice;
     private Toolbar det_toolbar;
@@ -123,6 +125,7 @@ public class DetailActivity extends AppCompatActivity {
                     txtAppname.setText(bugsData.getApps_name());
                     txtSubject.setText(bugsData.getSubject());
                     txtDetail.setText(bugsData.getDetail());
+                    txt_report_request_date.setText(bugsData.getCreated_at());
                     txtTitle.setText("Bug Report");
                     String status = bugsData.getStatus();
                     datePicker(etyear, etmonth, etday);
@@ -148,6 +151,8 @@ public class DetailActivity extends AppCompatActivity {
                     }else if(status.equals("On Proccess")) {
                         txtAprovalStat.setVisibility(View.VISIBLE);
                         txtAprovalStat.setText("Assigned");
+                        tv_container_assignDate.setVisibility(View.VISIBLE);
+                        txt_assignDate.setText(bugsData.getAssign_at());
                         txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
                         container.setVisibility(View.GONE);
                     }
@@ -167,11 +172,14 @@ public class DetailActivity extends AppCompatActivity {
                 break;
 
             case "twk-staff":
+                tv_container_report_requestDate.setVisibility(View.GONE);
                 tv_time_periodic_container.setVisibility(View.GONE);
                 tv_price_container.setVisibility(View.GONE);
+                tv_container_assignDate.setVisibility(View.VISIBLE);
                 container.setVisibility(View.GONE);
                 rowDeadlineStaff.setVisibility(View.VISIBLE);
                 if (getIntent().hasExtra(EXTRA_JOBS)) {
+                    txt_assignDate.setText(jobsData.getCreated_at());
                     tv_price_container.setVisibility(View.GONE);
                     tv_time_periodic_container.setVisibility(View.GONE);
                     btnStaff.setVisibility(View.VISIBLE);
@@ -198,6 +206,7 @@ public class DetailActivity extends AppCompatActivity {
                             }else {
                                 btnStaff.setVisibility(View.GONE);
                             }
+                            txt_assignDate.setText(notifData.getAssign_at());
                             txtPtname.setVisibility(View.VISIBLE);
                             txtTitle.setText("Bug Report");
                             txtDeadlineStaff.setText("Deadline : " + notifData.getDead_line());
@@ -234,6 +243,13 @@ public class DetailActivity extends AppCompatActivity {
                     } else {
                         txtTitle.setText("Feature Request");
                     }
+                    txtDeadlineStaff.setText("Deadline : "+doneData.getDead_line());
+                    txtAprovalStat.setVisibility(View.VISIBLE);
+                    txtAprovalStat.setText(doneData.getStatus());
+                    txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
+                    tv_container_completed_at.setVisibility(View.VISIBLE);
+                    txt_completed_date.setText(doneData.getUpdated_at());
+                    txt_assignDate.setText(doneData.getAssign_at());
                     txtPtname.setText(doneData.getNama_perusahaan());
                     txtPriority.setText(doneData.getPriority());
                     txtAppname.setText(doneData.getApps_name());
@@ -249,6 +265,8 @@ public class DetailActivity extends AppCompatActivity {
                     tv_price_container.setVisibility(View.GONE);
                     tv_time_periodic_container.setVisibility(View.GONE);
                     container.setVisibility(View.GONE);
+
+                    txt_report_request_date.setText(bugsData.getCreated_at());
                     txtPriority.setText(bugsData.getPriority());
                     txtAppname.setText(bugsData.getApps_name());
                     txtSubject.setText(bugsData.getSubject());
@@ -256,6 +274,8 @@ public class DetailActivity extends AppCompatActivity {
                     txtTitle.setText("Bug Report");
                     if (bugsData.getStatus().equals("On Proccess")){
                         txtAprovalStat.setVisibility(View.VISIBLE);
+                        tv_container_assignDate.setVisibility(View.VISIBLE);
+                        txt_assignDate.setText(bugsData.getAssign_at());
                         txtAprovalStat.setTextColor(this.getResources().getColor(R.color.onProccess));
                         txtAprovalStat.setText(bugsData.getStatus());
                     }
@@ -263,6 +283,8 @@ public class DetailActivity extends AppCompatActivity {
                 else if (getIntent().hasExtra(EXTRA_FEATURE)) {
                     txtPriority.setText(fiturData.getPriority());
                     txtAppname.setText(fiturData.getApps_name());
+                    txt_report_request_date.setText(fiturData.getCreated_at());
+                    tv_report_request.setText("Requested at");
                     txtSubject.setText(fiturData.getSubject());
                     txtDetail.setText(fiturData.getDetail());
                     txtTitle.setText("Feature Request");
@@ -281,6 +303,15 @@ public class DetailActivity extends AppCompatActivity {
                         tv_price_container.setVisibility(View.GONE);
                         tv_time_periodic_container.setVisibility(View.GONE);
                         container.setVisibility(View.GONE);
+                    }
+                    else if(status.equals("On Proccess")){
+                        container.setVisibility(View.GONE);
+                        txtAprovalStat.setText("On Proccess");
+                        txtAprovalStat.setTextColor(this.getResources().getColor(R.color.onProccess));
+                        tv_container_assignDate.setVisibility(View.VISIBLE);
+                        txt_assignDate.setText(fiturData.getAssign_at());
+                        txtTimePeriodic.setText(fiturData.getTime_periodic());
+                        txtPrice.setText(toRupiah(String.valueOf(fiturData.getPrice())));
                     }
                     else if (status.equals("Need Agreement")) {
                         btnAssign.setVisibility(View.GONE);
@@ -360,7 +391,19 @@ public class DetailActivity extends AppCompatActivity {
                             txtTitle.setText("Bug Report");
                             if (notifData.getStatus().equals("On Proccess")){
                                 txtAprovalStat.setVisibility(View.VISIBLE);
+                                tv_container_assignDate.setVisibility(View.VISIBLE);
+                                txt_assignDate.setText(notifData.getAssign_at());
                                 txtAprovalStat.setTextColor(this.getResources().getColor(R.color.onProccess));
+                                txtAprovalStat.setText(notifData.getStatus());
+                            }else {
+                                txtAprovalStat.setVisibility(View.VISIBLE);
+
+                                txt_report_request_date.setText(notifData.getCreated_at());
+                                tv_container_assignDate.setVisibility(View.VISIBLE);
+                                txt_assignDate.setText(notifData.getAssign_at());
+                                tv_container_completed_at.setVisibility(View.VISIBLE);
+                                txt_completed_date.setText(notifData.getUpdated_at());
+                                txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
                                 txtAprovalStat.setText(notifData.getStatus());
                             }
                             break;
@@ -441,6 +484,30 @@ public class DetailActivity extends AppCompatActivity {
                                 });
 
                             }
+                            else if(notifData.getStatus().equals("On Proccess")){
+                                btnAssign.setVisibility(View.GONE);
+                                btnAgreement.setVisibility(View.GONE);
+                                containerAdminAct.setVisibility(View.GONE);
+                                clientAgreeDisagree.setVisibility(View.GONE);
+                                tv_container_assignDate.setVisibility(View.VISIBLE);
+                                txt_assignDate.setText(notifData.getAssign_at());
+                                txtAprovalStat.setTextColor(this.getResources().getColor(R.color.onProccess));
+                                txtAprovalStat.setText(notifData.getStatus());
+                            }
+                            else if(notifData.getStatus().equals("Done")){
+
+                                tv_report_request.setText("Requested at");
+                                txt_report_request_date.setText(notifData.getCreated_at());
+                                tv_container_assignDate.setVisibility(View.VISIBLE);
+                                txt_assignDate.setText(notifData.getAssign_at());
+                                tv_container_completed_at.setVisibility(View.VISIBLE);
+                                txt_completed_date.setText(notifData.getUpdated_at());
+                                txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
+                                txtAprovalStat.setText(notifData.getStatus());
+                                container.setVisibility(View.GONE);
+                                txtPrice.setText(toRupiah(String.valueOf(notifData.getPrice())));
+                                txtTimePeriodic.setText(notifData.getTime_periodic());
+                            }
                             else {
                                 container.setVisibility(View.GONE);
                                 txtPrice.setText(toRupiah(String.valueOf(notifData.getPrice())));
@@ -498,26 +565,39 @@ public class DetailActivity extends AppCompatActivity {
     }
 
     private void setDetailDone(DoneData doneData) {
+        final SharedPreferences userInfo = getSharedPreferences("userInformation", 0);
+        final String getRole = userInfo.getString("role", "");
         container.setVisibility(View.GONE);
+        txtAprovalStat.setVisibility(View.VISIBLE);
+        txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
+        txtAprovalStat.setText(doneData.getStatus());
         txtPriority.setText(doneData.getPriority());
         txtAppname.setText(doneData.getApps_name());
         txtSubject.setText(doneData.getSubject());
         txtDetail.setText(doneData.getDetail());
+        if (getRole.equals("twk-staff") || getRole.equals("twk-head")){
+            txtPtname.setVisibility(View.VISIBLE);
+        }
         String getType = doneData.getType();
         switch (getType) {
             case "Report":
-                txtPtname.setVisibility(View.VISIBLE);
                 txtPtname.setText(doneData.getNama_perusahaan());
                 tv_time_periodic_container.setVisibility(View.GONE);
                 tv_price_container.setVisibility(View.GONE);
+                tv_container_completed_at.setVisibility(View.VISIBLE);
+                txt_report_request_date.setText(doneData.getCreated_at());
+                txt_completed_date.setText(doneData.getUpdated_at());
                 txtTitle.setText("Bug Report");
                 break;
 
             case "Request":
-                txtPtname.setVisibility(View.VISIBLE);
                 txtPtname.setText(doneData.getNama_perusahaan());
                 txtTitle.setText("Feature Request");
-                txtTimePeriodic.setText(doneData.getDead_line());
+                tv_container_completed_at.setVisibility(View.VISIBLE);
+                txt_report_request_date.setText(doneData.getCreated_at());
+                txt_completed_date.setText(doneData.getUpdated_at());
+                tv_report_request.setText("Requested at");
+                txtTimePeriodic.setText(doneData.getTime_periodic());
                 txtPrice.setText(String.valueOf(doneData.getPrice()));
                 break;
         }
@@ -548,12 +628,15 @@ public class DetailActivity extends AppCompatActivity {
                         sweet.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
                             @Override
                             public void onClick(SweetAlertDialog sweetAlertDialog) {
-                                FeatureFragment.getInstance().setPage(1);
-                                FeatureFragment.getInstance().getListFeature().clear();
-                                FeatureFragment.getInstance().addListDataFeatureUser();
-                                NotificationActivity.getInstance().setPage(1);
-                                NotificationActivity.getInstance().getListnotif().clear();
-                                NotificationActivity.getInstance().addListNotification(id_user);
+                                if (getIntent().hasExtra(EXTRA_NOTIF)){
+                                    NotificationActivity.getInstance().setPage(1);
+                                    NotificationActivity.getInstance().getListnotif().clear();
+                                    NotificationActivity.getInstance().addListNotification(id_user);
+                                }else {
+                                    FeatureFragment.getInstance().setPage(1);
+                                    FeatureFragment.getInstance().getListFeature().clear();
+                                    FeatureFragment.getInstance().addListDataFeatureUser();
+                                }
                                 finish();
                             }
                         });
@@ -586,6 +669,9 @@ public class DetailActivity extends AppCompatActivity {
         txtAppname.setText(fiturData.getApps_name());
         txtSubject.setText(fiturData.getSubject());
         txtDetail.setText(fiturData.getDetail());
+        txtTimePeriodic.setText(fiturData.getTime_periodic());
+        tv_report_request.setText("Requested at");
+        txt_report_request_date.setText(fiturData.getCreated_at());
         txtDeadlineOrTimePeriodic.setText("Time Periodic :");
         txtTitle.setText("Feature Request");
         String status = fiturData.getStatus();
@@ -691,7 +777,15 @@ public class DetailActivity extends AppCompatActivity {
             txtTimePeriodic.setText(time_periodic);
             txtPrice.setText(toRupiah(String.valueOf(price)));
             container.setVisibility(View.GONE);
-        }else {
+        }else if(status.equals("On Proccess")){
+            tv_container_assignDate.setVisibility(View.VISIBLE);
+            txt_assignDate.setText(fiturData.getAssign_at());
+            txtAprovalStat.setText(fiturData.getStatus());
+            txtPrice.setText(toRupiah(String.valueOf(fiturData.getPrice())));
+            txtAprovalStat.setTextColor(this.getResources().getColor(R.color.onProccess));
+            container.setVisibility(View.GONE);
+        }
+        else {
             txtPrice.setText(String.valueOf(fiturData.getPrice()));
             txtTimePeriodic.setText(fiturData.getTime_periodic());
             container.setVisibility(View.INVISIBLE);
@@ -708,6 +802,7 @@ public class DetailActivity extends AppCompatActivity {
                 container_price.setVisibility(View.GONE);
                 btnAgreement.setVisibility(View.GONE);
                 txtPtname.setVisibility(View.VISIBLE);
+                txt_report_request_date.setText(dataNotif.getCreated_at());
                 txtPtname.setText(dataNotif.getNama_perusahaan());
                 txtPriority.setText(dataNotif.getPriority());
                 txtAppname.setText(dataNotif.getApps_name());
@@ -743,6 +838,13 @@ public class DetailActivity extends AppCompatActivity {
                 }
                 else {
                     container.setVisibility(View.INVISIBLE);
+                    tv_container_assignDate.setVisibility(View.VISIBLE);
+                    txt_assignDate.setText(dataNotif.getAssign_at());
+                    tv_container_completed_at.setVisibility(View.VISIBLE);
+                    txt_completed_date.setText(dataNotif.getUpdated_at());
+                    txtAprovalStat.setVisibility(View.VISIBLE);
+                    txtAprovalStat.setText(dataNotif.getStatus());
+                    txtAprovalStat.setTextColor(this.getResources().getColor(R.color.greenFigma));
                 }
                 break;
 
@@ -752,6 +854,8 @@ public class DetailActivity extends AppCompatActivity {
                 txtPriority.setText(dataNotif.getPriority());
                 txtAppname.setText(dataNotif.getApps_name());
                 txtSubject.setText(dataNotif.getSubject());
+                tv_report_request.setText("Requested at");
+                txt_report_request_date.setText(dataNotif.getCreated_at());
                 txtDetail.setText(dataNotif.getDetail());
                 txtDeadlineOrTimePeriodic.setText("Time Periodic :");
                 txtTitle.setText("Feature Request");
@@ -953,6 +1057,13 @@ public class DetailActivity extends AppCompatActivity {
         tv_price_container = findViewById(R.id.tv_price_container);
         txtTimePeriodic = findViewById(R.id.tv_time_periodic);
         txtPrice = findViewById(R.id.tv_price);
+        tv_container_assignDate = findViewById(R.id.container_assign_at);
+        txt_assignDate = findViewById(R.id.tv_assigned_date);
+        txt_report_request_date = findViewById(R.id.tv_report_request_date);
+        tv_container_report_requestDate = findViewById(R.id.container_reported_request_at);
+        tv_container_completed_at = findViewById(R.id.container_completed_at);
+        txt_completed_date = findViewById(R.id.tv_completed_date);
+        tv_report_request = findViewById(R.id.tv_report_request);
     }
 
     private String toRupiah(String nominal){

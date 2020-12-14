@@ -62,7 +62,7 @@ public class BugsFragment extends Fragment {
     private String assigned = null;
     private String fromDate = null;
     private String untilDate = null;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
     ProgressBar progressBar;
 
 
@@ -96,6 +96,14 @@ public class BugsFragment extends Fragment {
 
     public void setUntilDate(String untilDate) {
         this.untilDate = untilDate;
+    }
+
+    public RvBugsAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
     }
 
     @Override
@@ -304,11 +312,6 @@ public class BugsFragment extends Fragment {
                     case "twk-head":
                         listBugs.clear();
                         page = 1;
-                        priority = null;
-                        apps_name = null;
-                        assigned = null;
-                        fromDate = null;
-                        untilDate = null;
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {
@@ -320,11 +323,6 @@ public class BugsFragment extends Fragment {
                     default:
                         listBugs.clear();
                         page = 1;
-                        priority = null;
-                        apps_name = null;
-                        assigned = null;
-                        fromDate = null;
-                        untilDate = null;
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {

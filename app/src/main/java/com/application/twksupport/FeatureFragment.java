@@ -49,7 +49,7 @@ public class FeatureFragment extends Fragment {
     private Button tryAgain;
     private LinearLayout error_container;
     private static FeatureFragment instance;
-    SwipeRefreshLayout swipeRefreshLayout;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private int page = 1;
     private int last_page = 1;
     private String priority = null;
@@ -89,6 +89,14 @@ public class FeatureFragment extends Fragment {
 
     public void setUntilDate(String untilDate) {
         this.untilDate = untilDate;
+    }
+
+    public RvFeatureAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
     }
 
     @Override
@@ -305,11 +313,6 @@ public class FeatureFragment extends Fragment {
                 swipeRefreshLayout.setRefreshing(true);
                 switch (role) {
                     case "twk-head":
-                        priority = null;
-                        apps_name = null;
-                        assigned = null;
-                        fromDate = null;
-                        untilDate = null;
                         listFeature.clear();
                         page = 1;
                         handler.postDelayed(new Runnable() {
@@ -321,8 +324,6 @@ public class FeatureFragment extends Fragment {
                         break;
 
                     default:
-                        priority = null;
-                        apps_name = null;
                         listFeature.clear();
                         page = 1;
                         handler.postDelayed(new Runnable() {

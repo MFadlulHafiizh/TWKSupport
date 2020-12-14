@@ -30,6 +30,7 @@ public class BugsData implements Parcelable {
         detail = in.readString();
         status = in.readString();
         created_at = in.readString();
+        assign_at = in.readString();
     }
 
     public static final Creator<BugsData> CREATOR = new Creator<BugsData>() {
@@ -116,6 +117,14 @@ public class BugsData implements Parcelable {
         this.created_at = created_at;
     }
 
+    public String getAssign_at() {
+        return assign_at;
+    }
+
+    public void setAssign_at(String assign_at) {
+        this.assign_at = assign_at;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -132,5 +141,6 @@ public class BugsData implements Parcelable {
         parcel.writeString(detail);
         parcel.writeString(status);
         parcel.writeString(created_at);
+        parcel.writeString(assign_at);
     }
 }

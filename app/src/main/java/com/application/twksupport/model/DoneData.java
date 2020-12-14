@@ -14,10 +14,12 @@ public class DoneData implements Parcelable {
     private String subject;
     private String detail;
     private String status;
-    @SerializedName("updated_at")
+    private String updated_at;
     private String created_at;
     private String dead_line;
+    private String time_periodic;
     private int price;
+    private String assign_at;
 
     protected DoneData(Parcel in) {
         nama_perusahaan = in.readString();
@@ -31,6 +33,9 @@ public class DoneData implements Parcelable {
         created_at = in.readString();
         dead_line = in.readString();
         price = in.readInt();
+        assign_at = in.readString();
+        updated_at = in.readString();
+        time_periodic = in.readString();
     }
 
     public static final Creator<DoneData> CREATOR = new Creator<DoneData>() {
@@ -133,6 +138,30 @@ public class DoneData implements Parcelable {
         this.price = price;
     }
 
+    public String getAssign_at() {
+        return assign_at;
+    }
+
+    public void setAssign_at(String assign_at) {
+        this.assign_at = assign_at;
+    }
+
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
+
+    public String getTime_periodic() {
+        return time_periodic;
+    }
+
+    public void setTime_periodic(String time_periodic) {
+        this.time_periodic = time_periodic;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -151,5 +180,8 @@ public class DoneData implements Parcelable {
         dest.writeString(created_at);
         dest.writeString(dead_line);
         dest.writeInt(price);
+        dest.writeString(assign_at);
+        dest.writeString(updated_at);
+        dest.writeString(time_periodic);
     }
 }

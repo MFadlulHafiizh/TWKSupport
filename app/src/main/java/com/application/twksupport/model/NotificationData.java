@@ -16,13 +16,14 @@ public class NotificationData implements Parcelable {
     private String subject;
     private String detail;
     private String status;
-    @SerializedName("updated_at")
+    private String updated_at;
     private String created_at;
     private int price;
     private String time_periodic;
     private String dead_line;
     private int read_at;
     private String aproval_stat;
+    private String assign_at;
 
     protected NotificationData(Parcel in) {
         id_notif = in.readString();
@@ -41,6 +42,8 @@ public class NotificationData implements Parcelable {
         price = in.readInt();
         time_periodic = in.readString();
         dead_line = in.readString();
+        updated_at = in.readString();
+        assign_at = in.readString();
     }
 
     public static final Creator<NotificationData> CREATOR = new Creator<NotificationData>() {
@@ -175,12 +178,28 @@ public class NotificationData implements Parcelable {
         this.time_periodic = time_periodic;
     }
 
+    public String getUpdated_at() {
+        return updated_at;
+    }
+
+    public void setUpdated_at(String updated_at) {
+        this.updated_at = updated_at;
+    }
+
     public String getDead_line() {
         return dead_line;
     }
 
     public void setDead_line(String dead_line) {
         this.dead_line = dead_line;
+    }
+
+    public String getAssign_at() {
+        return assign_at;
+    }
+
+    public void setAssign_at(String assign_at) {
+        this.assign_at = assign_at;
     }
 
     @Override
@@ -206,5 +225,7 @@ public class NotificationData implements Parcelable {
         dest.writeInt(price);
         dest.writeString(time_periodic);
         dest.writeString(dead_line);
+        dest.writeString(updated_at);
+        dest.writeString(assign_at);
     }
 }

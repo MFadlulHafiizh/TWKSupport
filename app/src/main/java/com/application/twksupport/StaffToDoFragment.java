@@ -14,6 +14,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +41,7 @@ public class StaffToDoFragment extends Fragment {
     private RvTodoAdapter mAdapter;
     private List<TodoData> listjobs = new ArrayList<>();
     private LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
+    private LinearLayout error_container;
     private TextView filterbutton;
     private static StaffToDoFragment instance;
     private int page = 1;
@@ -49,6 +52,7 @@ public class StaffToDoFragment extends Fragment {
     private String untilDate = null;
     private ProgressBar progressBar;
     private SwipeRefreshLayout swipeRefreshLayout;
+    private Button btn_tryAgain;
 
     public StaffToDoFragment() {
     }
@@ -81,6 +85,14 @@ public class StaffToDoFragment extends Fragment {
         this.untilDate = untilDate;
     }
 
+    public RvTodoAdapter getmAdapter() {
+        return mAdapter;
+    }
+
+    public SwipeRefreshLayout getSwipeRefreshLayout() {
+        return swipeRefreshLayout;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -91,6 +103,8 @@ public class StaffToDoFragment extends Fragment {
         swipeRefreshLayout = view.findViewById(R.id.refresh_todo);
         filterbutton = view.findViewById(R.id.filter_todo);
         progressBar = view.findViewById(R.id.progresbar_todo);
+        error_container = view.findViewById(R.id.error_frame_todo);
+        btn_tryAgain = view.findViewById(R.id.btn_tryAgain_todo);
         swipeRefreshLayout.setRefreshing(true);
 
         //prepareRecycleView
@@ -134,6 +148,16 @@ public class StaffToDoFragment extends Fragment {
             }
         });
 
+        btn_tryAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                page = 1;
+                listjobs.clear();
+                swipeRefreshLayout.setRefreshing(true);
+                getJobs();
+            }
+        });
+
         //filter
         final UserInteraction userInteraction = new UserInteraction();
         filterbutton.setOnClickListener(new View.OnClickListener() {
@@ -146,6 +170,7 @@ public class StaffToDoFragment extends Fragment {
     }
 
     public void getJobs(){
+        error_container.setVisibility(View.GONE);
         SharedPreferences _objresp = getActivity().getSharedPreferences("JWTTOKEN", 0);
         SharedPreferences getIdStaff = getActivity().getSharedPreferences("userInformation", 0);
         String tokenStaff = _objresp.getString("jwttoken", "");
@@ -190,6 +215,7 @@ public class StaffToDoFragment extends Fragment {
             @Override
             public void onFailure(Call<ResponseData> call, Throwable t) {
                 swipeRefreshLayout.setRefreshing(false);
+                error_container.setVisibility(View.VISIBLE);
                 mAdapter.notifyDataSetChanged();
                 Log.d("Staffjob", ""+t.getMessage());
             }

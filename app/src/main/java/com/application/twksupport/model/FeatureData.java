@@ -15,6 +15,7 @@ public class FeatureData implements Parcelable {
     private String time_periodic;
     private int price;
     private String aproval_stat;
+    private String assign_at;
 
     public FeatureData(){
 
@@ -108,6 +109,14 @@ public class FeatureData implements Parcelable {
         this.aproval_stat = aproval_stat;
     }
 
+    public String getAssign_at() {
+        return assign_at;
+    }
+
+    public void setAssign_at(String assign_at) {
+        this.assign_at = assign_at;
+    }
+
     protected FeatureData(Parcel in) {
         nama_perusahaan = in.readString();
         apps_name = in.readString();
@@ -120,6 +129,7 @@ public class FeatureData implements Parcelable {
         time_periodic = in.readString();
         price = in.readInt();
         aproval_stat = in.readString();
+        assign_at = in.readString();
     }
 
     @Override
@@ -140,6 +150,7 @@ public class FeatureData implements Parcelable {
         parcel.writeString(time_periodic);
         parcel.writeInt(price);
         parcel.writeString(aproval_stat);
+        parcel.writeString(assign_at);
     }
 
     public static final Creator<FeatureData> CREATOR = new Creator<FeatureData>() {

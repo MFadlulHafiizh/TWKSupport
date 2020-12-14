@@ -195,31 +195,6 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/tv_time_periodic_container">
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/comfortaa_regular"
-                        android:paddingVertical="5dp"
-                        android:text="Time periodic"
-                        android:textColor="@color/defaultWhite"
-                        android:textSize="13sp" />
-
-                    <TextView
-                        android:id="@+id/tv_time_periodic"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:fontFamily="@font/comfortaa_bold"
-                        android:paddingVertical="5dp"
-                        android:paddingLeft="16dp"
-                        android:paddingRight="8dp"
-                        tools:text="2020-12-11"
-                        android:textColor="@color/defaultWhite"
-                        android:textSize="13sp" />
-                </TableRow>
-
-                <TableRow
                     android:id="@+id/tv_price_container">
                     <TextView
                         android:layout_width="wrap_content"
@@ -245,9 +220,32 @@
                 </TableRow>
 
                 <TableRow
-                    android:id="@+id/container_reported_request_at"
-                    android:visibility="gone"
-                    tools:visibility="visible">
+                    android:id="@+id/tv_time_periodic_container">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:fontFamily="@font/comfortaa_regular"
+                        android:paddingVertical="5dp"
+                        android:text="Time periodic"
+                        android:textColor="@color/defaultWhite"
+                        android:textSize="13sp" />
+
+                    <TextView
+                        android:id="@+id/tv_time_periodic"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:fontFamily="@font/comfortaa_bold"
+                        android:paddingVertical="5dp"
+                        android:paddingLeft="16dp"
+                        android:paddingRight="8dp"
+                        tools:text="2020-12-11"
+                        android:textColor="@color/defaultWhite"
+                        android:textSize="13sp" />
+                </TableRow>
+
+                <TableRow
+                    android:id="@+id/container_reported_request_at">
                     <TextView
                         android:id="@+id/tv_report_request"
                         android:layout_width="wrap_content"
@@ -259,6 +257,7 @@
                         android:textSize="13sp" />
 
                     <TextView
+                        android:id="@+id/tv_report_request_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/comfortaa_regular"
@@ -283,6 +282,7 @@
                         android:textSize="13sp" />
 
                     <TextView
+                        android:id="@+id/tv_assigned_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/comfortaa_regular"
@@ -307,6 +307,7 @@
                         android:textSize="13sp" />
 
                     <TextView
+                        android:id="@+id/tv_completed_date"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/comfortaa_regular"
